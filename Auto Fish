@@ -61,3 +61,51 @@ task.spawn(function()
     end
 end)
 
+local plr = game.Players.LocalPlayer
+local vu = game:GetService("VirtualUser")
+local inputService = game:GetService("UserInputService")
+
+-- Debug: Log when the script starts running
+print("Anti-AFK script started.")
+
+-- Flag to ensure only one simulation occurs per idle event
+local isSimulating = false
+
+-- Monitor when the player is idle
+plr.Idled:Connect(function()
+    if not isSimulating then
+        -- Debug: Log when the player is idle and simulation begins
+        print("Player is idle, simulating input.")
+        
+        isSimulating = true
+        
+        -- Simulate input based on platform (PC or mobile)
+        if inputService.TouchEnabled then
+            -- For mobile, simulate a touch event
+            local touchPosition = Vector2.new(0, 0)  -- You can adjust this if needed
+            vu:Button2Down(touchPosition, workspace.CurrentCamera.CFrame)
+            wait(0.1)  -- Short wait to avoid freezing
+            vu:Button2Up(touchPosition, workspace.CurrentCamera.CFrame)
+        else
+            -- For PC, simulate right-click input
+            vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            wait(0.1)  -- Short wait to avoid freezing
+            vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        end
+        
+        -- Debug: Log when input simulation is completed
+        print("Simulated input.")
+        
+        -- Reset the flag after simulation
+        isSimulating = false
+    else
+        -- Debug: Log if the script is trying to simulate again before the previous one finishes
+        print("Idle event triggered, but simulation is already in progress.")
+    end
+end)
+
+-- Fire the "Stop Timer" event to stop idle tracking
+game.ReplicatedStorage.Network["Idle Tracking: Stop Timer"]:FireServer()
+
+-- Debug: Log when "Stop Timer" is fired
+print("Fired 'Idle Tracking: Stop Timer' to prevent AFK status.")
