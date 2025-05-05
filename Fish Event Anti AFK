@@ -8,5 +8,9 @@ while task.wait(60) do
 
     -- Fire the touch input (this is just a mock, not real touch simulation)
     UserInputService.InputBegan:Fire(touchInput)
+    
+    -- Debug line
+    print("Anti-AFK action triggered: Simulating touch input")
+
     task.wait(0.1)
 end
