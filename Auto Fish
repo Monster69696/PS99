@@ -1,7 +1,12 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Anti%20AFK"))()
-task.wait(1)
+-- Auto Fish script
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Optimizations"))()
-task.wait(1)
-
+-- Load Auto script
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Auto"))()
+wait(1)  -- 1-second delay between script loads
+
+-- Load Fish Event Anti AFK script
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Anti%20AFK"))()
+wait(1)  -- 1-second delay between script loads
+
+-- Load Fish Event Optimizations script
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Optimizations"))()
