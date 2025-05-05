@@ -1,16 +1,36 @@
-local UserInputService = game:GetService("UserInputService")
+local VirtualUser = game:GetService("VirtualUser")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-while task.wait(60) do
-    -- Simulate a small touch input
-    local touchInput = Instance.new("InputObject", game)
-    touchInput.UserInputType = Enum.UserInputType.Touch
-    touchInput.Position = Vector2.new(math.random(0, 500), math.random(0, 500)) -- Random position to simulate touch
+local LocalPlayer = Players.LocalPlayer
+local Network = ReplicatedStorage:WaitForChild("Network")
 
-    -- Fire the touch input (this is just a mock, not real touch simulation)
-    UserInputService.InputBegan:Fire(touchInput)
-    
-    -- Debug line
-    print("Anti-AFK action triggered: Simulating touch input")
-
-    task.wait(0.1)
+-- Disable old idle connections
+for _, v in pairs(getconnections(LocalPlayer.Idled)) do
+    v:Disable()
 end
+
+-- Connect Anti-AFK function
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:ClickButton2(Vector2.new(math.random(0, 1000), math.random(0, 1000)))
+    print("[Anti-AFK] Simulated click to prevent idle kick.")
+end)
+
+-- Hook and block idle-related namecalls
+old = hookmetamethod(game, "__namecall", function(self, ...)
+    local method = getnamecallmethod()
+    if not checkcaller() then
+        local Name = tostring(self)
+        if table.find({"Server Closing", "Idle Tracking: Update Timer", "Move Server"}, Name) then
+            print("[Anti-AFK] Blocked remote:", Name)
+            return nil
+        end
+    end
+    return old(self, ...)
+end)
+
+-- Fire the stop timer remote
+pcall(function()
+    Network["Idle Tracking: Stop Timer"]:FireServer()
+    print("[Anti-AFK] Fired: Idle Tracking: Stop Timer")
+end)
