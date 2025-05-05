@@ -61,12 +61,18 @@ task.spawn(function()
     end
 end)
 
-local VirtualInputManager = cloneref(game:GetService("VirtualInputManager"))
+
+local UserInputService = game:GetService("UserInputService")
 
 while task.wait(60) do
-    VirtualInputManager:SendKeyEvent(true, "W", false, false)
+    -- Simulate a small touch input
+    local touchInput = Instance.new("InputObject", game)
+    touchInput.UserInputType = Enum.UserInputType.Touch
+    touchInput.Position = Vector2.new(math.random(0, 500), math.random(0, 500)) -- Random position to simulate touch
+
+    -- Fire the touch input (this is just a mock, not real touch simulation)
+    UserInputService.InputBegan:Fire(touchInput)
     task.wait(0.1)
-    VirtualInputManager:SendKeyEvent(false, "W", false, false)
 end
 
 
