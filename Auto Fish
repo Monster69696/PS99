@@ -1,7 +1,7 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Anti%20AFK"))()
-
+task.wait(1)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Fish%20Event%20Optimizations"))()
-
+task.wait(1)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Auto"))()
