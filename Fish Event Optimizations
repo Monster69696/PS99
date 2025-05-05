@@ -5,9 +5,9 @@ pcall(function()
 
     -- Cap FPS to save performance
     if setfpscap then
-        setfpscap(25)
+        setfpscap(20)
     elseif setfpscap_internal then
-        setfpscap_internal(25)
+        setfpscap_internal(20)
     end
 
     -- FPS Counter (Optional UI)
