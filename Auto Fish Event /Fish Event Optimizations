@@ -71,3 +71,57 @@ pcall(function()
 end)
 
 
+
+-- SIMPLE RENDER TOGGLE BUTTON (Black Screen with "Running..." text)
+
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+
+-- UI SETUP
+local screenGui = Instance.new("ScreenGui")
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+screenGui.Name = "BlackRenderToggle"
+screenGui.Parent = CoreGui
+
+-- BLACK FRAME
+local blackFrame = Instance.new("Frame")
+blackFrame.Size = UDim2.new(1, 0, 1, 0)
+blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+blackFrame.Visible = false
+blackFrame.Parent = screenGui
+
+-- TEXT LABEL
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "Running..."
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.Parent = blackFrame
+
+-- TOGGLE BUTTON
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 120, 0, 40)
+toggleButton.Position = UDim2.new(1, -130, 1, -50)
+toggleButton.AnchorPoint = Vector2.new(1, 1)
+toggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Text = "Toggle Render"
+toggleButton.TextScaled = true
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.Parent = screenGui
+
+-- STATE
+local renderDisabled = false
+
+-- TOGGLE LOGIC
+toggleButton.MouseButton1Click:Connect(function()
+    renderDisabled = not renderDisabled
+    RunService:Set3dRenderingEnabled(not renderDisabled)
+    blackFrame.Visible = renderDisabled
+end)
+
+-- OPTIONAL: Auto-start with rendering OFF
+-- toggleButton:Click()
