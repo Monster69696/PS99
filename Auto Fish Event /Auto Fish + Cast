@@ -1,1 +1,64 @@
+local players = game:GetService("Players")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local localPlayer = players.LocalPlayer
+
+local fishingModule = require(replicatedStorage.Library.Client.EventFishingCmds)
+local FishGame = require(replicatedStorage.Library.Client.EventFishingCmds.Game)
+
+if not FishGame.BeginOld then
+    FishGame.BeginOld = FishGame.Begin
+end
+
+FishGame.Begin = function(arg1, arg2, arg3)
+    arg2.BarSize = 1
+    return FishGame.BeginOld(arg1, arg2, arg3)
+end
+
+local function getCastPosition()
+    local character = localPlayer.Character
+    if character then
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            return hrp.Position + Vector3.new(0, -2, -10)
+        end
+    end
+    return nil
+end
+
+task.spawn(function()
+    while true do
+        task.wait(1.5)
+
+        local castPosition = getCastPosition()
+        if castPosition then
+            fishingModule.LocalCast(castPosition)
+        end
+    end
+end)
+
+local CatchItem = require(game.ReplicatedStorage.Library.Items.CatchItem)
+local Network = require(game.ReplicatedStorage.Library.Client.Network)
+
+task.spawn(function()
+    while true do
+        local success, errorMessage = pcall(function()
+            local fishToSell = {}
+            for fishId, _ in pairs(CatchItem:All()) do
+                table.insert(fishToSell, fishId)
+            end
+
+            if #fishToSell > 0 then
+                Network.Invoke("FishingEvent_Sell", fishToSell)
+            end
+        end)
+
+        -- Optional: log errors if needed
+        -- if not success then
+        --     warn("AutoSell Error:", errorMessage)
+        -- end
+
+        task.wait(10)
+    end
+end)
+
 
