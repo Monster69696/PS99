@@ -1,105 +1,71 @@
+-- CONFIG
+local config = {
+    color = Color3.fromRGB(0, 0, 0),
+    transparency = 0.8,
+    keywords = {
+        "Breakable", "Chest", "Ore", "Drop", "Coin", "Gem", "FX", "Effect",
+        "Bubble", "Debris", "Particles", "Decoration", "Glass", "Shine",
+        "Rock", "Tree", "Leaf", "island", "boat", "ship"
+    }
+}
+
+-- SERVICES
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace.Terrain
+
+-- CLEAN LIGHTING
 pcall(function()
-    -- Suppress console messages
-    local OldPrint = print
-    print = function() end
-
-    -- Cap FPS to save performance
-    if setfpscap then
-        setfpscap(20)
-    elseif setfpscap_internal then
-        setfpscap_internal(20)
-    end
-
-    -- FPS Counter (Optional UI)
-    local RunService = game:GetService("RunService")
-    local StatsGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-    StatsGui.Name = "FPSCounter"
-
-    local TextLabel = Instance.new("TextLabel", StatsGui)
-    TextLabel.Size = UDim2.new(0, 100, 0, 25)
-    TextLabel.Position = UDim2.new(0, 10, 0, 10)
-    TextLabel.BackgroundTransparency = 0.3
-    TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    TextLabel.TextColor3 = Color3.new(1, 1, 1)
-    TextLabel.TextScaled = true
-    TextLabel.Font = Enum.Font.SourceSansBold
-    TextLabel.Text = "FPS: ..."
-
-    local lastTime, frames = tick(), 0
-    RunService.RenderStepped:Connect(function()
-        frames += 1
-        local now = tick()
-        if now - lastTime >= 1 then
-            TextLabel.Text = "FPS: " .. frames
-            frames = 0
-            lastTime = now
+    for _, v in pairs({
+        Ambient = Color3.new(0, 0, 0),
+        Brightness = 0,
+        GlobalShadows = false,
+        FogEnd = 1e10,
+        ClockTime = 0,
+        OutdoorAmbient = Color3.new(0, 0, 0),
+        EnvironmentDiffuseScale = 0,
+        EnvironmentSpecularScale = 0,
+        ShadowSoftness = 1
+    }) do
+        for k, val in pairs(v) do
+            Lighting[k] = val
         end
-    end)
-
-    -- Check if any ancestor has 'fish' or 'event' in name
-    local function isFishOrEventRelated(obj)
-        local parent = obj
-        while parent do
-            local name = parent.Name:lower()
-            if name:find("fish") or name:find("event") then
-                return true
-            end
-            parent = parent.Parent
-        end
-        return false
     end
+    for _, obj in ipairs(Lighting:GetChildren()) do
+        if not obj:IsA("ValueBase") then obj:Destroy() end
+    end
+end)
 
-    for _, obj in ipairs(game:GetDescendants()) do
-        local isFishEvent = isFishOrEventRelated(obj)
+-- NEUTRALIZE WIND
+pcall(function()
+    Terrain.WindSpeed = 0
+    Terrain.WindDirection = Vector3.zero
+end)
 
-        if obj:IsA("BasePart") then
-            -- Light visual optimization even inside fish folders
+-- MAKE PARTS UNIFORM + TRANSPARENT
+pcall(function()
+    local all = workspace:GetDescendants()
+    for _, obj in ipairs(all) do
+        if obj:IsA("BasePart") or obj:IsA("MeshPart") then
             obj.Material = Enum.Material.SmoothPlastic
-            obj.Color = Color3.fromRGB(40, 40, 40)
-            obj.CastShadow = false
-            obj.Transparency = 0.5  -- Set transparency
-        elseif (obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") or obj:IsA("Fire") or obj:IsA("Smoke") or obj:IsA("Sparkles")) and not isFishEvent then
+            obj.Color = config.color
+            obj.Transparency = config.transparency
+        elseif obj:IsA("Decal") then
+            obj.Transparency = 1
+        elseif obj:IsA("Texture") then
             obj:Destroy()
-        elseif (obj:IsA("Texture") or obj:IsA("Decal") or obj:IsA("SurfaceAppearance")) and not isFishEvent then
-            obj:Destroy()
-        elseif (obj:IsA("BillboardGui") or obj:IsA("SurfaceGui")) and not obj:IsDescendantOf(game:GetService("StarterGui")) and not isFishEvent then
-            obj.Enabled = false
         end
     end
+end)
 
-    -- Remove other player pets
-    local pets = workspace:FindFirstChild("Pets")
-    if pets then
-        for _, pet in pairs(pets:GetChildren()) do
-            pet:Destroy()
+-- DESTROY PARTICLES, BEAMS, LIGHTS (no loop)
+pcall(function()
+    local typesToRemove = {
+        "ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles", "Beam",
+        "PointLight", "SpotLight", "SurfaceLight"
+    }
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        for _, class in ipairs(typesToRemove) do
+            if obj:IsA(class) then obj:Destroy() break end
         end
     end
-
-    -- Remove accessories on other players
-    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-        if plr ~= game.Players.LocalPlayer then
-            if plr.Character then
-                for _, v in pairs(plr.Character:GetDescendants()) do
-                    if v:IsA("Accessory") or v:IsA("Hat") then
-                        v:Destroy()
-                    end
-                end
-            end
-        end
-    end
-
-    -- Destroy MapEffects if it exists
-    if workspace:FindFirstChild("MapEffects") then
-        workspace.MapEffects:Destroy()
-    end
-
-    -- Lighting tweak
-    local lighting = game:GetService("Lighting")
-    lighting.Sky = nil
-    lighting.FogStart = 0
-    lighting.FogEnd = 1000
-    lighting.Brightness = 0
-
-    -- Restore the original print function
-    print = OldPrint
 end)
