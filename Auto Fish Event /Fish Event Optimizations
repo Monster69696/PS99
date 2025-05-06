@@ -1,0 +1,73 @@
+-- CONFIG
+local config = {
+    color = Color3.fromRGB(0, 0, 0),
+    transparency = 0.8,
+    keywords = {
+        "Breakable", "Chest", "Ore", "Drop", "Coin", "Gem", "FX", "Effect",
+        "Bubble", "Debris", "Particles", "Decoration", "Glass", "Shine",
+        "Rock", "Tree", "Leaf", "island", "boat", "ship"
+    }
+}
+
+-- SERVICES
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace.Terrain
+
+-- CLEAN LIGHTING
+pcall(function()
+    for _, v in pairs({
+        Ambient = Color3.new(0, 0, 0),
+        Brightness = 0,
+        GlobalShadows = false,
+        FogEnd = 1e10,
+        ClockTime = 0,
+        OutdoorAmbient = Color3.new(0, 0, 0),
+        EnvironmentDiffuseScale = 0,
+        EnvironmentSpecularScale = 0,
+        ShadowSoftness = 1
+    }) do
+        for k, val in pairs(v) do
+            Lighting[k] = val
+        end
+    end
+    for _, obj in ipairs(Lighting:GetChildren()) do
+        if not obj:IsA("ValueBase") then obj:Destroy() end
+    end
+end)
+
+-- NEUTRALIZE WIND
+pcall(function()
+    Terrain.WindSpeed = 0
+    Terrain.WindDirection = Vector3.zero
+end)
+
+-- MAKE PARTS UNIFORM + TRANSPARENT
+pcall(function()
+    local all = workspace:GetDescendants()
+    for _, obj in ipairs(all) do
+        if obj:IsA("BasePart") or obj:IsA("MeshPart") then
+            obj.Material = Enum.Material.SmoothPlastic
+            obj.Color = config.color
+            obj.Transparency = config.transparency
+        elseif obj:IsA("Decal") then
+            obj.Transparency = 1
+        elseif obj:IsA("Texture") then
+            obj:Destroy()
+        end
+    end
+end)
+
+-- DESTROY PARTICLES, BEAMS, LIGHTS (no loop)
+pcall(function()
+    local typesToRemove = {
+        "ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles", "Beam",
+        "PointLight", "SpotLight", "SurfaceLight"
+    }
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        for _, class in ipairs(typesToRemove) do
+            if obj:IsA(class) then obj:Destroy() break end
+        end
+    end
+end)
+
+
