@@ -12,10 +12,12 @@ local config = {
 -- SERVICES
 local Lighting = game:GetService("Lighting")
 local Terrain = workspace.Terrain
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
 -- CLEAN LIGHTING
 pcall(function()
-    for _, v in pairs({
+    for k, val in pairs({
         Ambient = Color3.new(0, 0, 0),
         Brightness = 0,
         GlobalShadows = false,
@@ -26,9 +28,7 @@ pcall(function()
         EnvironmentSpecularScale = 0,
         ShadowSoftness = 1
     }) do
-        for k, val in pairs(v) do
-            Lighting[k] = val
-        end
+        Lighting[k] = val
     end
     for _, obj in ipairs(Lighting:GetChildren()) do
         if not obj:IsA("ValueBase") then obj:Destroy() end
@@ -49,6 +49,8 @@ pcall(function()
             obj.Material = Enum.Material.SmoothPlastic
             obj.Color = config.color
             obj.Transparency = config.transparency
+            obj.Anchored = true
+            obj.CanCollide = false
         elseif obj:IsA("Decal") then
             obj.Transparency = 1
         elseif obj:IsA("Texture") then
@@ -70,12 +72,41 @@ pcall(function()
     end
 end)
 
+-- REMOVE SOUNDS
+pcall(function()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Sound") then
+            obj:Stop()
+            obj:Destroy()
+        end
+    end
+end)
 
+-- DISABLE NPC/AI MOVEMENTS
+pcall(function()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Humanoid") then
+            obj.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            obj.HumanoidRootPart.Anchored = true
+        end
+    end
+end)
+
+-- REMOVE SKYBOX
+pcall(function()
+    Lighting.Sky = nil  -- Removes the skybox
+end)
+
+-- MEMORY CLEANUP (Remove unused objects)
+pcall(function()
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Model") and not obj.Parent then
+            obj:Destroy()
+        end
+    end
+end)
 
 -- SIMPLE RENDER TOGGLE BUTTON (Black Screen with "Running..." text)
-
-local CoreGui = game:GetService("CoreGui")
-local RunService = game:GetService("RunService")
 
 -- UI SETUP
 local screenGui = Instance.new("ScreenGui")
@@ -126,9 +157,8 @@ end)
 -- OPTIONAL: Auto-start with rendering OFF
 -- toggleButton:Click()
 
-
+-- One-time FPS cap and loop
 pcall(function()
-    -- One-time FPS cap
     if setfpscap then
         setfpscap(15)
     elseif setfpscap_internal then
@@ -148,12 +178,11 @@ pcall(function()
     end)
 
     -- On-screen FPS counter
-    local RunService = game:GetService("RunService")
     local StatsGui = Instance.new("ScreenGui")
     StatsGui.Name = "FPSCounter"
     StatsGui.ResetOnSpawn = false
     StatsGui.IgnoreGuiInset = true
-    StatsGui.Parent = game:GetService("CoreGui")
+    StatsGui.Parent = CoreGui
 
     local TextLabel = Instance.new("TextLabel")
     TextLabel.Size = UDim2.new(0, 100, 0, 25)
@@ -177,5 +206,3 @@ pcall(function()
         end
     end)
 end)
-
-
