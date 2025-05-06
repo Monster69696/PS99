@@ -2,10 +2,6 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Auto%20Fish%20Event%20/Fish%20Event%20Anti%20AFK"))()
 wait(1)
 
--- Load Fish Event Optimizations
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Auto%20Fish%20Event%20/Fish%20Event%20Optimizations"))()
-wait(1)
-
 -- Load Auto Fish + Cast
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Auto%20Fish%20Event%20/Auto%20Fish%20%2B%20Cast"))()
 wait(1)
