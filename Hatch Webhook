@@ -2,8 +2,8 @@
 -- discord.gg/fnxh8zUmTx
 
 getgenv().Webhook = {
-    ['ID'] = "",
-    ['URL'] = "",
+    ['ID'] = "902135337353109554",
+    ['URL'] = "https://discord.com/api/webhooks/1263736357294051339/wxKgfr-PzrI1ttmbVmxAye3KmqShK_Ke0cE7BcMkw3OaTbFZ0xO75JYqn8l_8k4LdESS",
 }
 
 repeat task.wait() until game:IsLoaded()
