@@ -1,125 +1,98 @@
 -- CONFIG
 local config = {
-    color = Color3.fromRGB(0, 0, 0),
-    transparency = 0.8,
-    keywords = {
-        "Breakable", "Chest", "Ore", "Drop", "Coin", "Gem", "FX", "Effect",
-        "Bubble", "Debris", "Particles", "Decoration", "Glass", "Shine",
-        "Rock", "Tree", "Leaf", "island", "boat", "ship"
-    }
+	color = Color3.fromRGB(0, 0, 0),
+	transparency = 0.8,
+	keywords = {
+		"Breakable", "Chest", "Ore", "Drop", "Coin", "Gem", "FX", "Effect",
+		"Bubble", "Debris", "Particles", "Decoration", "Glass", "Shine",
+		"Rock", "Tree", "Leaf", "island", "boat", "ship"
+	}
 }
 
 -- SERVICES
 local Lighting = game:GetService("Lighting")
 local Terrain = workspace.Terrain
-
--- CLEAN LIGHTING
-pcall(function()
-    for k, val in pairs({
-        Ambient = Color3.new(0, 0, 0),
-        Brightness = 0,
-        GlobalShadows = false,
-        FogEnd = 1e10,
-        ClockTime = 0,
-        OutdoorAmbient = Color3.new(0, 0, 0),
-        EnvironmentDiffuseScale = 0,
-        EnvironmentSpecularScale = 0,
-        ShadowSoftness = 1
-    }) do
-        Lighting[k] = val
-    end
-
-    -- Remove unwanted lighting objects
-    for _, obj in ipairs(Lighting:GetChildren()) do
-        if not obj:IsA("ValueBase") then obj:Destroy() end
-    end
-end)
-
--- NEUTRALIZE WIND
-pcall(function()
-    Terrain.WindSpeed = 0
-    Terrain.WindDirection = Vector3.zero
-end)
-
--- MAKE PARTS UNIFORM + TRANSPARENT
-pcall(function()
-    local all = workspace:GetDescendants()
-    for _, obj in ipairs(all) do
-        if obj:IsA("BasePart") or obj:IsA("MeshPart") then
-            obj.Material = Enum.Material.SmoothPlastic
-            obj.Color = config.color
-            obj.Transparency = config.transparency
-            obj.CanCollide = false
-            obj.Anchored = true
-        elseif obj:IsA("Decal") then
-            obj.Transparency = 1
-        elseif obj:IsA("Texture") then
-            obj:Destroy()
-        end
-    end
-end)
-
--- DESTROY PARTICLES, BEAMS, LIGHTS (no loop)
-pcall(function()
-    local typesToRemove = {
-        "ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles", "Beam",
-        "PointLight", "SpotLight", "SurfaceLight"
-    }
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        for _, class in ipairs(typesToRemove) do
-            if obj:IsA(class) then obj:Destroy() break end
-        end
-    end
-end)
-
--- DESTROY SOUNDS
-pcall(function()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("Sound") then
-            obj:Stop()
-            obj:Destroy()
-        end
-    end
-end)
-
--- FREEZE NPCs/AI
-pcall(function()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("Model") and obj:FindFirstChild("Humanoid") then
-            local humanoid = obj:FindFirstChild("Humanoid")
-            humanoid.PlatformStand = true
-            humanoid.WalkSpeed = 0
-            humanoid.JumpHeight = 0
-        end
-    end
-end)
-
--- REMOVE SKY
-pcall(function()
-    if game:GetService("Lighting"):FindFirstChild("Sky") then
-        game:GetService("Lighting").Sky:Destroy()
-    end
-end)
-
--- SIMPLE RENDER TOGGLE BUTTON (Black Screen with "Running..." text)
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 
--- UI SETUP
+-- SAFE LIGHTING SETTINGS
+pcall(function()
+	for k, val in pairs({
+		Ambient = Color3.new(0, 0, 0),
+		Brightness = 0,
+		GlobalShadows = false,
+		FogEnd = 1e10,
+		ClockTime = 0,
+		OutdoorAmbient = Color3.new(0, 0, 0),
+		EnvironmentDiffuseScale = 0,
+		EnvironmentSpecularScale = 0,
+		ShadowSoftness = 1
+	}) do
+		Lighting[k] = val
+	end
+
+	for _, obj in ipairs(Lighting:GetChildren()) do
+		if not obj:IsA("ValueBase") then obj:Destroy() end
+	end
+end)
+
+-- DISABLE WIND
+pcall(function()
+	Terrain.WindSpeed = 0
+	Terrain.WindDirection = Vector3.zero
+end)
+
+-- UNIFY & FADE PARTS
+pcall(function()
+	local all = workspace:GetDescendants()
+	for i = 1, #all do
+		local obj = all[i]
+		if obj:IsA("BasePart") or obj:IsA("MeshPart") then
+			obj.Material = Enum.Material.SmoothPlastic
+			obj.Color = config.color
+			obj.Transparency = config.transparency
+		elseif obj:IsA("Decal") then
+			obj.Transparency = 1
+		elseif obj:IsA("Texture") then
+			obj:Destroy()
+		end
+
+		if i % 100 == 0 then task.wait() end
+	end
+end)
+
+-- REMOVE EFFECTS & LIGHTS
+pcall(function()
+	local typesToRemove = {
+		"ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles", "Beam",
+		"PointLight", "SpotLight", "SurfaceLight"
+	}
+	local all = workspace:GetDescendants()
+	for i = 1, #all do
+		local obj = all[i]
+		for _, class in ipairs(typesToRemove) do
+			if obj:IsA(class) then
+				obj:Destroy()
+				break
+			end
+		end
+		if i % 100 == 0 then task.wait() end
+	end
+end)
+
+-- BLACK SCREEN UI TOGGLE
 local screenGui = Instance.new("ScreenGui")
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
 screenGui.Name = "BlackRenderToggle"
 screenGui.Parent = CoreGui
 
--- BLACK FRAME
 local blackFrame = Instance.new("Frame")
 blackFrame.Size = UDim2.new(1, 0, 1, 0)
 blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 blackFrame.Visible = false
 blackFrame.Parent = screenGui
 
--- TEXT LABEL
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(1, 0, 1, 0)
 textLabel.BackgroundTransparency = 1
@@ -129,7 +102,6 @@ textLabel.TextScaled = true
 textLabel.Font = Enum.Font.SourceSansBold
 textLabel.Parent = blackFrame
 
--- TOGGLE BUTTON
 local toggleButton = Instance.new("TextButton")
 toggleButton.Size = UDim2.new(0, 120, 0, 40)
 toggleButton.Position = UDim2.new(1, -130, 1, -50)
@@ -141,66 +113,61 @@ toggleButton.TextScaled = true
 toggleButton.Font = Enum.Font.SourceSansBold
 toggleButton.Parent = screenGui
 
--- STATE
 local renderDisabled = false
-
--- TOGGLE LOGIC
 toggleButton.MouseButton1Click:Connect(function()
-    renderDisabled = not renderDisabled
-    RunService:Set3dRenderingEnabled(not renderDisabled)
-    blackFrame.Visible = renderDisabled
+	renderDisabled = not renderDisabled
+	RunService:Set3dRenderingEnabled(not renderDisabled)
+	blackFrame.Visible = renderDisabled
 end)
 
--- OPTIONAL: Auto-start with rendering OFF
+-- OPTIONAL AUTO START BLACK SCREEN
 -- toggleButton:Click()
 
+-- FPS CAP + COUNTER
 pcall(function()
-    -- One-time FPS cap
-    if setfpscap then
-        setfpscap(15)
-    elseif setfpscap_internal then
-        setfpscap_internal(15)
-    end
+	if setfpscap then
+		setfpscap(15)
+	elseif setfpscap_internal then
+		setfpscap_internal(15)
+	end
 
-    -- Light loop to keep FPS capped every 30 seconds
-    task.spawn(function()
-        while true do
-            if setfpscap then
-                setfpscap(15)
-            elseif setfpscap_internal then
-                setfpscap_internal(15)
-            end
-            task.wait(30)
-        end
-    end)
+	task.spawn(function()
+		while true do
+			if setfpscap then
+				setfpscap(15)
+			elseif setfpscap_internal then
+				setfpscap_internal(15)
+			end
+			task.wait(30)
+		end
+	end)
 
-    -- On-screen FPS counter (Updated size and position)
-    local RunService = game:GetService("RunService")
-    local StatsGui = Instance.new("ScreenGui")
-    StatsGui.Name = "FPSCounter"
-    StatsGui.ResetOnSpawn = false
-    StatsGui.IgnoreGuiInset = true
-    StatsGui.Parent = game:GetService("CoreGui")
+	local StatsGui = Instance.new("ScreenGui")
+	StatsGui.Name = "FPSCounter"
+	StatsGui.ResetOnSpawn = false
+	StatsGui.IgnoreGuiInset = true
+	StatsGui.Parent = CoreGui
 
-    local TextLabel = Instance.new("TextLabel")
-    TextLabel.Size = UDim2.new(0, 150, 0, 40)  -- Increased size
-    TextLabel.Position = UDim2.new(1, -160, 1, -50)  -- Positioned lower-right
-    TextLabel.BackgroundTransparency = 0.3
-    TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    TextLabel.TextColor3 = Color3.new(1, 1, 1)
-    TextLabel.TextScaled = true
-    TextLabel.Font = Enum.Font.SourceSansBold
-    TextLabel.Text = "FPS: ..."
-    TextLabel.Parent = StatsGui
+	local TextLabel = Instance.new("TextLabel")
+	TextLabel.Size = UDim2.new(0, 140, 0, 40)
+	TextLabel.Position = UDim2.new(0, 15, 0, 50)
+	TextLabel.BackgroundTransparency = 0.3
+	TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel.TextColor3 = Color3.new(1, 1, 1)
+	TextLabel.TextScaled = true
+	TextLabel.Font = Enum.Font.SourceSansBold
+	TextLabel.Text = "FPS: ..."
+	TextLabel.Parent = StatsGui
 
-    local lastTime, frames = tick(), 0
-    RunService.RenderStepped:Connect(function()
-        frames += 1
-        local now = tick()
-        if now - lastTime >= 1 then
-            TextLabel.Text = "FPS: " .. frames
-            frames = 0
-            lastTime = now
-        end
-    end)
+	local lastTime, frames = tick(), 0
+	RunService.RenderStepped:Connect(function()
+		frames += 1
+		local now = tick()
+		if now - lastTime >= 1 then
+			TextLabel.Text = "FPS: " .. frames
+			frames = 0
+			lastTime = now
+		end
+	end)
 end)
+
