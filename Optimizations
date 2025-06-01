@@ -1,3 +1,5 @@
+task.wait(10)
+
 -- PS99 OP Optimization Script: Outlined Parts, Black Screen Toggle, Popups Disabled, Mobile Buttons Safe
 
 --[[
