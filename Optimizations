@@ -1,7 +1,15 @@
--- PS99 Optimized Script: Outlined Parts, No Loops, No Popups, FPS Cap
+-- PS99 OP Optimization Script: Outlined Parts, Black Screen Toggle, Popups Disabled, Mobile Buttons Safe
 
--- FPS Cap (set to 15 for ultra-low resource use; change as needed)
-if setfpscap then setfpscap(15) end
+--[[
+Features:
+- Sets all optimizations for max performance.
+- Adds faint outlines to map geometry for navigation.
+- Includes toggleable black screen overlay.
+- Keeps Roblox mobile move/jump buttons.
+- Disables all popups/ads/notifications.
+- Does NOT run any infinite loops.
+- setfpscap(15) is NOT included here (run in your executor console if needed).
+--]]
 
 local plr = game.Players.LocalPlayer
 
@@ -11,7 +19,7 @@ pcall(function()
     settings().Rendering.TextureQuality = Enum.TextureQuality.Low
 end)
 
--- Remove all decals and textures (one time)
+-- Remove all decals and textures (one-time)
 for _, v in ipairs(workspace:GetDescendants()) do
     if v:IsA("Decal") or v:IsA("Texture") then
         pcall(function()
@@ -21,11 +29,11 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- Outline all BaseParts and MeshParts (except your character)
+-- Outline all BaseParts and MeshParts (except your character), set partial transparency
 for _, v in ipairs(workspace:GetDescendants()) do
     if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
         pcall(function()
-            v.Transparency = 0.8
+            v.Transparency = 0.4 -- Lower transparency for easier navigation (0.0=opaque, 1.0=invisible)
             -- Remove existing highlights to avoid stacking
             for _, h in ipairs(v:GetChildren()) do
                 if h:IsA("Highlight") then h:Destroy() end
@@ -33,7 +41,7 @@ for _, v in ipairs(workspace:GetDescendants()) do
             -- Add highlight for outline
             local highlight = Instance.new("Highlight")
             highlight.Adornee = v
-            highlight.FillTransparency = 1
+            highlight.FillTransparency = 1 -- No fill, just outline
             highlight.OutlineTransparency = 0
             highlight.OutlineColor = Color3.new(1, 1, 1)
             highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
@@ -154,9 +162,11 @@ for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
     end
 end
 
--- Hide CoreGui (e.g. Topbar, Chat)
+-- Only disable Chat and PlayerList (do NOT disable Enum.CoreGuiType.All so mobile buttons remain)
+local StarterGui = game:GetService("StarterGui")
 pcall(function()
-    game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
 end)
 
 -- Enable StreamingEnabled for large maps
@@ -179,4 +189,53 @@ for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
     end
 end
 
-print("[PS99 Optimizer] Outlines, optimizations, and FPS cap applied! No persistent loops or popups.")
+-- Add a toggleable black screen with a button (does not block touch input)
+local PlayerGui = plr:FindFirstChild("PlayerGui") or plr:WaitForChild("PlayerGui")
+local function addFullBlackScreenWithToggle()
+    local old = PlayerGui:FindFirstChild("FullBlackScreenWithToggle")
+    if old then old:Destroy() end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.IgnoreGuiInset = true
+    screenGui.ResetOnSpawn = false
+    screenGui.Name = "FullBlackScreenWithToggle"
+    screenGui.Parent = PlayerGui
+
+    local fullBlack = Instance.new("Frame")
+    fullBlack.Name = "BlackOverlay"
+    fullBlack.BackgroundColor3 = Color3.new(0, 0, 0)
+    fullBlack.BorderSizePixel = 0
+    fullBlack.Position = UDim2.new(0, 0, 0, 0)
+    fullBlack.Size = UDim2.new(1, 0, 1, 0)
+    fullBlack.ZIndex = 9999
+    fullBlack.Visible = true
+    fullBlack.Parent = screenGui
+
+    local toggleBtn = Instance.new("TextButton")
+    toggleBtn.Name = "ToggleBlack"
+    toggleBtn.Text = "Hide Black Screen"
+    toggleBtn.Size = UDim2.new(0, 200, 0, 40)
+    toggleBtn.Position = UDim2.new(0, 10, 0, 10)
+    toggleBtn.BackgroundColor3 = Color3.new(0.12, 0.12, 0.12)
+    toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+    toggleBtn.TextSize = 18
+    toggleBtn.Font = Enum.Font.SourceSansBold
+    toggleBtn.BorderSizePixel = 0
+    toggleBtn.ZIndex = 10000
+    toggleBtn.Parent = screenGui
+
+    local function toggle()
+        fullBlack.Visible = not fullBlack.Visible
+        if fullBlack.Visible then
+            toggleBtn.Text = "Hide Black Screen"
+        else
+            toggleBtn.Text = "Show Black Screen"
+        end
+    end
+
+    toggleBtn.MouseButton1Click:Connect(toggle)
+end
+
+addFullBlackScreenWithToggle()
+
+print("[PS99 OP Optimizer] All OP optimizations, outlines, and black screen toggle applied! No loops, popups, or lost mobile buttons.")
