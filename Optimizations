@@ -1,0 +1,182 @@
+-- PS99 Optimized Script: Outlined Parts, No Loops, No Popups, FPS Cap
+
+-- FPS Cap (set to 15 for ultra-low resource use; change as needed)
+if setfpscap then setfpscap(15) end
+
+local plr = game.Players.LocalPlayer
+
+-- Lower graphics & texture quality
+pcall(function()
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    settings().Rendering.TextureQuality = Enum.TextureQuality.Low
+end)
+
+-- Remove all decals and textures (one time)
+for _, v in ipairs(workspace:GetDescendants()) do
+    if v:IsA("Decal") or v:IsA("Texture") then
+        pcall(function()
+            v.Transparency = 1
+            v.Parent = nil
+        end)
+    end
+end
+
+-- Outline all BaseParts and MeshParts (except your character)
+for _, v in ipairs(workspace:GetDescendants()) do
+    if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
+        pcall(function()
+            v.Transparency = 0.8
+            -- Remove existing highlights to avoid stacking
+            for _, h in ipairs(v:GetChildren()) do
+                if h:IsA("Highlight") then h:Destroy() end
+            end
+            -- Add highlight for outline
+            local highlight = Instance.new("Highlight")
+            highlight.Adornee = v
+            highlight.FillTransparency = 1
+            highlight.OutlineTransparency = 0
+            highlight.OutlineColor = Color3.new(1, 1, 1)
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Parent = v
+        end)
+    end
+end
+
+-- Destroy all accessories, hats, shirts, pants, faces except your own
+for _, v in ipairs(workspace:GetDescendants()) do
+    if (v:IsA("Accessory") or v:IsA("Hat") or v:IsA("Shirt") or v:IsA("Pants") or v:IsA("FaceInstance")) and not v:IsDescendantOf(plr.Character) then
+        pcall(function()
+            v:Destroy()
+        end)
+    end
+end
+
+-- Disable all visual effects
+for _, v in ipairs(workspace:GetDescendants()) do
+    if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Smoke") or v:IsA("Fire")
+    or v:IsA("Explosion") or v:IsA("Sparkles") or v:IsA("Highlight") or v:IsA("SelectionBox")
+    or v:IsA("PointLight") or v:IsA("SpotLight") or v:IsA("SurfaceLight") then
+        pcall(function()
+            v.Enabled = false
+        end)
+    end
+end
+
+-- Remove all BillboardGuis and SurfaceGuis
+for _, v in ipairs(workspace:GetDescendants()) do
+    if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
+        pcall(function()
+            v.Enabled = false
+        end)
+    end
+end
+
+-- Disable all sounds
+for _, v in ipairs(workspace:GetDescendants()) do
+    if v:IsA("Sound") then
+        pcall(function()
+            v.Volume = 0
+            v:Stop()
+        end)
+    end
+end
+
+-- Disable all animations for your character and pets
+if plr and plr.Character then
+    for _, v in ipairs(plr.Character:GetDescendants()) do
+        if v:IsA("Animator") or v:IsA("Animation") then
+            pcall(function()
+                v:Destroy()
+            end)
+        end
+    end
+end
+if workspace:FindFirstChild("Pets") then
+    for _, pet in ipairs(workspace.Pets:GetDescendants()) do
+        if pet:IsA("Animator") or pet:IsA("Animation") then
+            pcall(function()
+                pet:Destroy()
+            end)
+        end
+    end
+end
+
+-- Remove or disable all Lighting post-processing effects
+local Lighting = game:GetService("Lighting")
+for _, v in ipairs(Lighting:GetChildren()) do
+    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect")
+    or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+        pcall(function()
+            v.Enabled = false
+        end)
+    end
+end
+
+-- Remove all Sky objects (skybox) and flatten lighting
+for _, v in ipairs(Lighting:GetChildren()) do
+    if v:IsA("Sky") then
+        pcall(function()
+            v:Destroy()
+        end)
+    end
+end
+Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
+Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+pcall(function()
+    Lighting.GlobalShadows = false
+end)
+
+-- Kill Terrain water visuals
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
+if Terrain then
+    pcall(function()
+        Terrain.WaterTransparency = 1
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterColor = Color3.new(0, 0, 0)
+    end)
+end
+
+-- Remove certain folders if present
+local foldersToRemove = {"Decorations", "Backgrounds", "Trees"}
+for _, name in ipairs(foldersToRemove) do
+    local obj = workspace:FindFirstChild(name)
+    if obj then pcall(function() obj:Destroy() end) end
+end
+
+-- Hide all GUIs except MainHUD (customize as needed)
+for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
+    if gui:IsA("ScreenGui") and gui.Name ~= "MainHUD" then
+        pcall(function()
+            gui.Enabled = false
+        end)
+    end
+end
+
+-- Hide CoreGui (e.g. Topbar, Chat)
+pcall(function()
+    game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+end)
+
+-- Enable StreamingEnabled for large maps
+pcall(function()
+    workspace.StreamingEnabled = true
+    workspace.StreamingMinRadius = 32
+end)
+
+-- Remove popups/notifications/alerts/ad/message/dialog GUIs from PlayerGui
+local popupKeywords = {"popup", "notif", "alert", "msg", "dialog", "ad"}
+for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
+    if gui:IsA("ScreenGui") or gui:IsA("Frame") then
+        local name = gui.Name:lower()
+        for _, kw in ipairs(popupKeywords) do
+            if name:find(kw) then
+                pcall(function() gui.Enabled = false; gui:Destroy() end)
+                break
+            end
+        end
+    end
+end
+
+print("[PS99 Optimizer] Outlines, optimizations, and FPS cap applied! No persistent loops or popups.")
