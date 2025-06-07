@@ -1,0 +1,46 @@
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "BasketballScoreGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("CoreGui")
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Parent = screenGui
+textLabel.Size = UDim2.new(0, 300, 0, 50)
+textLabel.Position = UDim2.new(0.5, -150, 0.05, 0)
+textLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.Font = Enum.Font.GothamBold
+textLabel.TextSize = 22
+textLabel.Text = "Basketball Score: Loading..."
+
+-- Function to get score
+local function getScore()
+    for _, v in pairs(getgc(true)) do
+        if typeof(v) == "table" and rawget(v, "BasketballRecord") then
+            if v.BasketballRecord > 0 then
+                return v.BasketballRecord
+            end
+        end
+    end
+    return nil
+end
+
+-- Format large number into millions with 2 decimal places
+local function formatScore(score)
+    local millions = score / 1_000_000
+    return string.format("%.2fM", millions)
+end
+
+-- Initial run
+while true do
+    local score = getScore()
+    if score then
+        textLabel.Text = "🏀 Basketball Score: " .. formatScore(score)
+        print("✅ Your Basketball Score:", score)
+    else
+        textLabel.Text = "🏀 Basketball Score: Not Found"
+        print("⚠️ Could not find BasketballRecord")
+    end
+    wait(60) -- Repeat every 60 seconds
+end
