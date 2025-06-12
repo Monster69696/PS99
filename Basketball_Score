@@ -35,7 +35,7 @@ end
 -- Webhook sending function
 local function sendWebhook(score)
     local HttpService = game:GetService("HttpService")
-    local webhookUrl = "YOUR_WEBHOOK_URL_HERE"
+    local webhookUrl = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca"
 
     local data = {
         content = "🚨 **Basketball Score Update!**\n🏀 New High Score: **" .. formatScore(score) .. "**"
