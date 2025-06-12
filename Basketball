@@ -1,4 +1,4 @@
--- Wait For The Game To Loaded
+-- Wait for the game to load
 repeat task.wait() until game:IsLoaded()
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -23,15 +23,35 @@ local HumanoidRootPart = player.Character:WaitForChild("HumanoidRootPart")
 
 -- Settings
 _G.AutoOpen = true
-local fallbackCFrame = CFrame.new(1882.58251953125, 16.709362030029297, -22506.265625)
+_G.AutoShoot = true -- Default ON
+local fallbackCFrame = CFrame.new(1882.5825, 16.7093, -22506.2656)
 
--- Removing Egg Animation
+-- 🟢 GUI Toggle Button (center screen)
+local gui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+gui.Name = "AutoShootToggleGui"
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 200, 0, 50)
+toggleButton.Position = UDim2.new(0.5, -100, 0.5, -25) -- center screen
+toggleButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = 20
+toggleButton.Text = "Auto Shoot: ON"
+toggleButton.Parent = gui
+toggleButton.ZIndex = 999
+
+toggleButton.MouseButton1Click:Connect(function()
+    _G.AutoShoot = not _G.AutoShoot
+    toggleButton.Text = _G.AutoShoot and "Auto Shoot: ON" or "Auto Shoot: OFF"
+end)
+
+-- Disable egg animation
 local EggScript = player.PlayerScripts:WaitForChild("Scripts"):WaitForChild("Game"):WaitForChild("Egg Opening Frontend")
 getsenv(EggScript).PlayEggAnimation = function() return end
 
+-- Enter Event
 task.wait(5)
-
--- Function - Teleport Event
 local function Enter(Name)
     setthreadidentity(2)
     pcall(function()
@@ -39,31 +59,28 @@ local function Enter(Name)
     end)
     setthreadidentity(7)
 end
-
 Enter("BasketballEvent")
 
-task.wait(3)
-
--- Auto Inf Shoot
+-- Auto Infinite Shoot
 task.spawn(function()
     while task.wait() do
-        pcall(function()
-            shootRemote:InvokeServer("BasketballEvent", "InfiniteShoot", 1)
-        end)
+        if _G.AutoShoot then
+            pcall(function()
+                shootRemote:InvokeServer("BasketballEvent", "InfiniteShoot", 1)
+            end)
+        end
     end
 end)
 
--- Auto Orb Collecter + Fallback
+-- Auto Orb Collect + Fallback
 task.spawn(function()
     local lastOrbTime = tick()
-
     while task.wait() do
         pcall(function()
             local char = player.Character or player.CharacterAdded:Wait()
             if not char:FindFirstChild("HumanoidRootPart") then return end
 
             local foundOrb = false
-
             for _, model in ipairs(OrbsPath:GetChildren()) do
                 if model:IsA("Model") and model:FindFirstChild("Orb") then
                     char.HumanoidRootPart.CFrame = model.Orb.CFrame + Vector3.new(0, 5, 0)
@@ -81,7 +98,7 @@ task.spawn(function()
     end
 end)
 
--- Function - Find Nearest Egg
+-- Find Nearest Egg
 local function find_nearest_egg()
     local nearestEgg, nearestDistance = nil, math.huge
     local eggsFolder = workspace.__THINGS:FindFirstChild("CustomEggs")
@@ -103,7 +120,7 @@ local function find_nearest_egg()
     return nearestEgg
 end
 
--- Auto Hatch Nearest Egg
+-- Auto Hatch
 task.spawn(function()
     while task.wait() do
         if _G.AutoOpen then
@@ -117,53 +134,5 @@ task.spawn(function()
     end
 end)
 
+-- Anti-AFK
 loadstring(game:HttpGet("https://raw.githubusercontent.com/juywvm/-Roblox-Projects-/main/____Anti_Afk_Remastered_______"))()
-
-
-
--- Create GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "BasketballScoreGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = game:GetService("CoreGui")
-
-local textLabel = Instance.new("TextLabel")
-textLabel.Parent = screenGui
-textLabel.Size = UDim2.new(0, 300, 0, 50)
-textLabel.Position = UDim2.new(0.5, -150, 0.05, 0)
-textLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 22
-textLabel.Text = "Basketball Score: Loading..."
-
--- Function to get score
-local function getScore()
-    for _, v in pairs(getgc(true)) do
-        if typeof(v) == "table" and rawget(v, "BasketballRecord") then
-            if v.BasketballRecord > 0 then
-                return v.BasketballRecord
-            end
-        end
-    end
-    return nil
-end
-
--- Format large number into millions with 2 decimal places
-local function formatScore(score)
-    local millions = score / 1_000_000
-    return string.format("%.2fM", millions)
-end
-
--- Initial run
-while true do
-    local score = getScore()
-    if score then
-        textLabel.Text = "🏀 Basketball Score: " .. formatScore(score)
-        print("✅ Your Basketball Score:", score)
-    else
-        textLabel.Text = "🏀 Basketball Score: Not Found"
-        print("⚠️ Could not find BasketballRecord")
-    end
-    wait(60) -- Repeat every 60 seconds
-end
