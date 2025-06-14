@@ -1,0 +1,73 @@
+-- ✅ CONFIGURATION
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca" -- 🔁 Replace with your Discord webhook URL
+
+-- ✅ SERVICES
+local HttpService = game:GetService("HttpService")
+
+-- ✅ SEND TO WEBHOOK FUNCTION
+local function sendWebhook(msg)
+	if not WEBHOOK_URL or WEBHOOK_URL == "" then
+		warn("⚠️ Webhook URL is missing.")
+		return
+	end
+
+	local success, err = pcall(function()
+		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode({
+			content = msg
+		}), Enum.HttpContentType.ApplicationJson)
+	end)
+
+	if not success then
+		warn("[Webhook Error]", err)
+	end
+end
+
+-- ✅ OVERRIDE print FUNCTION
+_G.webhookPrint = function(...)
+	local args = { ... }
+	local full = ""
+
+	for i, v in ipairs(args) do
+		full = full .. tostring(v) .. (i < #args and " " or "")
+	end
+
+	print("[Webhook] " .. full)
+	sendWebhook("📢 **Console:** " .. full)
+end
+
+-- Example:
+webhookPrint("✅ Webhook logger started!")
+
+-- ✅ HOOK REMOTE CALLS
+local oldNamecall
+oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+	local method = getnamecallmethod()
+	local args = { ... }
+
+	-- Ignore irrelevant remotes (to avoid spam)
+	local remoteName = tostring(self)
+	if remoteName:find("Heartbeat") or remoteName:find("Ping") or remoteName:find("Stat") then
+		return oldNamecall(self, ...)
+	end
+
+	if method == "FireServer" or method == "InvokeServer" then
+		local msg = "🛰️ **Remote Call Detected**\n"
+		msg = msg .. "**Remote:** `" .. remoteName .. "`\n"
+		msg = msg .. "**Method:** `" .. method .. "`"
+
+		for i, v in ipairs(args) do
+			local argStr
+			local success, json = pcall(function() return HttpService:JSONEncode(v) end)
+			if success then
+				argStr = json
+			else
+				argStr = tostring(v)
+			end
+			msg = msg .. "\n`Arg " .. i .. "`: ```" .. argStr .. "```"
+		end
+
+		sendWebhook(msg)
+	end
+
+	return oldNamecall(self, ...)
+end))
