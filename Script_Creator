@@ -18,21 +18,23 @@ local function sendWebhook(message)
     end)
 end
 
--- Skip these spammy remotes
+-- Skip spammy/unwanted remotes
 local skipRemotes = {
     ["Send Position"] = true,
     ["SendLikelySpeakingUsers"] = true,
     ["__BLUNDER"] = true,
+    ["Click"] = true, -- ✅ Skipping Click remote too
 }
 
--- Hook remote calls
+-- Hook FireServer / InvokeServer calls
 local oldNamecall
 oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod()
     local args = { ... }
 
     if not checkcaller() and (method == "FireServer" or method == "InvokeServer") then
-        local remoteName = tostring(self):match("[^.]+$") -- get only the final part of the path
+        local remoteName = tostring(self):match("[^.]+$") -- final segment like "Click"
+
         if skipRemotes[remoteName] then
             return oldNamecall(self, ...)
         end
