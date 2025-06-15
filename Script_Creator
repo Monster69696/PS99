@@ -1,41 +1,21 @@
---[[
-  Roblox Console to Discord Webhook Logger
-  Forwards all print, warn, and error messages to a Discord webhook.
-  Replace only the webhook URL if needed.
-  Works with most modern executors (supports syn.request, http_request, or request).
---]]
-
 local webhookUrl = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca"
+local HttpService = game:GetService("HttpService")
+local LogService = game:GetService("LogService")
 
--- Universal HTTP request function
-local http_request = syn and syn.request or http_request or request -- supports most executors
+local http_request = syn and syn.request or http_request or request
 
 local function sendToDiscord(msg)
-    if not http_request then
-        return
-    end
+    if not http_request then return end
     http_request({
         Url = webhookUrl,
         Method = "POST",
         Headers = {["Content-Type"] = "application/json"},
-        Body = game:GetService("HttpService"):JSONEncode({
-            content = msg
-        })
+        Body = HttpService:JSONEncode({content = msg})
     })
 end
 
-local function wrap(f, tag)
-    return function(...)
-        local args = {...}
-        local msg = "["..tag.."] " .. table.concat(args, " ")
-        sendToDiscord(msg)
-        f(...)
-    end
-end
+LogService.MessageOut:Connect(function(message, messageType)
+    sendToDiscord("[".. tostring(messageType) .."] " .. tostring(message))
+end)
 
--- Hook print, warn, error
-print = wrap(print, "PRINT")
-warn  = wrap(warn,  "WARN")
-error = wrap(error, "ERROR")
-
-print("[Console2Discord] Script loaded! All console output will be sent to your Discord webhook.")
+print("[Console2Discord] LogService hook loaded! All console output will be sent to your Discord webhook.")
