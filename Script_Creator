@@ -1,21 +1,40 @@
+--// Settings
 local webhookUrl = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca"
+
+--// Services
 local HttpService = game:GetService("HttpService")
 local LogService = game:GetService("LogService")
 
-local http_request = syn and syn.request or http_request or request
-
-local function sendToDiscord(msg)
-    if not http_request then return end
-    http_request({
-        Url = webhookUrl,
-        Method = "POST",
-        Headers = {["Content-Type"] = "application/json"},
-        Body = HttpService:JSONEncode({content = msg})
-    })
+--// Function to send to Discord
+local function sendToDiscord(typeStr, msg)
+    local content = string.format("**[%s]** `%s`: %s", os.date("%H:%M:%S"), typeStr, msg)
+    local success, err = pcall(function()
+        http_request({
+            Url = webhookUrl,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = HttpService:JSONEncode({
+                content = content
+            })
+        })
+    end)
+    if not success then
+        warn("[Discord Logger] Failed to send log: " .. tostring(err))
+    end
 end
 
+--// Hooking MessageOut to capture all output (print, warn, errors, game logs)
 LogService.MessageOut:Connect(function(message, messageType)
-    sendToDiscord("[".. tostring(messageType) .."] " .. tostring(message))
+    local typeStr = "INFO"
+    if messageType == Enum.MessageType.MessageWarning then
+        typeStr = "WARN"
+    elseif messageType == Enum.MessageType.MessageError then
+        typeStr = "ERROR"
+    end
+    sendToDiscord(typeStr, tostring(message))
 end)
 
-print("[Console2Discord] LogService hook loaded! All console output will be sent to your Discord webhook.")
+--// Confirmation
+print("✅ Full Console Logger to Discord Webhook is now active.")
