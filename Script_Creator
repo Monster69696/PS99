@@ -18,8 +18,6 @@ local function safeFormatArgs(args)
                 return HttpService:JSONEncode(v)
             end)
             valueStr = success and result or "[Unserializable Table]"
-        elseif typeStr == "CFrame" then
-            valueStr = tostring(v)
         else
             valueStr = tostring(v)
         end
@@ -51,13 +49,6 @@ local function sendToDiscord(remoteType, remotePath, argsText)
     end
 end
 
---// Ignore list
-local ignoredRemotes = {
-    ["ReplicatedStorage.Network.Send Position"] = true,
-    ["ReplicatedStorage.Events.Click"] = true,
-    ["ReplicatedStorage.Library.Modules.Performance.UnreliableRemoteEvent"] = true,
-}
-
 --// Hook __namecall
 local mt = getrawmetatable(game)
 setreadonly(mt, false)
@@ -67,20 +58,15 @@ local oldNamecall = mt.__namecall
 mt.__namecall = newcclosure(function(self, ...)
     local args = {...}
     local method = getnamecallmethod()
-    local fullName = self:GetFullName()
-
-    -- Skip ignored remotes
-    if ignoredRemotes[fullName] then
-        return oldNamecall(self, unpack(args))
-    end
 
     if method == "FireServer" or method == "InvokeServer" or method == "Fire" or method == "Invoke" then
+        local remotePath = self:GetFullName()
         local argsText = safeFormatArgs(args)
-        sendToDiscord(method, fullName, argsText)
+        sendToDiscord(method, remotePath, argsText)
     end
 
     return oldNamecall(self, unpack(args))
 end)
 
---// Startup confirmation
-sendToDiscord("Logger", "Initialized", "🟣 Remote Logger is live. Ignoring spam remotes.")
+--// Initial message
+sendToDiscord("Logger", "Initialized", "🟣 Remote Logger (Webhook Mode) is now running.")
