@@ -1,82 +1,41 @@
-local HttpService = game:GetService("HttpService")
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca"
+--[[
+  Roblox Console to Discord Webhook Logger
+  Forwards all print, warn, and error messages to a Discord webhook.
+  Replace only the webhook URL if needed.
+  Works with most modern executors (supports syn.request, http_request, or request).
+--]]
 
--- ✅ Smart request handler
-local requestFunc = (syn and syn.request) or (http and http.request) or request or http_request
+local webhookUrl = "https://discord.com/api/webhooks/1378878453293650041/4ENx3GlPurpgQxPckeSYplZUurHREcdSejG-pIpYi8lmXuFKr7xxZ7I78IncKX8yX4Ca"
 
--- ✅ Skip noisy remotes
-local skipRemotes = {
-    ["Click"] = true,
-    ["Send Position"] = true,
-    ["SendLikelySpeakingUsers"] = true,
-    ["__BLUNDER"] = true,
-}
+-- Universal HTTP request function
+local http_request = syn and syn.request or http_request or request -- supports most executors
 
--- ✅ Webhook sender
-local function sendWebhook(msg)
-    if not requestFunc or not WEBHOOK_URL then return end
-    local success, err = pcall(function()
-        requestFunc({
-            Url = WEBHOOK_URL,
-            Method = "POST",
-            Headers = { ["Content-Type"] = "application/json" },
-            Body = HttpService:JSONEncode({ content = msg })
+local function sendToDiscord(msg)
+    if not http_request then
+        return
+    end
+    http_request({
+        Url = webhookUrl,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = game:GetService("HttpService"):JSONEncode({
+            content = msg
         })
-    end)
-    if not success then
-        warn("[Webhook Error]", err)
+    })
+end
+
+local function wrap(f, tag)
+    return function(...)
+        local args = {...}
+        local msg = "["..tag.."] " .. table.concat(args, " ")
+        sendToDiscord(msg)
+        f(...)
     end
 end
 
--- ✅ Error reporting
-game:GetService("LogService").MessageOut:Connect(function(msg, msgType)
-    if msgType == Enum.MessageType.MessageError then
-        sendWebhook("❌ **Error:** " .. msg)
-    elseif msgType == Enum.MessageType.MessageWarning then
-        sendWebhook("⚠️ **Warning:** " .. msg)
-    end
-end)
+-- Hook print, warn, error
+print = wrap(print, "PRINT")
+warn  = wrap(warn,  "WARN")
+error = wrap(error, "ERROR")
 
--- ✅ Remote tracker
-local oldNamecall
-oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-    local method = getnamecallmethod()
-    local args = { ... }
-
-    if not checkcaller() and (method == "FireServer" or method == "InvokeServer") then
-        local remoteName = tostring(self):match("[^%.]+$") or tostring(self)
-
-        if skipRemotes[remoteName] then
-            return oldNamecall(self, ...)
-        end
-
-        local success, msg = pcall(function()
-            local msg = "📡 **Remote Call Detected**\n"
-            msg = msg .. "**Remote:** `" .. tostring(self) .. "`\n"
-            msg = msg .. "**Method:** `" .. method .. "`"
-
-            for i, v in ipairs(args) do
-                local str
-                local ok, result = pcall(function()
-                    return HttpService:JSONEncode(v)
-                end)
-                str = ok and result or tostring(v)
-                msg = msg .. string.format("\n`Arg %d`: ```%s```", i, str)
-            end
-
-            return msg
-        end)
-
-        if success and msg then
-            sendWebhook(msg)
-        else
-            sendWebhook("❌ **Error formatting remote call:** " .. tostring(msg))
-        end
-    end
-
-    return oldNamecall(self, ...)
-end))
-
--- ✅ Confirmation
-sendWebhook("✅ Webhook remote logger loaded and stable.")
-print("✅ Webhook logger running.")
+print("[Console2Discord] Script loaded! All console output will be sent to your Discord webhook.")
