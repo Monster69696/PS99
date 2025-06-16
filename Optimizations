@@ -302,35 +302,4 @@ end
 
 addFullBlackScreenWithToggle()
 
--- 🔥 Destroy all breaking visual effects instantly when added
-local function isVisualEffect(obj)
-    local class = obj.ClassName
-    return class == "ParticleEmitter"
-        or class == "Trail"
-        or class == "Beam"
-        or class == "Smoke"
-        or class == "Fire"
-        or class == "Explosion"
-        or class == "Sparkles"
-        or class == "Highlight"
-        or class == "SelectionBox"
-        or class == "PointLight"
-        or class == "SpotLight"
-        or class == "SurfaceLight"
-end
-
--- Remove existing effects already in workspace
-for _, v in ipairs(workspace:GetDescendants()) do
-    if isVisualEffect(v) then
-        pcall(function() v:Destroy() end)
-    end
-end
-
--- Auto-remove new visual effects that appear later (like breaking effects)
-workspace.DescendantAdded:Connect(function(v)
-    if isVisualEffect(v) then
-        pcall(function() v:Destroy() end)
-    end
-end)
-
 print("[PS99 OP Optimizer] All OP optimizations, outlines, and black screen toggle applied! No loops, popups, or lost mobile buttons.")
