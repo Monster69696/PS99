@@ -134,23 +134,17 @@ for _, obj in ipairs(Lighting:GetChildren()) do
     end
 end
 
--- If the Sky property changes (some games reassign Sky), remove it again
-Lighting:GetPropertyChangedSignal("Sky"):Connect(function()
-    for _, obj in ipairs(Lighting:GetChildren()) do
-        if obj:IsA("Sky") then
-            pcall(function()
-                obj:Destroy()
-            end)
-        end
+-- Remove any Sky objects already present
+for _, obj in ipairs(Lighting:GetChildren()) do
+    if obj:IsA("Sky") then
+        pcall(function() obj:Destroy() end)
     end
-end)
+end
 
--- Also remove any newly added Sky instances
+-- Remove any Sky objects added later (some games try to reinsert it)
 Lighting.ChildAdded:Connect(function(child)
     if child:IsA("Sky") then
-        pcall(function()
-            child:Destroy()
-        end)
+        pcall(function() child:Destroy() end)
     end
 end)
 
