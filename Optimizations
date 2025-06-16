@@ -246,4 +246,38 @@ end
 
 addFullBlackScreenWithToggle()
 
+-- OPTIONAL FREEZE LOGIC (Safe version: last step)
+local function safelyFreezeJointsAndAnimations()
+	local char = plr.Character or plr.CharacterAdded:Wait()
+	local pets = workspace:FindFirstChild("Pets")
+
+	for _, v in ipairs(workspace:GetDescendants()) do
+		if not v:IsDescendantOf(char) and not (pets and v:IsDescendantOf(pets)) then
+			-- Freeze/Remove Joints
+			if v:IsA("Motor6D") or v:IsA("WeldConstraint") or v:IsA("HingeConstraint") then
+				pcall(function()
+					v.Enabled = false -- safer than destroy
+				end)
+			end
+
+			-- Disable Animation Components
+			if v:IsA("Animator") or v:IsA("Animation") or v:IsA("AnimationController") then
+				pcall(function()
+					v.Parent = nil -- non-destructive removal
+				end)
+			end
+		end
+
+		-- Cancel Tweens if present
+		local tween = v:FindFirstChildOfClass("Tween")
+		if tween then
+			pcall(function()
+				tween:Cancel()
+			end)
+		end
+	end
+end
+
+safelyFreezeJointsAndAnimations()
+
 print("[PS99 OP Optimizer] ✅ All optimizations applied successfully (error-free).")
