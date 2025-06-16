@@ -122,14 +122,39 @@ for _, v in ipairs(Lighting:GetChildren()) do
     end
 end
 
--- Remove all Sky objects (skybox) and flatten lighting
-for _, v in ipairs(Lighting:GetChildren()) do
-    if v:IsA("Sky") then
+-- Full Sky Removal: Destroys sky and prevents it from reappearing
+local Lighting = game:GetService("Lighting")
+
+-- Destroy all existing skybox objects
+for _, obj in ipairs(Lighting:GetChildren()) do
+    if obj:IsA("Sky") then
         pcall(function()
-            v:Destroy()
+            obj:Destroy()
         end)
     end
 end
+
+-- If the Sky property changes (some games reassign Sky), remove it again
+Lighting:GetPropertyChangedSignal("Sky"):Connect(function()
+    for _, obj in ipairs(Lighting:GetChildren()) do
+        if obj:IsA("Sky") then
+            pcall(function()
+                obj:Destroy()
+            end)
+        end
+    end
+end)
+
+-- Also remove any newly added Sky instances
+Lighting.ChildAdded:Connect(function(child)
+    if child:IsA("Sky") then
+        pcall(function()
+            child:Destroy()
+        end)
+    end
+end)
+
+-- Flatten ambient light
 Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
 Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
 pcall(function()
