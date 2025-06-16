@@ -35,7 +35,7 @@ end
 for _, v in ipairs(workspace:GetDescendants()) do
     if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
         pcall(function()
-            v.Transparency = 0.4 -- Lower transparency for easier navigation (0.0=opaque, 1.0=invisible)
+            v.Transparency = 1.0 -- Lower transparency for easier navigation (0.0=opaque, 1.0=invisible)
             -- Remove existing highlights to avoid stacking
             for _, h in ipairs(v:GetChildren()) do
                 if h:IsA("Highlight") then h:Destroy() end
@@ -155,9 +155,13 @@ for _, name in ipairs(foldersToRemove) do
     if obj then pcall(function() obj:Destroy() end) end
 end
 
--- Hide all GUIs except MainHUD (customize as needed)
+-- Pause (disable) all GUIs except our optimization screen (black screen toggle)
+local keepGuiNames = {
+    ["FullBlackScreenWithToggle"] = true, -- keep this optimization overlay
+}
+
 for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
-    if gui:IsA("ScreenGui") and gui.Name ~= "MainHUD" then
+    if gui:IsA("ScreenGui") and not keepGuiNames[gui.Name] then
         pcall(function()
             gui.Enabled = false
         end)
