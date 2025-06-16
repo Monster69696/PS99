@@ -160,17 +160,11 @@ end
 local player = game.Players.LocalPlayer
 local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
 
--- Hide all custom ScreenGuis
-for _, gui in ipairs(player:WaitForChild("PlayerGui"):GetChildren()) do
-    if gui:IsA("ScreenGui") and not guiToKeep[gui.Name] then
-        pcall(function()
-            gui.Enabled = false
-        end)
-    end
-end
-
--- Disable Roblox CoreGui elements except Backpack (mobile buttons)
+local player = game.Players.LocalPlayer
 local StarterGui = game:GetService("StarterGui")
+local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
+
+-- Disable all CoreGui (except mobile controls)
 for _, guiType in ipairs(Enum.CoreGuiType:GetEnumItems()) do
     if guiType ~= Enum.CoreGuiType.Backpack then
         pcall(function()
@@ -179,15 +173,30 @@ for _, guiType in ipairs(Enum.CoreGuiType:GetEnumItems()) do
     end
 end
 
--- Force hidden leftover UI
-for _, v in ipairs(player.PlayerGui:GetDescendants()) do
-    if v:IsA("Frame") or v:IsA("TextLabel") or v:IsA("ImageLabel") then
-        if not v:IsDescendantOf(player.PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
-            pcall(function()
-                v.Visible = false
-                v.Parent = nil
-            end)
-        end
+-- Disable any custom UIs (ScreenGui, BillboardGui, SurfaceGui, etc.)
+for _, v in ipairs(player:WaitForChild("PlayerGui"):GetDescendants()) do
+    if v:IsA("GuiObject") and not v:IsDescendantOf(player.PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
+        pcall(function()
+            v.Visible = false
+        end)
+    end
+end
+
+-- Destroy any non-essential GUI children
+for _, gui in ipairs(player.PlayerGui:GetChildren()) do
+    if gui:IsA("ScreenGui") and not guiToKeep[gui.Name] then
+        pcall(function()
+            gui:Destroy()
+        end)
+    end
+end
+
+-- Also check for rogue UIs in CoreGui (some games put them there)
+for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
+    if v:IsA("GuiObject") then
+        pcall(function()
+            v.Visible = false
+        end)
     end
 end
 
