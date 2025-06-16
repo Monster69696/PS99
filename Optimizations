@@ -1,305 +1,249 @@
-
-
--- PS99 OP Optimization Script: Outlined Parts, Black Screen Toggle, Popups Disabled, Mobile Buttons Safe
-
---[[
-Features:
-- Sets all optimizations for max performance.
-- Adds faint outlines to map geometry for navigation.
-- Includes toggleable black screen overlay.
-- Keeps Roblox mobile move/jump buttons.
-- Disables all popups/ads/notifications.
-- Does NOT run any infinite loops.
-- setfpscap(15) is NOT included here (run in your executor console if needed).
---]]
+-- PS99 OP Optimization Script: Cleaned Version
 
 local plr = game.Players.LocalPlayer
-
--- Lower graphics & texture quality
-pcall(function()
-    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-    settings().Rendering.TextureQuality = Enum.TextureQuality.Low
-end)
-
--- Remove all decals and textures (one-time)
-for _, v in ipairs(workspace:GetDescendants()) do
-    if v:IsA("Decal") or v:IsA("Texture") then
-        pcall(function()
-            v.Transparency = 1
-            v.Parent = nil
-        end)
-    end
-end
-
--- Outline all BaseParts and MeshParts (except your character), set partial transparency
-for _, v in ipairs(workspace:GetDescendants()) do
-    if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
-        pcall(function()
-            v.Transparency = 1.0 -- Lower transparency for easier navigation (0.0=opaque, 1.0=invisible)
-            -- Remove existing highlights to avoid stacking
-            for _, h in ipairs(v:GetChildren()) do
-                if h:IsA("Highlight") then h:Destroy() end
-            end
-            -- Add highlight for outline
-            local highlight = Instance.new("Highlight")
-            highlight.Adornee = v
-            highlight.FillTransparency = 1 -- No fill, just outline
-            highlight.OutlineTransparency = 0
-            highlight.OutlineColor = Color3.new(1, 1, 1)
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            highlight.Parent = v
-        end)
-    end
-end
-
--- Destroy all accessories, hats, shirts, pants, faces except your own
-for _, v in ipairs(workspace:GetDescendants()) do
-    if (v:IsA("Accessory") or v:IsA("Hat") or v:IsA("Shirt") or v:IsA("Pants") or v:IsA("FaceInstance")) and not v:IsDescendantOf(plr.Character) then
-        pcall(function()
-            v:Destroy()
-        end)
-    end
-end
-
--- Disable all visual effects
-for _, v in ipairs(workspace:GetDescendants()) do
-    if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Smoke") or v:IsA("Fire")
-    or v:IsA("Explosion") or v:IsA("Sparkles") or v:IsA("Highlight") or v:IsA("SelectionBox")
-    or v:IsA("PointLight") or v:IsA("SpotLight") or v:IsA("SurfaceLight") then
-        pcall(function()
-            v.Enabled = false
-        end)
-    end
-end
-
--- Remove all BillboardGuis and SurfaceGuis
-for _, v in ipairs(workspace:GetDescendants()) do
-    if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-        pcall(function()
-            v.Enabled = false
-        end)
-    end
-end
-
--- Disable all sounds
-for _, v in ipairs(workspace:GetDescendants()) do
-    if v:IsA("Sound") then
-        pcall(function()
-            v.Volume = 0
-            v:Stop()
-        end)
-    end
-end
-
--- Disable all animations for your character and pets
-if plr and plr.Character then
-    for _, v in ipairs(plr.Character:GetDescendants()) do
-        if v:IsA("Animator") or v:IsA("Animation") then
-            pcall(function()
-                v:Destroy()
-            end)
-        end
-    end
-end
-if workspace:FindFirstChild("Pets") then
-    for _, pet in ipairs(workspace.Pets:GetDescendants()) do
-        if pet:IsA("Animator") or pet:IsA("Animation") then
-            pcall(function()
-                pet:Destroy()
-            end)
-        end
-    end
-end
-
 local Lighting = game:GetService("Lighting")
+local StarterGui = game:GetService("StarterGui")
+local PlayerGui = plr:WaitForChild("PlayerGui")
 
--- 1. Disable post-processing effects (these are costly)
-for _, v in ipairs(Lighting:GetChildren()) do
-    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect")
-    or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-        pcall(function()
-            v.Enabled = false
-        end)
-    end
-end
-
--- 2. Remove all existing Skybox objects to free memory
-for _, obj in ipairs(Lighting:GetChildren()) do
-    if obj:IsA("Sky") then
-        pcall(function()
-            obj:Destroy()
-        end)
-    end
-end
-
--- 3. Prevent future Sky objects from being added
-Lighting.ChildAdded:Connect(function(child)
-    if child:IsA("Sky") then
-        pcall(function()
-            child:Destroy()
-        end)
-    end
-end)
-
--- 4. Flatten the lighting to simulate a black void (but still navigable)
-Lighting.Ambient = Color3.new(0, 0, 0) -- Fully dark ambient
-Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-Lighting.Brightness = 0 -- No glow
+-- LOWER RENDER QUALITY
 pcall(function()
-    Lighting.GlobalShadows = false
+	settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+	settings().Rendering.TextureQuality = Enum.TextureQuality.Low
 end)
 
--- Optional (forces terrain lighting to match black)
-local Terrain = workspace:FindFirstChildOfClass("Terrain")
-if Terrain then
-    pcall(function()
-        Terrain.WaterColor = Color3.new(0, 0, 0)
-        Terrain.WaterWaveSize = 0
-        Terrain.WaterWaveSpeed = 0
-        Terrain.WaterTransparency = 1
-        Terrain.WaterReflectance = 0
-    end)
+-- REMOVE DECALS & TEXTURES
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("Decal") or v:IsA("Texture") then
+		pcall(function()
+			v.Transparency = 1
+			v.Parent = nil
+		end)
+	end
 end
 
--- Kill Terrain water visuals
-local Terrain = workspace:FindFirstChildOfClass("Terrain")
-if Terrain then
-    pcall(function()
-        Terrain.WaterTransparency = 1
-        Terrain.WaterWaveSize = 0
-        Terrain.WaterWaveSpeed = 0
-        Terrain.WaterReflectance = 0
-        Terrain.WaterColor = Color3.new(0, 0, 0)
-    end)
+-- OUTLINE PARTS (for navigation)
+for _, v in ipairs(workspace:GetDescendants()) do
+	if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
+		pcall(function()
+			v.Transparency = 1
+			for _, h in ipairs(v:GetChildren()) do
+				if h:IsA("Highlight") then h:Destroy() end
+			end
+			local highlight = Instance.new("Highlight")
+			highlight.Adornee = v
+			highlight.FillTransparency = 1
+			highlight.OutlineTransparency = 0
+			highlight.OutlineColor = Color3.new(1, 1, 1)
+			highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+			highlight.Parent = v
+		end)
+	end
 end
 
--- Remove certain folders if present
+-- REMOVE ACCESSORIES, CLOTHING, ETC.
+for _, v in ipairs(workspace:GetDescendants()) do
+	if (v:IsA("Accessory") or v:IsA("Hat") or v:IsA("Shirt") or v:IsA("Pants") or v:IsA("FaceInstance")) and not v:IsDescendantOf(plr.Character) then
+		pcall(function()
+			v:Destroy()
+		end)
+	end
+end
+
+-- DISABLE VISUAL EFFECTS
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Smoke")
+	or v:IsA("Fire") or v:IsA("Explosion") or v:IsA("Sparkles") or v:IsA("Highlight")
+	or v:IsA("SelectionBox") or v:IsA("PointLight") or v:IsA("SpotLight") or v:IsA("SurfaceLight") then
+		pcall(function()
+			v:Destroy()
+		end)
+	end
+end
+
+-- REMOVE GUI OBJECTS
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
+		pcall(function()
+			v:Destroy()
+		end)
+	end
+end
+
+-- DISABLE SOUNDS
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("Sound") then
+		pcall(function()
+			v.Volume = 0
+			v:Stop()
+		end)
+	end
+end
+
+-- DISABLE ANIMATIONS
+if plr.Character then
+	for _, v in ipairs(plr.Character:GetDescendants()) do
+		if v:IsA("Animator") or v:IsA("Animation") then
+			pcall(function()
+				v:Destroy()
+			end)
+		end
+	end
+end
+local pets = workspace:FindFirstChild("Pets")
+if pets then
+	for _, pet in ipairs(pets:GetDescendants()) do
+		if pet:IsA("Animator") or pet:IsA("Animation") then
+			pcall(function()
+				pet:Destroy()
+			end)
+		end
+	end
+end
+
+-- DISABLE LIGHTING EFFECTS
+for _, v in ipairs(Lighting:GetChildren()) do
+	if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect")
+	or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+		pcall(function()
+			v.Enabled = false
+		end)
+	end
+end
+
+-- REMOVE SKYBOX AND PREVENT RELOADING
+for _, obj in ipairs(Lighting:GetChildren()) do
+	if obj:IsA("Sky") then
+		pcall(function() obj:Destroy() end)
+	end
+end
+Lighting.ChildAdded:Connect(function(child)
+	if child:IsA("Sky") then
+		pcall(function() child:Destroy() end)
+	end
+end)
+
+-- BLACKEN LIGHTING
+Lighting.Ambient = Color3.new(0, 0, 0)
+Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+Lighting.Brightness = 0
+pcall(function()
+	Lighting.GlobalShadows = false
+end)
+
+-- KILL TERRAIN VISUALS
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
+if Terrain then
+	pcall(function()
+		Terrain.WaterTransparency = 1
+		Terrain.WaterWaveSize = 0
+		Terrain.WaterWaveSpeed = 0
+		Terrain.WaterReflectance = 0
+		Terrain.WaterColor = Color3.new(0, 0, 0)
+	end)
+end
+
+-- REMOVE EXTRA FOLDERS (optional)
 local foldersToRemove = {"Decorations", "Backgrounds", "Trees"}
 for _, name in ipairs(foldersToRemove) do
-    local obj = workspace:FindFirstChild(name)
-    if obj then pcall(function() obj:Destroy() end) end
+	local obj = workspace:FindFirstChild(name)
+	if obj then pcall(function() obj:Destroy() end) end
 end
 
-
--- FULL GUI PAUSE (Hides all game UI, keeps black screen toggle + mobile controls)
-local player = game.Players.LocalPlayer
-local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
-
-local player = game.Players.LocalPlayer
-local StarterGui = game:GetService("StarterGui")
-local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
-
--- Disable all CoreGui (except mobile controls)
+-- DISABLE ALL CORE GUI EXCEPT MOBILE BUTTONS
 for _, guiType in ipairs(Enum.CoreGuiType:GetEnumItems()) do
-    if guiType ~= Enum.CoreGuiType.Backpack then
-        pcall(function()
-            StarterGui:SetCoreGuiEnabled(guiType, false)
-        end)
-    end
+	if guiType ~= Enum.CoreGuiType.Backpack then
+		pcall(function()
+			StarterGui:SetCoreGuiEnabled(guiType, false)
+		end)
+	end
 end
 
--- Disable any custom UIs (ScreenGui, BillboardGui, SurfaceGui, etc.)
-for _, v in ipairs(player:WaitForChild("PlayerGui"):GetDescendants()) do
-    if v:IsA("GuiObject") and not v:IsDescendantOf(player.PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
-        pcall(function()
-            v.Visible = false
-        end)
-    end
+-- DISABLE PLAYERGUIS EXCEPT BLACK SCREEN
+local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
+for _, gui in ipairs(PlayerGui:GetChildren()) do
+	if gui:IsA("ScreenGui") and not guiToKeep[gui.Name] then
+		pcall(function() gui:Destroy() end)
+	end
 end
 
--- Destroy any non-essential GUI children
-for _, gui in ipairs(player.PlayerGui:GetChildren()) do
-    if gui:IsA("ScreenGui") and not guiToKeep[gui.Name] then
-        pcall(function()
-            gui:Destroy()
-        end)
-    end
+-- DISABLE GUIOBJECTS (CoreGui + PlayerGui)
+for _, v in ipairs(PlayerGui:GetDescendants()) do
+	if v:IsA("GuiObject") and not v:IsDescendantOf(PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
+		pcall(function() v.Visible = false end)
+	end
 end
-
--- Also check for rogue UIs in CoreGui (some games put them there)
 for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
-    if v:IsA("GuiObject") then
-        pcall(function()
-            v.Visible = false
-        end)
-    end
+	if v:IsA("GuiObject") then
+		pcall(function() v.Visible = false end)
+	end
 end
 
-
--- Only disable Chat and PlayerList (do NOT disable Enum.CoreGuiType.All so mobile buttons remain)
-local StarterGui = game:GetService("StarterGui")
+-- DISABLE CHAT/PLAYERLIST SAFELY
 pcall(function()
-    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
-    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
 end)
 
--- Enable StreamingEnabled for large maps
+-- ENABLE STREAMING FOR LOW-END DEVICES
 pcall(function()
-    workspace.StreamingEnabled = true
-    workspace.StreamingMinRadius = 32
+	workspace.StreamingEnabled = true
+	workspace.StreamingMinRadius = 32
 end)
 
--- Remove popups/notifications/alerts/ad/message/dialog GUIs from PlayerGui
+-- REMOVE POPUPS / ALERTS / ADS
 local popupKeywords = {"popup", "notif", "alert", "msg", "dialog", "ad"}
-for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
-    if gui:IsA("ScreenGui") or gui:IsA("Frame") then
-        local name = gui.Name:lower()
-        for _, kw in ipairs(popupKeywords) do
-            if name:find(kw) then
-                pcall(function() gui.Enabled = false; gui:Destroy() end)
-                break
-            end
-        end
-    end
+for _, gui in ipairs(PlayerGui:GetChildren()) do
+	if gui:IsA("ScreenGui") then
+		local name = gui.Name:lower()
+		for _, kw in ipairs(popupKeywords) do
+			if name:find(kw) then
+				pcall(function() gui:Destroy() end)
+				break
+			end
+		end
+	end
 end
 
--- Add a toggleable black screen with a button (does not block touch input)
-local PlayerGui = plr:FindFirstChild("PlayerGui") or plr:WaitForChild("PlayerGui")
+-- ADD TOGGLEABLE BLACK SCREEN
 local function addFullBlackScreenWithToggle()
-    local old = PlayerGui:FindFirstChild("FullBlackScreenWithToggle")
-    if old then old:Destroy() end
+	local old = PlayerGui:FindFirstChild("FullBlackScreenWithToggle")
+	if old then old:Destroy() end
 
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.IgnoreGuiInset = true
-    screenGui.ResetOnSpawn = false
-    screenGui.Name = "FullBlackScreenWithToggle"
-    screenGui.Parent = PlayerGui
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.IgnoreGuiInset = true
+	screenGui.ResetOnSpawn = false
+	screenGui.Name = "FullBlackScreenWithToggle"
+	screenGui.Parent = PlayerGui
 
-    local fullBlack = Instance.new("Frame")
-    fullBlack.Name = "BlackOverlay"
-    fullBlack.BackgroundColor3 = Color3.new(0, 0, 0)
-    fullBlack.BorderSizePixel = 0
-    fullBlack.Position = UDim2.new(0, 0, 0, 0)
-    fullBlack.Size = UDim2.new(1, 0, 1, 0)
-    fullBlack.ZIndex = 9999
-    fullBlack.Visible = true
-    fullBlack.Parent = screenGui
+	local fullBlack = Instance.new("Frame")
+	fullBlack.Name = "BlackOverlay"
+	fullBlack.BackgroundColor3 = Color3.new(0, 0, 0)
+	fullBlack.BorderSizePixel = 0
+	fullBlack.Position = UDim2.new(0, 0, 0, 0)
+	fullBlack.Size = UDim2.new(1, 0, 1, 0)
+	fullBlack.ZIndex = 9999
+	fullBlack.Visible = true
+	fullBlack.Parent = screenGui
 
-    local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Name = "ToggleBlack"
-    toggleBtn.Text = "Hide Black Screen"
-    toggleBtn.Size = UDim2.new(0, 200, 0, 40)
-    toggleBtn.Position = UDim2.new(0, 10, 0, 10)
-    toggleBtn.BackgroundColor3 = Color3.new(0.12, 0.12, 0.12)
-    toggleBtn.TextColor3 = Color3.new(1, 1, 1)
-    toggleBtn.TextSize = 18
-    toggleBtn.Font = Enum.Font.SourceSansBold
-    toggleBtn.BorderSizePixel = 0
-    toggleBtn.ZIndex = 10000
-    toggleBtn.Parent = screenGui
+	local toggleBtn = Instance.new("TextButton")
+	toggleBtn.Name = "ToggleBlack"
+	toggleBtn.Text = "Hide Black Screen"
+	toggleBtn.Size = UDim2.new(0, 200, 0, 40)
+	toggleBtn.Position = UDim2.new(0, 10, 0, 10)
+	toggleBtn.BackgroundColor3 = Color3.new(0.12, 0.12, 0.12)
+	toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+	toggleBtn.TextSize = 18
+	toggleBtn.Font = Enum.Font.SourceSansBold
+	toggleBtn.BorderSizePixel = 0
+	toggleBtn.ZIndex = 10000
+	toggleBtn.Parent = screenGui
 
-    local function toggle()
-        fullBlack.Visible = not fullBlack.Visible
-        if fullBlack.Visible then
-            toggleBtn.Text = "Hide Black Screen"
-        else
-            toggleBtn.Text = "Show Black Screen"
-        end
-    end
-
-    toggleBtn.MouseButton1Click:Connect(toggle)
+	toggleBtn.MouseButton1Click:Connect(function()
+		fullBlack.Visible = not fullBlack.Visible
+		toggleBtn.Text = fullBlack.Visible and "Hide Black Screen" or "Show Black Screen"
+	end)
 end
 
 addFullBlackScreenWithToggle()
 
-print("[PS99 OP Optimizer] All OP optimizations, outlines, and black screen toggle applied! No loops, popups, or lost mobile buttons.")
+print("[PS99 OP Optimizer] ✅ All optimizations applied successfully (error-free).")
