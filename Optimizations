@@ -281,13 +281,17 @@ end
 safelyFreezeJointsAndAnimations()
 
 
--- 🔒 Anchor unanchored parts inside any "Break" folders at start
+-- 🔒 Anchor unanchored parts that are NOT player/pets/world/important
 for _, v in ipairs(workspace:GetDescendants()) do
 	if v:IsA("BasePart") and not v.Anchored then
-		local ancestor = v:FindFirstAncestor(function(p)
-			return typeof(p.Name) == "string" and p.Name:lower():find("break")
-		end)
-		if ancestor then
+		local ignore = v:IsDescendantOf(game.Players.LocalPlayer.Character)
+			or v:IsDescendantOf(workspace:FindFirstChild("Pets") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Map") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder"))
+
+		if not ignore then
 			pcall(function()
 				v.Anchored = true
 			end)
@@ -295,22 +299,21 @@ for _, v in ipairs(workspace:GetDescendants()) do
 	end
 end
 
--- 🔄 Auto-handle any future breakables added (destroy effects, anchor parts)
+-- 🔄 Destroy effects and anchor new parts except protected areas
 workspace.DescendantAdded:Connect(function(obj)
-	local ancestor = obj:FindFirstAncestor(function(p)
-		return typeof(p.Name) == "string" and p.Name:lower():find("break")
-	end)
+	if obj:IsDescendantOf(game.Players.LocalPlayer.Character)
+		or obj:IsDescendantOf(workspace:FindFirstChild("Pets") or Instance.new("Folder"))
+		or obj:IsDescendantOf(workspace:FindFirstChild("Map") or Instance.new("Folder"))
+		or obj:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
+		or obj:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
+		or obj:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder")) then
+		return
+	end
 
-	if ancestor then
-		if obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Tween") or obj:IsA("Animation") then
-			pcall(function()
-				obj:Destroy()
-			end)
-		elseif obj:IsA("BasePart") and not obj.Anchored then
-			pcall(function()
-				obj.Anchored = true
-			end)
-		end
+	if obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Tween") or obj:IsA("Animation") then
+		pcall(function() obj:Destroy() end)
+	elseif obj:IsA("BasePart") and not obj.Anchored then
+		pcall(function() obj.Anchored = true end)
 	end
 end)
 
