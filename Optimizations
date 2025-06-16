@@ -111,8 +111,9 @@ if workspace:FindFirstChild("Pets") then
     end
 end
 
--- Remove or disable all Lighting post-processing effects
 local Lighting = game:GetService("Lighting")
+
+-- 1. Disable post-processing effects (these are costly)
 for _, v in ipairs(Lighting:GetChildren()) do
     if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect")
     or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
@@ -122,10 +123,7 @@ for _, v in ipairs(Lighting:GetChildren()) do
     end
 end
 
--- Full Sky Removal: Destroys sky and prevents it from reappearing
-local Lighting = game:GetService("Lighting")
-
--- Destroy all existing skybox objects
+-- 2. Remove all existing Skybox objects to free memory
 for _, obj in ipairs(Lighting:GetChildren()) do
     if obj:IsA("Sky") then
         pcall(function()
@@ -134,26 +132,34 @@ for _, obj in ipairs(Lighting:GetChildren()) do
     end
 end
 
--- Remove any Sky objects already present
-for _, obj in ipairs(Lighting:GetChildren()) do
-    if obj:IsA("Sky") then
-        pcall(function() obj:Destroy() end)
-    end
-end
-
--- Remove any Sky objects added later (some games try to reinsert it)
+-- 3. Prevent future Sky objects from being added
 Lighting.ChildAdded:Connect(function(child)
     if child:IsA("Sky") then
-        pcall(function() child:Destroy() end)
+        pcall(function()
+            child:Destroy()
+        end)
     end
 end)
 
--- Flatten ambient light
-Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
-Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+-- 4. Flatten the lighting to simulate a black void (but still navigable)
+Lighting.Ambient = Color3.new(0, 0, 0) -- Fully dark ambient
+Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+Lighting.Brightness = 0 -- No glow
 pcall(function()
     Lighting.GlobalShadows = false
 end)
+
+-- Optional (forces terrain lighting to match black)
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
+if Terrain then
+    pcall(function()
+        Terrain.WaterColor = Color3.new(0, 0, 0)
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterTransparency = 1
+        Terrain.WaterReflectance = 0
+    end)
+end
 
 -- Kill Terrain water visuals
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
