@@ -21,6 +21,46 @@ for _, v in ipairs(workspace:GetDescendants()) do
 	end
 end
 
+
+-- Fully destroy all VFX to reduce GPU usage
+local function destroyAllVFX()
+    local vfxTypes = {
+        "ParticleEmitter", "Trail", "Beam", "Smoke", "Fire", "Explosion",
+        "Sparkles", "PointLight", "SpotLight", "SurfaceLight",
+        "Highlight", "SelectionBox", "ForceField"
+    }
+
+    for _, v in ipairs(workspace:GetDescendants()) do
+        for _, vfx in ipairs(vfxTypes) do
+            if v:IsA(vfx) then
+                pcall(function()
+                    v:Destroy()
+                end)
+            end
+        end
+    end
+end
+
+-- Initial VFX cleanup
+destroyAllVFX()
+
+-- Continuous VFX cleanup (every 5 seconds)
+task.spawn(function()
+    while true do
+        destroyAllVFX()
+        task.wait(5)
+    end
+end)
+
+-- Remove break FX when new VFX appears (prevents respawned effects)
+workspace.ChildAdded:Connect(function(child)
+    if child:IsA("Explosion") or child:IsA("ParticleEmitter") then
+        pcall(function()
+            child:Destroy()
+        end)
+    end
+end)
+
 -- OUTLINE PARTS (for navigation)
 for _, v in ipairs(workspace:GetDescendants()) do
 	if (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
