@@ -253,28 +253,6 @@ for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
     end
 end
 
--- 🔥 Destroy breaking VFX and effects created during breakables
-local function isVisualEffect(obj)
-    return obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam")
-        or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Explosion")
-        or obj:IsA("Sparkles") or obj:IsA("Highlight") or obj:IsA("SelectionBox")
-        or obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight")
-end
-
--- Clean up any that already exist
-for _, obj in ipairs(workspace:GetDescendants()) do
-    if isVisualEffect(obj) then
-        pcall(function() obj:Destroy() end)
-    end
-end
-
--- Auto-remove any new visual effects that get added (like break effects)
-workspace.DescendantAdded:Connect(function(obj)
-    if isVisualEffect(obj) then
-        pcall(function() obj:Destroy() end)
-    end
-end)
-
 -- Add a toggleable black screen with a button (does not block touch input)
 local PlayerGui = plr:FindFirstChild("PlayerGui") or plr:WaitForChild("PlayerGui")
 local function addFullBlackScreenWithToggle()
@@ -323,5 +301,36 @@ local function addFullBlackScreenWithToggle()
 end
 
 addFullBlackScreenWithToggle()
+
+-- 🔥 Destroy all breaking visual effects instantly when added
+local function isVisualEffect(obj)
+    local class = obj.ClassName
+    return class == "ParticleEmitter"
+        or class == "Trail"
+        or class == "Beam"
+        or class == "Smoke"
+        or class == "Fire"
+        or class == "Explosion"
+        or class == "Sparkles"
+        or class == "Highlight"
+        or class == "SelectionBox"
+        or class == "PointLight"
+        or class == "SpotLight"
+        or class == "SurfaceLight"
+end
+
+-- Remove existing effects already in workspace
+for _, v in ipairs(workspace:GetDescendants()) do
+    if isVisualEffect(v) then
+        pcall(function() v:Destroy() end)
+    end
+end
+
+-- Auto-remove new visual effects that appear later (like breaking effects)
+workspace.DescendantAdded:Connect(function(v)
+    if isVisualEffect(v) then
+        pcall(function() v:Destroy() end)
+    end
+end)
 
 print("[PS99 OP Optimizer] All OP optimizations, outlines, and black screen toggle applied! No loops, popups, or lost mobile buttons.")
