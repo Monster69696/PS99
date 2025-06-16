@@ -95,20 +95,32 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- DISABLE PLAYER & PET ANIMATIONS
+-- SAFELY DISABLE ANIMATIONS WITHOUT BREAKING GAME
 if plr.Character then
     for _, v in ipairs(plr.Character:GetDescendants()) do
-        if v:IsA("Animator") or v:IsA("Animation") then
-            pcall(function() v:Destroy() end)
+        if v:IsA("AnimationTrack") then
+            pcall(function()
+                v:Stop()
+            end)
+        elseif v:IsA("Animator") then
+            pcall(function()
+                v:GetPlayingAnimationTracks():Destroy()
+            end)
         end
     end
 end
 
 local pets = workspace:FindFirstChild("Pets")
 if pets then
-    for _, v in ipairs(pets:GetDescendants()) do
-        if v:IsA("Animator") or v:IsA("Animation") then
-            pcall(function() v:Destroy() end)
+    for _, pet in ipairs(pets:GetDescendants()) do
+        if pet:IsA("AnimationTrack") then
+            pcall(function()
+                pet:Stop()
+            end)
+        elseif pet:IsA("Animator") then
+            pcall(function()
+                pet:GetPlayingAnimationTracks():Destroy()
+            end)
         end
     end
 end
