@@ -155,18 +155,42 @@ for _, name in ipairs(foldersToRemove) do
     if obj then pcall(function() obj:Destroy() end) end
 end
 
--- Pause (disable) all GUIs except our optimization screen (black screen toggle)
-local keepGuiNames = {
-    ["FullBlackScreenWithToggle"] = true, -- keep this optimization overlay
-}
 
-for _, gui in ipairs(plr.PlayerGui:GetChildren()) do
-    if gui:IsA("ScreenGui") and not keepGuiNames[gui.Name] then
+-- FULL GUI PAUSE (Hides all game UI, keeps black screen toggle + mobile controls)
+local player = game.Players.LocalPlayer
+local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
+
+-- Hide all custom ScreenGuis
+for _, gui in ipairs(player:WaitForChild("PlayerGui"):GetChildren()) do
+    if gui:IsA("ScreenGui") and not guiToKeep[gui.Name] then
         pcall(function()
             gui.Enabled = false
         end)
     end
 end
+
+-- Disable Roblox CoreGui elements except Backpack (mobile buttons)
+local StarterGui = game:GetService("StarterGui")
+for _, guiType in ipairs(Enum.CoreGuiType:GetEnumItems()) do
+    if guiType ~= Enum.CoreGuiType.Backpack then
+        pcall(function()
+            StarterGui:SetCoreGuiEnabled(guiType, false)
+        end)
+    end
+end
+
+-- Force hidden leftover UI
+for _, v in ipairs(player.PlayerGui:GetDescendants()) do
+    if v:IsA("Frame") or v:IsA("TextLabel") or v:IsA("ImageLabel") then
+        if not v:IsDescendantOf(player.PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
+            pcall(function()
+                v.Visible = false
+                v.Parent = nil
+            end)
+        end
+    end
+end
+
 
 -- Only disable Chat and PlayerList (do NOT disable Enum.CoreGuiType.All so mobile buttons remain)
 local StarterGui = game:GetService("StarterGui")
