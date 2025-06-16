@@ -280,4 +280,38 @@ end
 
 safelyFreezeJointsAndAnimations()
 
+
+-- 🔒 Anchor unanchored parts inside any "Break" folders at start
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("BasePart") and not v.Anchored then
+		local ancestor = v:FindFirstAncestor(function(p)
+			return typeof(p.Name) == "string" and p.Name:lower():find("break")
+		end)
+		if ancestor then
+			pcall(function()
+				v.Anchored = true
+			end)
+		end
+	end
+end
+
+-- 🔄 Auto-handle any future breakables added (destroy effects, anchor parts)
+workspace.DescendantAdded:Connect(function(obj)
+	local ancestor = obj:FindFirstAncestor(function(p)
+		return typeof(p.Name) == "string" and p.Name:lower():find("break")
+	end)
+
+	if ancestor then
+		if obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Tween") or obj:IsA("Animation") then
+			pcall(function()
+				obj:Destroy()
+			end)
+		elseif obj:IsA("BasePart") and not obj.Anchored then
+			pcall(function()
+				obj.Anchored = true
+			end)
+		end
+	end
+end)
+
 print("[PS99 OP Optimizer] ✅ All optimizations applied successfully (error-free).")
