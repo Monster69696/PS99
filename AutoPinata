@@ -116,7 +116,9 @@ spawn(function()
 end)
 
 
--- ❄️ Freeze Joints / Animations (Non-Destructive)
+local plr = game:GetService("Players").LocalPlayer
+
+-- 🧊 1. Freeze Unused Joints & Animations
 local function safelyFreezeJointsAndAnimations()
 	local char = plr.Character or plr.CharacterAdded:Wait()
 	local pets = workspace:FindFirstChild("Pets")
@@ -125,16 +127,24 @@ local function safelyFreezeJointsAndAnimations()
 			if v:IsA("Motor6D") or v:IsA("WeldConstraint") or v:IsA("HingeConstraint") then
 				pcall(function() v.Enabled = false end)
 			elseif v:IsA("Animator") or v:IsA("Animation") or v:IsA("AnimationController") then
-				pcall(function() v.Parent = nil end)
+				pcall(function()
+					if v:IsDescendantOf(workspace) then
+						v:Destroy()
+					end
+				end)
 			end
 		end
-		local tween = v:FindFirstChildOfClass("Tween")
-		if tween then pcall(function() tween:Cancel() end) end
 	end
 end
 safelyFreezeJointsAndAnimations()
 
--- 🔐 Anchor unanchored parts outside safe folders
+-- 🧹 2. Remove Debris Folder (optional cleanup)
+local debris = workspace:FindFirstChild("__DEBRIS")
+if debris then
+	pcall(function() debris:Destroy() end)
+end
+
+-- 🔐 3. Anchor Unanchored Parts Outside Important Areas
 for _, v in ipairs(workspace:GetDescendants()) do
 	if v:IsA("BasePart") and not v.Anchored then
 		local ignore = v:IsDescendantOf(plr.Character)
@@ -143,24 +153,32 @@ for _, v in ipairs(workspace:GetDescendants()) do
 			or v:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
 			or v:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
 			or v:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder"))
+			or (v.Name:lower():find("button") or v.Name:lower():find("tele"))
 		if not ignore then
 			pcall(function() v.Anchored = true end)
 		end
 	end
 end
 
--- 🔁 Prevent Future Effects / Lag
+-- 🔁 4. Prevent Future Lag Effects
 workspace.DescendantAdded:Connect(function(obj)
-	if obj:IsA("BasePart") and not obj.Anchored then
-		pcall(function() obj.Anchored = true end)
-	elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Tween") or obj:IsA("Animation") then
-		pcall(function() obj:Destroy() end)
-	end
+	task.defer(function()
+		if obj:IsA("BasePart") and not obj.Anchored then
+			pcall(function() obj.Anchored = true end)
+		elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Trail")
+			or obj:IsA("Smoke") or obj:IsA("Sparkles") or obj:IsA("Explosion") then
+			pcall(function() obj:Destroy() end)
+		end
+	end)
 end)
 
--- 📡 Block TweenService from creating new tweens (optional extreme)
-local ts = game:GetService("TweenService")
-ts.Create = function(...) return { Play = function() end, Cancel = function() end } end
+-- 🧯 5. Cancel All Active Tweens (but don’t break TweenService)
+for _, obj in ipairs(workspace:GetDescendants()) do
+	local tween = obj:FindFirstChildOfClass("Tween")
+	if tween then
+		pcall(function() tween:Cancel() end)
+	end
+end
 
 
 print("[✅ PS99 Optimizer] All optimizations successfully applied.")
