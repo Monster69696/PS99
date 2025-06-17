@@ -1,0 +1,101 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Optimizations"))()
+
+
+-- PS99 Auto Mini Pinata Spawner (with Info Black Screen) by gpt bhaiya
+
+local plr = game.Players.LocalPlayer
+local PlayerGui = plr:WaitForChild("PlayerGui")
+local startTime = tick()
+
+local SaveModule = require(game:GetService("ReplicatedStorage").Library.Client.Save)
+local Network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
+
+-- Remove old GUI
+local old = PlayerGui:FindFirstChild("FullBlackScreenWithInfo")
+if old then old:Destroy() end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "FullBlackScreenWithInfo"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.Parent = PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.ZIndex = 9999
+frame.Parent = gui
+
+local title = Instance.new("TextLabel")
+title.Text = "MONSTER"
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 36
+title.TextColor3 = Color3.new(1, 1, 1)
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.ZIndex = 10000
+title.Parent = gui
+
+local info = Instance.new("TextLabel")
+info.Name = "RuntimeAndItems"
+info.Font = Enum.Font.Code
+info.TextSize = 20
+info.TextColor3 = Color3.new(1, 1, 1)
+info.BackgroundTransparency = 1
+info.Size = UDim2.new(1, 0, 0, 100)
+info.Position = UDim2.new(0, 0, 0.5, -50)
+info.ZIndex = 10000
+info.Parent = gui
+
+local function formatTime(t)
+	local h = math.floor(t / 3600)
+	local m = math.floor((t % 3600) / 60)
+	local s = math.floor(t % 60)
+	return string.format("%02d:%02d:%02d", h, m, s)
+end
+
+local function findAmount(data, itemId)
+	for _, item in pairs(data.Inventory.Misc or {}) do
+		if item.id == itemId and type(item._am) == "number" then
+			return item._am
+		end
+	end
+	return 0
+end
+
+task.spawn(function()
+	while true do
+		local runTime = formatTime(tick() - startTime)
+		local saveData = SaveModule.Get(plr)
+
+		local pinata = findAmount(saveData, "Mini Pinata")
+		local gift = findAmount(saveData, "Gift Bag")
+		local largeGift = findAmount(saveData, "Large Gift Bag")
+
+		info.Text = string.format("Time: %s\nPinata: %d\nGift Bag: %d\nLarge Gift Bag: %d", runTime, pinata, gift, largeGift)
+		task.wait(1.5)
+	end
+end)
+
+local function getPinata()
+	local save = SaveModule.Get(plr)
+	if not save or not save.Inventory or not save.Inventory.Misc then return end
+	for uid, item in pairs(save.Inventory.Misc) do
+		if item.id == "Mini Pinata" and type(item._am)== "number" and item._am > 0 then
+			return uid
+		end
+	end
+end
+
+spawn(function()
+	while true do
+		local uid = getPinata()
+		if not uid then break end
+		Network.Invoke("MiniPinata_Consume", uid)
+		task.wait(1)
+	end
+end)
+
+print("[✅ Pinata Spawner Running] UI and Tracker loaded.")
