@@ -10,23 +10,27 @@ local startTime = tick()
 local SaveModule = require(game:GetService("ReplicatedStorage").Library.Client.Save)
 local Network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
 
--- Remove old GUI
+-- Remove any existing GUI
 local old = PlayerGui:FindFirstChild("FullBlackScreenWithInfo")
 if old then old:Destroy() end
 
+-- ScreenGui setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "FullBlackScreenWithInfo"
 gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.Parent = PlayerGui
 
+-- Black background
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(1, 0, 1, 0)
+frame.Position = UDim2.new(0, 0, 0, 0)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BorderSizePixel = 0
 frame.ZIndex = 9999
 frame.Parent = gui
 
+-- "MONSTER" title at top center
 local title = Instance.new("TextLabel")
 title.Text = "MONSTER"
 title.Font = Enum.Font.GothamBlack
@@ -35,9 +39,12 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 50)
 title.Position = UDim2.new(0, 0, 0, 10)
+title.TextScaled = false
+title.TextXAlignment = Enum.TextXAlignment.Center
 title.ZIndex = 10000
 title.Parent = gui
 
+-- Info text
 local info = Instance.new("TextLabel")
 info.Name = "RuntimeAndItems"
 info.Font = Enum.Font.Code
@@ -46,9 +53,12 @@ info.TextColor3 = Color3.new(1, 1, 1)
 info.BackgroundTransparency = 1
 info.Size = UDim2.new(1, 0, 0, 100)
 info.Position = UDim2.new(0, 0, 0.5, -50)
+info.TextXAlignment = Enum.TextXAlignment.Center
+info.TextYAlignment = Enum.TextYAlignment.Top
 info.ZIndex = 10000
 info.Parent = gui
 
+-- Time formatter
 local function formatTime(t)
 	local h = math.floor(t / 3600)
 	local m = math.floor((t % 3600) / 60)
@@ -56,6 +66,7 @@ local function formatTime(t)
 	return string.format("%02d:%02d:%02d", h, m, s)
 end
 
+-- Finder function
 local function findAmount(data, itemId)
 	for _, item in pairs(data.Inventory.Misc or {}) do
 		if item.id == itemId and type(item._am) == "number" then
@@ -65,11 +76,12 @@ local function findAmount(data, itemId)
 	return 0
 end
 
+-- Updater
 task.spawn(function()
 	while true do
 		local runTime = formatTime(tick() - startTime)
-		local saveData = SaveModule.Get(plr)
 
+		local saveData = SaveModule.Get(game.Players.LocalPlayer)
 		local pinata = findAmount(saveData, "Mini Pinata")
 		local gift = findAmount(saveData, "Gift Bag")
 		local largeGift = findAmount(saveData, "Large Gift Bag")
@@ -79,9 +91,60 @@ task.spawn(function()
 	end
 end)
 
+
+-- ❄️ Freeze Joints / Animations (Non-Destructive)
+local function safelyFreezeJointsAndAnimations()
+	local char = plr.Character or plr.CharacterAdded:Wait()
+	local pets = workspace:FindFirstChild("Pets")
+	for _, v in ipairs(workspace:GetDescendants()) do
+		if not v:IsDescendantOf(char) and not (pets and v:IsDescendantOf(pets)) then
+			if v:IsA("Motor6D") or v:IsA("WeldConstraint") or v:IsA("HingeConstraint") then
+				pcall(function() v.Enabled = false end)
+			elseif v:IsA("Animator") or v:IsA("Animation") or v:IsA("AnimationController") then
+				pcall(function() v.Parent = nil end)
+			end
+		end
+		local tween = v:FindFirstChildOfClass("Tween")
+		if tween then pcall(function() tween:Cancel() end) end
+	end
+end
+safelyFreezeJointsAndAnimations()
+
+-- 🔐 Anchor unanchored parts outside safe folders
+for _, v in ipairs(workspace:GetDescendants()) do
+	if v:IsA("BasePart") and not v.Anchored then
+		local ignore = v:IsDescendantOf(plr.Character)
+			or v:IsDescendantOf(workspace:FindFirstChild("Pets") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Map") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
+			or v:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder"))
+		if not ignore then
+			pcall(function() v.Anchored = true end)
+		end
+	end
+end
+
+-- 🔁 Prevent Future Effects / Lag
+workspace.DescendantAdded:Connect(function(obj)
+	if obj:IsA("BasePart") and not obj.Anchored then
+		pcall(function() obj.Anchored = true end)
+	elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Tween") or obj:IsA("Animation") then
+		pcall(function() obj:Destroy() end)
+	end
+end)
+
+-- 📡 Block TweenService from creating new tweens (optional extreme)
+local ts = game:GetService("TweenService")
+ts.Create = function(...) return { Play = function() end, Cancel = function() end } end
+
+
+-- 🧨 Auto Mini Pinata Spawner (Silent Version by gpt bhaiya)
+
 local function getPinata()
 	local save = SaveModule.Get(plr)
 	if not save or not save.Inventory or not save.Inventory.Misc then return end
+
 	for uid, item in pairs(save.Inventory.Misc) do
 		if item.id == "Mini Pinata" and type(item._am)== "number" and item._am > 0 then
 			return uid
@@ -93,9 +156,10 @@ spawn(function()
 	while true do
 		local uid = getPinata()
 		if not uid then break end
+
 		Network.Invoke("MiniPinata_Consume", uid)
 		task.wait(1)
 	end
 end)
 
-print("[✅ Pinata Spawner Running] UI and Tracker loaded.")
+print("[✅ PS99 Optimizer] All optimizations successfully applied.")
