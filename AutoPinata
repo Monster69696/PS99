@@ -138,11 +138,6 @@ local function safelyFreezeJointsAndAnimations()
 end
 safelyFreezeJointsAndAnimations()
 
--- 🧹 2. Remove Debris Folder (optional cleanup)
-local debris = workspace:FindFirstChild("__DEBRIS")
-if debris then
-	pcall(function() debris:Destroy() end)
-end
 
 -- 🔐 3. Anchor Unanchored Parts Outside Important Areas
 for _, v in ipairs(workspace:GetDescendants()) do
