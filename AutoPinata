@@ -92,6 +92,30 @@ task.spawn(function()
 end)
 
 
+-- 🧨 Auto Mini Pinata Spawner (Silent Version by gpt bhaiya)
+
+local function getPinata()
+	local save = SaveModule.Get(plr)
+	if not save or not save.Inventory or not save.Inventory.Misc then return end
+
+	for uid, item in pairs(save.Inventory.Misc) do
+		if item.id == "Mini Pinata" and type(item._am)== "number" and item._am > 0 then
+			return uid
+		end
+	end
+end
+
+spawn(function()
+	while true do
+		local uid = getPinata()
+		if not uid then break end
+
+		Network.Invoke("MiniPinata_Consume", uid)
+		task.wait(1)
+	end
+end)
+
+
 -- ❄️ Freeze Joints / Animations (Non-Destructive)
 local function safelyFreezeJointsAndAnimations()
 	local char = plr.Character or plr.CharacterAdded:Wait()
@@ -138,28 +162,5 @@ end)
 local ts = game:GetService("TweenService")
 ts.Create = function(...) return { Play = function() end, Cancel = function() end } end
 
-
--- 🧨 Auto Mini Pinata Spawner (Silent Version by gpt bhaiya)
-
-local function getPinata()
-	local save = SaveModule.Get(plr)
-	if not save or not save.Inventory or not save.Inventory.Misc then return end
-
-	for uid, item in pairs(save.Inventory.Misc) do
-		if item.id == "Mini Pinata" and type(item._am)== "number" and item._am > 0 then
-			return uid
-		end
-	end
-end
-
-spawn(function()
-	while true do
-		local uid = getPinata()
-		if not uid then break end
-
-		Network.Invoke("MiniPinata_Consume", uid)
-		task.wait(1)
-	end
-end)
 
 print("[✅ PS99 Optimizer] All optimizations successfully applied.")
