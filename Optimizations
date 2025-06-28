@@ -98,34 +98,45 @@ for _, name in ipairs({"Decorations", "Backgrounds", "Trees"}) do
 	if f then pcall(function() f:Destroy() end) end
 end
 
--- 🎮 GUI Cleanup
+-- 🎮 GUI Cleanup (fixed)
 local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
-for _, v in ipairs(CoreGui:GetDescendants()) do
+
+-- 🧼 Clean CoreGui safely
+for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
 	if v:IsA("GuiObject") then
 		local parentGui = v:FindFirstAncestorOfClass("ScreenGui")
-		if not (parentGui and (parentGui:GetAttribute("Safe") or guiToKeep[parentGui.Name])) then
+		local isSafe = parentGui and (parentGui:GetAttribute("Safe") or guiToKeep[parentGui.Name])
+		if not isSafe then
 			pcall(function() v.Visible = false end)
 		end
 	end
 end
+
+-- 🧼 Clean PlayerGui safely
+local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 for _, v in ipairs(PlayerGui:GetDescendants()) do
-	if v:IsA("GuiObject") and not v:IsDescendantOf(PlayerGui:FindFirstChild("FullBlackScreenWithToggle")) then
-		pcall(function() v.Visible = false end)
+	if v:IsA("GuiObject") then
+		local parentGui = v:FindFirstAncestorOfClass("ScreenGui")
+		local isSafe = parentGui and (parentGui:GetAttribute("Safe") or guiToKeep[parentGui.Name])
+		if not isSafe then
+			pcall(function() v.Visible = false end)
+		end
 	end
 end
-for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
-	if v:IsA("GuiObject") then pcall(function() v.Visible = false end) end
-end
 
--- 📛 Remove Popups
+-- 📛 Remove popup GUIs
 for _, gui in ipairs(PlayerGui:GetChildren()) do
 	local name = gui.Name:lower()
 	for _, kw in ipairs({"popup", "notif", "alert", "msg", "dialog", "ad"}) do
-		if name:find(kw) then pcall(function() gui:Destroy() end) break end
+		if name:find(kw) then
+			pcall(function() gui:Destroy() end)
+			break
+		end
 	end
 end
 
--- 📲 Disable CoreGUI
+-- 📲 Disable all CoreGui types except Backpack
+local StarterGui = game:GetService("StarterGui")
 for _, t in ipairs(Enum.CoreGuiType:GetEnumItems()) do
 	if t ~= Enum.CoreGuiType.Backpack then
 		pcall(function() StarterGui:SetCoreGuiEnabled(t, false) end)
