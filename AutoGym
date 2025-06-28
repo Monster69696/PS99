@@ -1,28 +1,27 @@
--- Wait until game loaded then start the whole script.
+-- ✅ Wait for game and intro to fully load
 repeat task.wait() until game:IsLoaded()
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
 
--- Services / Helpers path - more tidy and fast ig/
+-- ✅ Services / Libraries
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local InstancingCmds = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("InstancingCmds"))
 local EggCmds = require(ReplicatedStorage.Library.Client.EggCmds)
 local Network = require(ReplicatedStorage.Library.Client.Network)
 local GetMaxEggsToHatch = EggCmds.GetMaxHatch()
 
--- Remotes
+-- ✅ Remote Events
 local Train = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Train")
 local Start = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Start")
 local ZonePurchase = ReplicatedStorage.Network:WaitForChild("InstanceZones_RequestPurchase")
 local GymRebirth = ReplicatedStorage.Network:WaitForChild("Gym_Rebirth")
 
--- Removing egg animation
+-- ✅ Remove Egg Animation
 local EggScript = player.PlayerScripts:WaitForChild("Scripts"):WaitForChild("Game"):WaitForChild("Egg Opening Frontend")
 getsenv(EggScript).PlayEggAnimation = function() return end
 
--- Enter gym event
+-- ✅ Enter Gym Event
 local function EnterGymEvent()
     setthreadidentity(2)
     pcall(function()
@@ -34,87 +33,115 @@ end
 EnterGymEvent()
 task.wait(3)
 
--- Auto buy all zones
+-- ✅ Auto buy all zones
 task.spawn(function()
-    while true do
-        for Zones = 1, 5 do
+    while task.wait(1) do
+        for zone = 1, 5 do
             pcall(function()
-                ZonePurchase:InvokeServer("GymEvent", Zones)
+                ZonePurchase:InvokeServer("GymEvent", zone)
             end)
         end
-        task.wait(1)
     end
 end)
 
--- Auto rebirth
+-- ✅ Auto Rebirth
 task.spawn(function()
-    while true do
+    while task.wait(1) do
         pcall(function()
             GymRebirth:InvokeServer()
         end)
-        task.wait(1)
     end
 end)
 
-
--- Auto start (start infinite mode)
+-- ✅ Auto Start (Infinite Mode)
 task.spawn(function()
-    while true do
+    while task.wait() do
         pcall(function()
             Start:InvokeServer()
         end)
-        task.wait()
     end
 end)
 
--- Auto train
+-- ✅ Auto Train
 task.spawn(function()
-    while true do
+    while task.wait() do
         pcall(function()
             Train:InvokeServer("Squat")
         end)
-        task.wait()
     end
 end)
 
--- Find nearest egg
+-- ✅ Find Nearest Egg
 local function find_nearest_egg()
-    local nearestEgg, nearestDistance = nil, math.huge
-    local eggsFolder = workspace.__THINGS:FindFirstChild("CustomEggs")
-    if not eggsFolder then return nil end
-
+    local nearest, shortest = nil, math.huge
+    local folder = workspace:FindFirstChild("__THINGS"):FindFirstChild("CustomEggs")
     local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return nil end
+    if not (folder and hrp) then return nil end
 
-    for _, eggModel in ipairs(eggsFolder:GetChildren()) do
-        if eggModel:IsA("Model") then
-            local success, cframe = pcall(function()
-                return eggModel:GetBoundingBox()
+    for _, egg in ipairs(folder:GetChildren()) do
+        if egg:IsA("Model") then
+            local success, box = pcall(function()
+                return egg:GetBoundingBox()
             end)
-            if success and cframe then
-                local dist = (hrp.Position - cframe.Position).Magnitude
-                if dist < nearestDistance then
-                    nearestEgg = eggModel.Name
-                    nearestDistance = dist
+            if success then
+                local dist = (hrp.Position - box.Position).Magnitude
+                if dist < shortest then
+                    nearest = egg.Name
+                    shortest = dist
                 end
             end
         end
     end
 
-    return nearestEgg
+    return nearest
 end
 
--- Auto hatch nearest egg
+-- ✅ Auto Hatch Nearest Egg
 _G.AutoOpen = true
 task.spawn(function()
     while task.wait() do
         if _G.AutoOpen then
-            local nearestEgg = find_nearest_egg()
-            if nearestEgg then
+            local egg = find_nearest_egg()
+            if egg then
                 pcall(function()
-                    Network.Invoke("CustomEggs_Hatch", nearestEgg, GetMaxEggsToHatch)
+                    Network.Invoke("CustomEggs_Hatch", egg, GetMaxEggsToHatch)
                 end)
             end
         end
     end
+end)
+
+-- ✅ Toggleable Black Screen UI (Battery Saver)
+local CoreGui = game:GetService("CoreGui")
+local blackScreenGui = Instance.new("ScreenGui")
+blackScreenGui.Name = "BlackScreenUI"
+blackScreenGui.IgnoreGuiInset = true
+blackScreenGui.ResetOnSpawn = false
+blackScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+blackScreenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.Visible = false
+frame.Parent = blackScreenGui
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Text = "🟢 SHOW SCREEN"
+toggleBtn.Size = UDim2.new(0, 160, 0, 40)
+toggleBtn.Position = UDim2.new(1, -170, 1, -50)
+toggleBtn.AnchorPoint = Vector2.new(0, 1)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.ZIndex = 10
+toggleBtn.Parent = blackScreenGui
+
+local isBlack = false
+toggleBtn.MouseButton1Click:Connect(function()
+    isBlack = not isBlack
+    frame.Visible = isBlack
+    toggleBtn.Text = isBlack and "🔴 HIDE SCREEN" or "🟢 SHOW SCREEN"
 end)
