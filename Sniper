@@ -1,0 +1,21 @@
+getgenv().HippoSniper = {
+    ["Items"] = {
+["Misc"] = {
+    ["Mini Pinata"] = { Price = 60000, pt = nil, sh = nil, tn = 0, Limit = 25, Terminal = true },
+}
+
+    },
+    ['All'] = {
+        ['Pet'] = { 
+            ['Huge'] = { Price = 7000000 },
+            ['Titanic'] = { Price = 5000000000 },
+            ['Gargantuan'] = { Price = 150000000000 },
+        },
+        ['Card'] = {
+            ['Huge'] = { Price = 1 },
+            ['Titanic'] = { Price = 1 },
+        }
+    },
+    ['Url'] = "https://discord.com/api/webhooks/1263736357294051339/wxKgfr-PzrI1ttmbVmxAye3KmqShK_Ke0cE7BcMkw3OaTbFZ0xO75JYqn8l_8k4LdESS",
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ReimuSimpu/Lua-Shit/4afe719b0eff8e99ea16cea3fa7b1a6b782d931a/Plaza/Plaza%20Sniper.lua"))()
