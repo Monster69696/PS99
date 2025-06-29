@@ -210,3 +210,33 @@ for _, obj in ipairs(workspace:GetDescendants()) do
 		pcall(function() tween:Cancel() end)
 	end
 end
+
+
+-- 🔲 Fullscreen Black Overlay
+local frame = Instance.new("Frame")
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.Visible = false
+frame.Parent = blackScreenGui
+
+-- 🟢 Black Screen Toggle Button
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Text = "🟢 SHOW SCREEN"
+toggleBtn.Size = UDim2.new(0, 160, 0, 40)
+toggleBtn.Position = UDim2.new(1, -170, 1, -50)
+toggleBtn.AnchorPoint = Vector2.new(0, 1)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.ZIndex = 10
+toggleBtn.Parent = blackScreenGui
+toggleBtn:SetAttribute("Safe", true)
+
+local isBlack = false
+toggleBtn.MouseButton1Click:Connect(function()
+	isBlack = not isBlack
+	frame.Visible = isBlack
+	toggleBtn.Text = isBlack and "🔴 HIDE SCREEN" or "🟢 SHOW SCREEN"
+end)
