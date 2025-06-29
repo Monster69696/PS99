@@ -148,58 +148,43 @@ end
 
 local BoothCmds = getsenv(game.ReplicatedStorage.Library.Client.BoothCmds)
 
--- Try to extract the internal upvalue (tbl_14_upvr) where listings are stored
-local ListingsTable
+local Network = require(game.ReplicatedStorage.Library.Client.Network)
 
--- Loop through all upvalues and find the one with .Listings inside
-for _, v in pairs(getupvalues(BoothCmds.promptOtherPlayerBooth2)) do
-	if typeof(v) == "table" then
-		for _, data in pairs(v) do
-			if typeof(data) == "table" and data.Listings then
-				ListingsTable = v
-				break
+local function CheckAllListings()
+	for _, player in ipairs(game.Players:GetPlayers()) do
+		if player ~= game.Players.LocalPlayer then
+			local success, boothData = pcall(function()
+				return Network.Invoke("Booths_GetInitialState", player)
+			end)
+
+			if success and boothData and boothData.Listings then
+				for listingUID, listing in pairs(boothData.Listings) do
+					if typeof(listing.Item) == "table" then
+						local price = listing.DiamondCost
+						local class = listing.Item.Class.Name
+						local data = listing.Item._data
+						local amount = ValidItem(class, price, data)
+
+						if amount > 0 then
+							print("Buying", data.id, "for", price)
+							local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
+								[listingUID] = amount
+							}, {
+								["Caller"] = {
+									["LineNumber"] = 532,
+									["FunctionName"] = "PromptPurchase2",
+									["ScriptPath"] = "ReplicatedStorage.Library.Client.BoothCmds",
+								}
+							})
+							if bought then
+								SendWebhook(class, data, price)
+							end
+						end
+					end
+				end
 			end
 		end
 	end
-	if ListingsTable then break end
-end
-
-if not ListingsTable then
-    warn("❌ Couldn't find booth listings table (tbl_14_upvr)")
-    return
-end
-
-local CheckAllListings = function()
-    for _, Player in ipairs(game.Players:GetPlayers()) do
-        local BoothInfo = ListingsTable[Player]
-        if BoothInfo and BoothInfo.Listings then
-            for ListingUID, Listing in pairs(BoothInfo.Listings) do
-                if type(Listing.Item) == "table" then
-                    local ListingPrice, Class, ItemData = Listing.DiamondCost, Listing.Item.Class.Name, Listing.Item._data
-                    local AmountToBuy = ValidItem(Class, ListingPrice, ItemData)
-
-                    if AmountToBuy > 0 then
-                        print("✅ Buying", ListingPrice, ItemData.id)
-                        local Bought, Err = Network.Invoke("Booths_RequestPurchase", Player.UserId, { [ListingUID] = AmountToBuy }, {
-                            ["Caller"] = {
-                                ["LineNumber"] = 532,
-                                ["ParameterCount"] = 2,
-                                ["Variadic"] = false,
-                                ["Traceback"] = "ReplicatedStorage.Library.Client.BoothCmds:532 function PromptPurchase2\n...",
-                                ["ScriptPath"] = "ReplicatedStorage.Library.Client.BoothCmds",
-                                ["ScriptClass"] = "ModuleScript",
-                                ["Handle"] = "function: 0xc3ef3e0bb3f1ea43",
-                                ["FunctionName"] = "PromptPurchase2",
-                                ["ScriptType"] = "Instance",
-                                ["SourceIdentifier"] = "ReplicatedStorage.Library.Client.BoothCmds"
-                            }
-                        })
-                        if Bought then SendWebhook(Class, ItemData, ListingPrice) end
-                    end
-                end
-            end
-        end
-    end
 end
 
 
