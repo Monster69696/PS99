@@ -145,12 +145,33 @@ local ValidItem = function(Class, Cost, Info)
     
     return 0
 end
- 
-local BoothCmds = require(game.ReplicatedStorage.Library.Client.BoothCmds)
+
+local BoothCmds = getsenv(game.ReplicatedStorage.Library.Client.BoothCmds)
+
+-- Try to extract the internal upvalue (tbl_14_upvr) where listings are stored
+local ListingsTable
+
+-- Loop through all upvalues and find the one with .Listings inside
+for _, v in pairs(getupvalues(BoothCmds.promptOtherPlayerBooth2)) do
+	if typeof(v) == "table" then
+		for _, data in pairs(v) do
+			if typeof(data) == "table" and data.Listings then
+				ListingsTable = v
+				break
+			end
+		end
+	end
+	if ListingsTable then break end
+end
+
+if not ListingsTable then
+    warn("❌ Couldn't find booth listings table (tbl_14_upvr)")
+    return
+end
 
 local CheckAllListings = function()
     for _, Player in ipairs(game.Players:GetPlayers()) do
-        local BoothInfo = BoothCmds.getByOwnerId(Player.UserId)
+        local BoothInfo = ListingsTable[Player]
         if BoothInfo and BoothInfo.Listings then
             for ListingUID, Listing in pairs(BoothInfo.Listings) do
                 if type(Listing.Item) == "table" then
@@ -158,13 +179,13 @@ local CheckAllListings = function()
                     local AmountToBuy = ValidItem(Class, ListingPrice, ItemData)
 
                     if AmountToBuy > 0 then
-                        print(ListingPrice, ItemData.id)
+                        print("✅ Buying", ListingPrice, ItemData.id)
                         local Bought, Err = Network.Invoke("Booths_RequestPurchase", Player.UserId, { [ListingUID] = AmountToBuy }, {
                             ["Caller"] = {
                                 ["LineNumber"] = 532,
                                 ["ParameterCount"] = 2,
                                 ["Variadic"] = false,
-                                ["Traceback"] = "ReplicatedStorage.Library.Client.BoothCmds:532 function PromptPurchase2\nReplicatedStorage.Library.Client.BoothCmds:659 function promptOtherPlayerBooth2\nReplicatedStorage.Library.Client.BoothCmds:998",
+                                ["Traceback"] = "ReplicatedStorage.Library.Client.BoothCmds:532 function PromptPurchase2\n...",
                                 ["ScriptPath"] = "ReplicatedStorage.Library.Client.BoothCmds",
                                 ["ScriptClass"] = "ModuleScript",
                                 ["Handle"] = "function: 0xc3ef3e0bb3f1ea43",
@@ -173,15 +194,14 @@ local CheckAllListings = function()
                                 ["SourceIdentifier"] = "ReplicatedStorage.Library.Client.BoothCmds"
                             }
                         })
-                        if Bought then
-                            SendWebhook(Class, ItemData, ListingPrice)
-                        end
+                        if Bought then SendWebhook(Class, ItemData, ListingPrice) end
                     end
                 end
             end
         end
     end
 end
+
 
 --SendWebhook("Misc", {id = "Secret Key" }, 1)
 CheckAllListings()
