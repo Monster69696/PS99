@@ -146,13 +146,11 @@ local ValidItem = function(Class, Cost, Info)
     return 0
 end
  
+local BoothCmds = require(game.ReplicatedStorage.Library.Client.BoothCmds)
+
 local CheckAllListings = function()
-    local BoothFrontend = require(game.ReplicatedStorage.Library.Client.BoothCmds) -- ✅ fixed here
-
     for _, Player in ipairs(game.Players:GetPlayers()) do
-        local BoothInfo = BoothFrontend.getState(Player)
-        setclipboard(game.HttpService:JSONEncode(BoothInfo))
-
+        local BoothInfo = BoothCmds.getByOwnerId(Player.UserId)
         if BoothInfo and BoothInfo.Listings then
             for ListingUID, Listing in pairs(BoothInfo.Listings) do
                 if type(Listing.Item) == "table" then
@@ -175,7 +173,6 @@ local CheckAllListings = function()
                                 ["SourceIdentifier"] = "ReplicatedStorage.Library.Client.BoothCmds"
                             }
                         })
-
                         if Bought then
                             SendWebhook(Class, ItemData, ListingPrice)
                         end
