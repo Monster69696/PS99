@@ -130,7 +130,7 @@ local ValidItem = function(Class, Cost, Info)
         local matchesSh = (ConfigItem.sh == nil or ConfigItem.sh == Info.sh)
         local matchesTn = (ConfigItem.tn == nil or ConfigItem.tn == Info.tn)
 
-        if AmountToBuy > 0 and matchesPt and matchesSh and matchesTn then
+        if AmountToBuy > 0
             return AmountToBuy
         end
     end
