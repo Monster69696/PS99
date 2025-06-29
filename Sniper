@@ -1,11 +1,11 @@
 getgenv().HippoSniper = {
     ["Items"] = {
         ["Misc"] = {
-            ["Mini Pinata"] = { Price = 60000, pt = nil, sh = nil, tn = nil, Limit = 25, Terminal = false },
+            ["Mini Pinata"] = { Price = 55000, pt = nil, sh = nil, tn = nil, Limit = 200000, Terminal = true },
         }
     },
     ['All'] = {
-        ['Pet'] = {
+        ['Pet'] = { 
             ['Huge'] = { Price = 7000000 },
             ['Titanic'] = { Price = 5000000000 },
             ['Gargantuan'] = { Price = 150000000000 },
@@ -24,16 +24,14 @@ repeat task.wait() until not LocalPlayer.PlayerGui:FindFirstChild("__INTRO")
 
 local Library = game.ReplicatedStorage.Library
 local Client = Library.Client
-
 local RAPCmds = require(Client.RAPCmds)
 local Network = require(Client.Network)
 local SaveMod = require(Client.Save)
-local LuaScanner = require(Library.Modules.LuaScanner)
 
 if game.PlaceId == 8737899170 or game.PlaceId == 16498369169 then
     while true do
-        Network.Invoke("Travel to Trading Plaza")
-        task.wait(1)
+        print("🌐 Not in Plaza, teleporting...")
+        Network.Invoke("Travel to Trading Plaza") task.wait(1)
     end
 end
 
@@ -43,62 +41,53 @@ for Class, _ in pairs(require(Library.Items.Types).Types) do
     DirClassesTable[Class] = SpecialClassCases[Class] or Class .. "s"
 end
 
-local function FormatInt(int)
+local FormatInt = function(int)
     local index, Suffix = 1, {"", "K", "M", "B", "T"}
     while int >= 1000 and index < #Suffix do
         int = int / 1000
-        index += 1
+        index = index + 1
     end
     return string.format(index == 1 and "%d" or "%.2f%s", int, Suffix[index])
 end
 
-local function GetItem(Class, Id)
+local GetItem = function(Class, Id)
     local Inventory = SaveMod.Get().Inventory[Class] or {}
     for UID, v in pairs(Inventory) do
         if v.id == Id then return UID, v end
     end
 end
 
-local function GetAssetId(Class, Info)
+local GetAssetId = function(Class, Info)
     local Directory = require(Library.Directory)
     local ItemTable = Directory[Class][Info.id]
+    local Icon = nil
 
-    local Icon
-    if Info.tn then
-        if ItemTable.Icon and type(ItemTable.Icon) == "function" then
-            Icon = unpack(getupvalues(ItemTable.Icon))[Info.tn]
-        elseif ItemTable.Tiers and ItemTable.Tiers[1] and ItemTable.Tiers[1].Effect then
-            local EffectType = ItemTable.Tiers[1].Effect.Type
-            Icon = EffectType and EffectType.Tiers and EffectType.Tiers[Info.tn].Icon
-        end
+    if Info.tn and ItemTable.Tiers and ItemTable.Tiers[1] and ItemTable.Tiers[1].Effect then
+        local EffectType = ItemTable.Tiers[1].Effect.Type
+        Icon = EffectType and EffectType.Tiers and EffectType.Tiers[Info.tn].Icon
     end
 
     Icon = Icon or ItemTable.Icon or ItemTable.icon or ItemTable.thumbnail or "rbxassetid://0"
     return Icon
 end
 
-local function GetRap(Class, ItemTable)
+local GetRap = function(Class, ItemTable)
     local Item = require(Library.Items[Class .. "Item"])(ItemTable.id)
-
     if ItemTable.sh then Item:SetShiny(true) end
     if ItemTable.pt == 1 then Item:SetGolden() end
     if ItemTable.pt == 2 then Item:SetRainbow() end
     if ItemTable.tn then Item:SetTier(ItemTable.tn) end
-
     return RAPCmds.Get(Item) or 0
 end
 
-local function SendWebhook(Class, ItemData, Gems)
+local SendWebhook = function(Class, ItemData, Gems)
     local AssetID = string.gsub(GetAssetId(DirClassesTable[Class], ItemData), "rbxassetid://", "")
     local Version = ItemData.pt == 1 and "Golden " or ItemData.pt == 2 and "Rainbow " or ""
     local Title = string.format("%s Sniped a %s%s%s (%sx)", LocalPlayer.Name, Version, ItemData.sh and "Shiny " or "", ItemData.id, ItemData._am or 1)
     local Rap = GetRap(Class, ItemData)
-    local itmamt = 0
-
-    for i, v in pairs(SaveMod.Get().Inventory[Class] or {}) do
-        if string.find(ItemData.id, v.id) then
-            itmamt = v._am or 1
-        end
+    local amt = 0
+    for _, v in pairs(SaveMod.Get().Inventory[Class] or {}) do
+        if string.find(ItemData.id, v.id) then amt = v._am or 1 end
     end
 
     local Body = game:GetService("HttpService"):JSONEncode({
@@ -109,18 +98,9 @@ local function SendWebhook(Class, ItemData, Gems)
             timestamp = DateTime.now():ToIsoDate(),
             thumbnail = { url = "https://biggamesapi.io/image/" .. AssetID },
             fields = {{
-                name = string.format(
-                    "<:Booth:1242309582760448020> Price: %s ( %s Each )\n<:Pet:1242299008605749301> RAP: %s ( %s Each )\n<:Diamond:1242298786219556914> Gems Left: %s ( %s Inv Items)",
-                    FormatInt(Gems * (ItemData._am or 1)),
-                    FormatInt(Gems),
-                    FormatInt(Rap * (ItemData._am or 1)),
-                    FormatInt(Rap),
-                    FormatInt(LocalPlayer.leaderstats["💎 Diamonds"].Value),
-                    FormatInt(itmamt)
-                ),
-                value = ""
+                name = string.format("💰 Price: %s (%s each)\n📊 RAP: %s (%s each)\n💎 Gems Left: %s (x%s)", FormatInt(Gems * (ItemData._am or 1)), FormatInt(Gems), FormatInt(Rap * (ItemData._am or 1)), FormatInt(Rap), FormatInt(LocalPlayer.leaderstats["💎 Diamonds"].Value), FormatInt(amt)), value = ""
             }},
-            footer = { text = "Hippo" }
+            footer = { text = "Hippo Sniper Script" }
         }}
     })
 
@@ -132,22 +112,29 @@ local function SendWebhook(Class, ItemData, Gems)
             Body = Body
         })
     end)
+
+    if success then
+        print("✅ Webhook sent successfully.")
+    else
+        warn("❌ Webhook failed:", err)
+    end
 end
 
-local function ValidItem(Class, Cost, Info)
 local ValidItem = function(Class, Cost, Info)
     local ConfigItem = HippoSniper['Items'][Class] and HippoSniper['Items'][Class][Info.id]
     if ConfigItem and Cost <= ConfigItem.Price then
         local _, InvInfo = GetItem(Class, Info.id)
         local AmountToBuy = math.min(Info._am or 1, (ConfigItem.Limit or 0) - (InvInfo and InvInfo._am or 0))
 
-        -- ✅ IGNORE pt/sh/tn and just buy anything below price & within limit
-        if AmountToBuy > 0 then
+        local matchesPt = (ConfigItem.pt == nil or ConfigItem.pt == Info.pt)
+        local matchesSh = (ConfigItem.sh == nil or ConfigItem.sh == Info.sh)
+        local matchesTn = (ConfigItem.tn == nil or ConfigItem.tn == Info.tn)
+
+        if AmountToBuy > 0 and matchesPt and matchesSh and matchesTn then
             return AmountToBuy
         end
     end
 
-    -- ✅ Still support general class snipes
     if HippoSniper['All'][Class] then
         for i,v in pairs(HippoSniper['All'][Class]) do
             if string.find(Info.id, i) and Cost <= v.Price then
@@ -159,10 +146,9 @@ local ValidItem = function(Class, Cost, Info)
     return 0
 end
 
-
 local function CheckAllListings()
     for _, player in ipairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
+        if player ~= LocalPlayer then
             local success, boothData = pcall(function()
                 return Network.Invoke("Booths_GetInitialState", player)
             end)
@@ -176,7 +162,7 @@ local function CheckAllListings()
                         local amount = ValidItem(class, price, data)
 
                         if amount > 0 then
-                            print("Buying", data.id, "for", price)
+                            print("🛒 Attempting to buy:", data.id, "for", price)
                             local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
                                 [listingUID] = amount
                             }, {
@@ -186,8 +172,12 @@ local function CheckAllListings()
                                     ["ScriptPath"] = "ReplicatedStorage.Library.Client.BoothCmds",
                                 }
                             })
+
                             if bought then
+                                print("✅ Bought", data.id, "from", player.Name)
                                 SendWebhook(class, data, price)
+                            else
+                                print("❌ Purchase failed for", data.id)
                             end
                         end
                     end
@@ -197,10 +187,8 @@ local function CheckAllListings()
     end
 end
 
--- Initial Check
 CheckAllListings()
 
--- Terminal Scanner
 while task.wait() do
     local TerminalItems, Classes = {}, {}
 
@@ -217,27 +205,20 @@ while task.wait() do
         end
     end
 
-    if #TerminalItems == 0 then
-        continue
-    end
+    if #TerminalItems == 0 then continue end
 
     local RandomId = TerminalItems[math.random(#TerminalItems)]
     local ItemInfo = ClassItems[RandomId]
 
-    local StackKey = game.HttpService:JSONEncode({
-        id = RandomId,
-        pt = ItemInfo.pt,
-        sh = ItemInfo.sh,
-        tn = ItemInfo.tn
-    })
-
+    local StackKey = game.HttpService:JSONEncode({id = RandomId, pt = ItemInfo.pt, sh = ItemInfo.sh, tn = ItemInfo.tn})
     local QueryResults = Network.Invoke("TradingTerminal_Search", RandomClass, StackKey, nil, true)
 
     if QueryResults then
+        print("🌍 Server hopping for", RandomId)
         game:GetService("TeleportService"):TeleportToPlaceInstance(
             QueryResults.place_id,
             QueryResults.job_id,
-            game.Players.LocalPlayer,
+            LocalPlayer,
             nil,
             {
                 TargetBoothId = QueryResults.booth,
