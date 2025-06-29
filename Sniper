@@ -147,10 +147,12 @@ local ValidItem = function(Class, Cost, Info)
 end
  
 local CheckAllListings = function()
-    local BoothFrontend = getsenv(game.ReplicatedStorage.Library.Client.BoothCmds)
+    local BoothFrontend = require(game.ReplicatedStorage.Library.Client.BoothCmds) -- ✅ fixed here
+
     for _, Player in ipairs(game.Players:GetPlayers()) do
         local BoothInfo = BoothFrontend.getState(Player)
         setclipboard(game.HttpService:JSONEncode(BoothInfo))
+
         if BoothInfo and BoothInfo.Listings then
             for ListingUID, Listing in pairs(BoothInfo.Listings) do
                 if type(Listing.Item) == "table" then
@@ -160,7 +162,7 @@ local CheckAllListings = function()
                     if AmountToBuy > 0 then
                         print(ListingPrice, ItemData.id)
                         local Bought, Err = Network.Invoke("Booths_RequestPurchase", Player.UserId, { [ListingUID] = AmountToBuy }, {
-                            ["Caller"] = { -- DOING THIS CASUE IDK WHY WHEN I DID Luascanner.Create(-1) didnt work
+                            ["Caller"] = {
                                 ["LineNumber"] = 532,
                                 ["ParameterCount"] = 2,
                                 ["Variadic"] = false,
@@ -173,7 +175,10 @@ local CheckAllListings = function()
                                 ["SourceIdentifier"] = "ReplicatedStorage.Library.Client.BoothCmds"
                             }
                         })
-                        if Bought then SendWebhook(Class, ItemData, ListingPrice) end
+
+                        if Bought then
+                            SendWebhook(Class, ItemData, ListingPrice)
+                        end
                     end
                 end
             end
