@@ -1,7 +1,7 @@
 getgenv().HippoSniper = {
     ["Items"] = {
         ["Misc"] = {
-            ["Piñata"] = { Price = 55000, pt = nil, sh = nil, tn = 0, Limit = 200000, Terminal = true },
+            ["Piñata"] = { Price = 55000, pt = nil, sh = nil, tn = nil, Limit = 200000, Terminal = true },
         }
     },
     ['All'] = {
