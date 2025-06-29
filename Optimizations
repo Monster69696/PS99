@@ -212,15 +212,28 @@ for _, obj in ipairs(workspace:GetDescendants()) do
 end
 
 
+-- 🕶️ BLACK SCREEN TOGGLE GUI
+local CoreGui = game:GetService("CoreGui")
+
+-- Create the ScreenGui
+local blackScreenGui = Instance.new("ScreenGui")
+blackScreenGui.Name = "FullBlackScreenWithToggle"
+blackScreenGui.ResetOnSpawn = false
+blackScreenGui.IgnoreGuiInset = true
+blackScreenGui.DisplayOrder = 999999
+blackScreenGui:SetAttribute("Safe", true)
+blackScreenGui.Parent = CoreGui
+
 -- 🔲 Fullscreen Black Overlay
 local frame = Instance.new("Frame")
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BorderSizePixel = 0
 frame.Size = UDim2.new(1, 0, 1, 0)
 frame.Visible = false
+frame.ZIndex = 5
 frame.Parent = blackScreenGui
 
--- 🟢 Black Screen Toggle Button
+-- 🟢 Toggle Button
 local toggleBtn = Instance.new("TextButton")
 toggleBtn.Text = "🟢 SHOW SCREEN"
 toggleBtn.Size = UDim2.new(0, 160, 0, 40)
@@ -231,9 +244,11 @@ toggleBtn.TextColor3 = Color3.new(1, 1, 1)
 toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.TextSize = 14
 toggleBtn.ZIndex = 10
+toggleBtn.AutoButtonColor = false
 toggleBtn.Parent = blackScreenGui
 toggleBtn:SetAttribute("Safe", true)
 
+-- 🔁 Toggle Behavior
 local isBlack = false
 toggleBtn.MouseButton1Click:Connect(function()
 	isBlack = not isBlack
