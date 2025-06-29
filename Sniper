@@ -135,18 +135,21 @@ local function SendWebhook(Class, ItemData, Gems)
 end
 
 local function ValidItem(Class, Cost, Info)
+local ValidItem = function(Class, Cost, Info)
     local ConfigItem = HippoSniper['Items'][Class] and HippoSniper['Items'][Class][Info.id]
     if ConfigItem and Cost <= ConfigItem.Price then
         local _, InvInfo = GetItem(Class, Info.id)
         local AmountToBuy = math.min(Info._am or 1, (ConfigItem.Limit or 0) - (InvInfo and InvInfo._am or 0))
 
-        if AmountToBuy > 0 and Info.pt == ConfigItem.pt and Info.sh == ConfigItem.sh and Info.tn == ConfigItem.tn then
+        -- ✅ IGNORE pt/sh/tn and just buy anything below price & within limit
+        if AmountToBuy > 0 then
             return AmountToBuy
         end
     end
 
+    -- ✅ Still support general class snipes
     if HippoSniper['All'][Class] then
-        for i, v in pairs(HippoSniper['All'][Class]) do
+        for i,v in pairs(HippoSniper['All'][Class]) do
             if string.find(Info.id, i) and Cost <= v.Price then
                 return Info._am or 1
             end
@@ -155,6 +158,7 @@ local function ValidItem(Class, Cost, Info)
 
     return 0
 end
+
 
 local function CheckAllListings()
     for _, player in ipairs(game.Players:GetPlayers()) do
