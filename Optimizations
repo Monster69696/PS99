@@ -8,7 +8,7 @@ local PlayerGui = plr:WaitForChild("PlayerGui")
 
 -- 📉 FPS Cap
 pcall(function()
-    if setfpscap then setfpscap(30) end
+    if setfpscap then setfpscap(10) end
 end)
 
 -- 🖼️ Lower Quality Settings
@@ -26,6 +26,7 @@ local destroyClasses = {
     PointLight = true, SpotLight = true, SurfaceLight = true,
     BillboardGui = true, SurfaceGui = true,
 }
+
 for _, v in ipairs(workspace:GetDescendants()) do
     local class = v.ClassName
     if destroyClasses[class] then
@@ -206,4 +207,19 @@ toggleBtn.MouseButton1Click:Connect(function()
     isBlack = not isBlack
     frame.Visible = isBlack
     toggleBtn.Text = isBlack and "🔴 HIDE SCREEN" or "🟢 SHOW SCREEN"
+end)
+
+-- 🧨 Real-time Popup Destroyer (nukes all future popups except your toggle)
+PlayerGui.ChildAdded:Connect(function(gui)
+    if gui:IsA("ScreenGui") and gui.Name ~= "FullBlackScreenWithToggle" then
+        task.wait(0.1)
+        pcall(function() gui:Destroy() end)
+    end
+end)
+
+CoreGui.ChildAdded:Connect(function(gui)
+    if gui:IsA("ScreenGui") and gui.Name ~= "FullBlackScreenWithToggle" then
+        task.wait(0.1)
+        pcall(function() gui:Destroy() end)
+    end
 end)
