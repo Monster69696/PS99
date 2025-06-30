@@ -1,7 +1,7 @@
 getgenv().HippoSniper = {
     ["Items"] = {
         ["Misc"] = {
-            ["Mini Pinata"] = { Price = 60000, pt = nil, sh = nil, tn = nil, Limit = 25, Terminal = true },
+            ["Mini Pinata"] = { Price = 60000, pt = nil, sh = nil, tn = nil, Limit = 25, Terminal = false },
         }
     },
     ['All'] = {
@@ -30,12 +30,12 @@ local Network = require(Client.Network)
 local SaveMod = require(Client.Save)
 local LuaScanner = require(Library.Modules.LuaScanner)
 
-if game.PlaceId == 8737899170 or game.PlaceId == 16498369169 then
-    while true do
-        Network.Invoke("Travel to Trading Plaza")
-        task.wait(1)
-    end
-end
+--if game.PlaceId == 8737899170 or game.PlaceId == 16498369169 then
+--    while true do
+--        Network.Invoke("Travel to Trading Plaza")
+--        task.wait(1)
+--    end
+--end
 
 local SpecialClassCases = {Lootbox = "Lootboxes", Box = "Boxes", Misc = "MiscItems"}
 local DirClassesTable = {}
