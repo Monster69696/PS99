@@ -1,78 +1,67 @@
--- PS99 OP Optimizer (Final Edition by gpt bhaiya)
+-- PS99 OP Optimizer (Final Edition - Modified by gpt bhaiya)
 
 local plr = game.Players.LocalPlayer
 local Lighting = game:GetService("Lighting")
 local StarterGui = game:GetService("StarterGui")
+local CoreGui = game:GetService("CoreGui")
 local PlayerGui = plr:WaitForChild("PlayerGui")
 
--- 📉 FPS Cap (if available)
+-- 📉 FPS Cap
 pcall(function()
-	if setfpscap then setfpscap(30) end
+    if setfpscap then setfpscap(30) end
 end)
 
 -- 🖼️ Lower Quality Settings
 pcall(function()
-	settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-	settings().Rendering.TextureQuality = Enum.TextureQuality.Low
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    settings().Rendering.TextureQuality = Enum.TextureQuality.Low
 end)
 
--- ⚡ Combine Workspace Descendant Loop
+-- ⚡ Clean Workspace
 local destroyClasses = {
-	Decal = true, Texture = true,
-	Accessory = true, Hat = true, Shirt = true, Pants = true, FaceInstance = true,
-	ParticleEmitter = true, Trail = true, Beam = true, Smoke = true, Fire = true,
-	Explosion = true, Sparkles = true, Highlight = true, SelectionBox = true,
-	PointLight = true, SpotLight = true, SurfaceLight = true,
-	BillboardGui = true, SurfaceGui = true,
+    Decal = true, Texture = true,
+    Accessory = true, Hat = true, Shirt = true, Pants = true, FaceInstance = true,
+    ParticleEmitter = true, Trail = true, Beam = true, Smoke = true, Fire = true,
+    Explosion = true, Sparkles = true, Highlight = true, SelectionBox = true,
+    PointLight = true, SpotLight = true, SurfaceLight = true,
+    BillboardGui = true, SurfaceGui = true,
 }
-local all = workspace:GetDescendants()
-for _, v in ipairs(all) do
-	local class = v.ClassName
-
-	if destroyClasses[class] then
-		pcall(function() v:Destroy() end)
-
-	elseif v:IsA("Sound") then
-		pcall(function() v.Volume = 0; v:Stop() end)
-
-	elseif (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
-		pcall(function()
-			v.Transparency = 1
-			for _, h in ipairs(v:GetChildren()) do if h:IsA("Highlight") then h:Destroy() end end
-			local hl = Instance.new("Highlight")
-			hl.Adornee = v
-			hl.FillTransparency = 1
-			hl.OutlineTransparency = 0
-			hl.OutlineColor = Color3.new(1, 1, 1)
-			hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			hl.Parent = v
-		end)
-
-	elseif v:IsA("ParticleEmitter") then
-		pcall(function() v.Enabled = false; v.Rate = 0; v.Lifetime = NumberRange.new(0); v.Speed = NumberRange.new(0) end)
-
-	elseif v:IsA("Explosion") then
-		pcall(function() v.BlastRadius = 0; v.BlastPressure = 0 end)
-
-	elseif v:IsA("Humanoid") and not v:IsDescendantOf(plr.Character) then
-		pcall(function() v:Destroy() end)
-	end
+for _, v in ipairs(workspace:GetDescendants()) do
+    local class = v.ClassName
+    if destroyClasses[class] then
+        pcall(function() v:Destroy() end)
+    elseif v:IsA("Sound") then
+        pcall(function() v.Volume = 0; v:Stop() end)
+    elseif (v:IsA("BasePart") or v:IsA("MeshPart")) and not v:IsDescendantOf(plr.Character) then
+        pcall(function()
+            v.Transparency = 1
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+            v.CastShadow = false
+            if v:FindFirstChildOfClass("Texture") then v:FindFirstChildOfClass("Texture"):Destroy() end
+            for _, child in ipairs(v:GetChildren()) do
+                if child:IsA("Decal") or child:IsA("Texture") then
+                    child:Destroy()
+                end
+            end
+        end)
+    end
 end
 
 -- 🔇 CoreGui Sound Kill
-for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
-	if v:IsA("Sound") then pcall(function() v.Volume = 0; v:Stop() end) end
+for _, v in ipairs(CoreGui:GetDescendants()) do
+    if v:IsA("Sound") then pcall(function() v.Volume = 0; v:Stop() end) end
 end
 
 -- 🎨 Lighting Cleanup
 for _, v in ipairs(Lighting:GetChildren()) do
-	if v:IsA("Sky") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect")
-	or v:IsA("SunRaysEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-		pcall(function() v:Destroy() end)
-	end
+    if v:IsA("Sky") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect")
+    or v:IsA("SunRaysEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+        pcall(function() v:Destroy() end)
+    end
 end
 Lighting.ChildAdded:Connect(function(child)
-	if child:IsA("Sky") then pcall(function() child:Destroy() end) end
+    if child:IsA("Sky") then pcall(function() child:Destroy() end) end
 end)
 Lighting.Ambient = Color3.new(0, 0, 0)
 Lighting.OutdoorAmbient = Color3.new(0, 0, 0)
@@ -82,140 +71,106 @@ pcall(function() Lighting.GlobalShadows = false end)
 -- 🌊 Terrain Kill
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 if Terrain then
-	pcall(function()
-		Terrain:Clear()
-		Terrain.WaterTransparency = 1
-		Terrain.WaterWaveSize = 0
-		Terrain.WaterWaveSpeed = 0
-		Terrain.WaterReflectance = 0
-		Terrain.WaterColor = Color3.new(0, 0, 0)
-	end)
+    pcall(function()
+        Terrain:Clear()
+        Terrain.WaterTransparency = 1
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterColor = Color3.new(0, 0, 0)
+    end)
 end
 
 -- 🧹 Remove Specific Folders
 for _, name in ipairs({"Decorations", "Backgrounds", "Trees"}) do
-	local f = workspace:FindFirstChild(name)
-	if f then pcall(function() f:Destroy() end) end
+    local f = workspace:FindFirstChild(name)
+    if f then pcall(function() f:Destroy() end) end
 end
 
--- 🎮 GUI Cleanup (fixed)
-local guiToKeep = { ["FullBlackScreenWithToggle"] = true }
-
--- 🧼 Clean CoreGui safely
-for _, v in ipairs(game:GetService("CoreGui"):GetDescendants()) do
-	if v:IsA("GuiObject") then
-		local parentGui = v:FindFirstAncestorOfClass("ScreenGui")
-		local isSafe = parentGui and (parentGui:GetAttribute("Safe") or guiToKeep[parentGui.Name])
-		if not isSafe then
-			pcall(function() v.Visible = false end)
-		end
-	end
-end
-
--- 🧼 Clean PlayerGui safely
-local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-for _, v in ipairs(PlayerGui:GetDescendants()) do
-	if v:IsA("GuiObject") then
-		local parentGui = v:FindFirstAncestorOfClass("ScreenGui")
-		local isSafe = parentGui and (parentGui:GetAttribute("Safe") or guiToKeep[parentGui.Name])
-		if not isSafe then
-			pcall(function() v.Visible = false end)
-		end
-	end
-end
-
--- 📛 Remove popup GUIs
+-- ❌ Remove All GUIs Except BlackScreen
 for _, gui in ipairs(PlayerGui:GetChildren()) do
-	local name = gui.Name:lower()
-	for _, kw in ipairs({"popup", "notif", "alert", "msg", "dialog", "ad"}) do
-		if name:find(kw) then
-			pcall(function() gui:Destroy() end)
-			break
-		end
-	end
+    if gui.Name ~= "FullBlackScreenWithToggle" then
+        pcall(function() gui:Destroy() end)
+    end
 end
 
--- 📲 Disable all CoreGui types except Backpack
-local StarterGui = game:GetService("StarterGui")
+for _, gui in ipairs(CoreGui:GetChildren()) do
+    if gui.Name ~= "FullBlackScreenWithToggle" then
+        pcall(function() gui:Destroy() end)
+    end
+end
+
+-- 📲 Disable All CoreGui Types Except Backpack
 for _, t in ipairs(Enum.CoreGuiType:GetEnumItems()) do
-	if t ~= Enum.CoreGuiType.Backpack then
-		pcall(function() StarterGui:SetCoreGuiEnabled(t, false) end)
-	end
+    if t ~= Enum.CoreGuiType.Backpack then
+        pcall(function() StarterGui:SetCoreGuiEnabled(t, false) end)
+    end
 end
 
 -- 🐾 Kill Animations in Pets + Character
 for _, source in ipairs({plr.Character, workspace:FindFirstChild("Pets")}) do
-	if source then
-		for _, v in ipairs(source:GetDescendants()) do
-			if v:IsA("Animator") or v:IsA("Animation") then
-				pcall(function() v:Destroy() end)
-			end
-		end
-	end
+    if source then
+        for _, v in ipairs(source:GetDescendants()) do
+            if v:IsA("Animator") or v:IsA("Animation") then
+                pcall(function() v:Destroy() end)
+            end
+        end
+    end
 end
 
--- 🧊 1. Freeze Unused Joints & Animations
+-- 🧊 Freeze Unused Joints & Animations
 local function safelyFreezeJointsAndAnimations()
-	local char = plr.Character or plr.CharacterAdded:Wait()
-	local pets = workspace:FindFirstChild("Pets")
-	for _, v in ipairs(workspace:GetDescendants()) do
-		if not v:IsDescendantOf(char) and not (pets and v:IsDescendantOf(pets)) then
-			if v:IsA("Motor6D") or v:IsA("WeldConstraint") or v:IsA("HingeConstraint") then
-				pcall(function() v.Enabled = false end)
-			elseif v:IsA("Animator") or v:IsA("Animation") or v:IsA("AnimationController") then
-				pcall(function()
-					if v:IsDescendantOf(workspace) then
-						v:Destroy()
-					end
-				end)
-			end
-		end
-	end
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local pets = workspace:FindFirstChild("Pets")
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if not v:IsDescendantOf(char) and not (pets and v:IsDescendantOf(pets)) then
+            if v:IsA("Motor6D") or v:IsA("WeldConstraint") or v:IsA("HingeConstraint") then
+                pcall(function() v.Enabled = false end)
+            elseif v:IsA("Animator") or v:IsA("Animation") or v:IsA("AnimationController") then
+                pcall(function() v:Destroy() end)
+            end
+        end
+    end
 end
 safelyFreezeJointsAndAnimations()
 
-
--- 🔐 3. Anchor Unanchored Parts Outside Important Areas
+-- 🔐 Anchor Unanchored Parts Outside Important Areas
 for _, v in ipairs(workspace:GetDescendants()) do
-	if v:IsA("BasePart") and not v.Anchored then
-		local ignore = v:IsDescendantOf(plr.Character)
-			or v:IsDescendantOf(workspace:FindFirstChild("Pets") or Instance.new("Folder"))
-			or v:IsDescendantOf(workspace:FindFirstChild("Map") or Instance.new("Folder"))
-			or v:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
-			or v:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
-			or v:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder"))
-			or (v.Name:lower():find("button") or v.Name:lower():find("tele"))
-		if not ignore then
-			pcall(function() v.Anchored = true end)
-		end
-	end
+    if v:IsA("BasePart") and not v.Anchored then
+        local ignore = v:IsDescendantOf(plr.Character)
+            or v:IsDescendantOf(workspace:FindFirstChild("Pets") or Instance.new("Folder"))
+            or v:IsDescendantOf(workspace:FindFirstChild("Map") or Instance.new("Folder"))
+            or v:IsDescendantOf(workspace:FindFirstChild("World") or Instance.new("Folder"))
+            or v:IsDescendantOf(workspace:FindFirstChild("Spawns") or Instance.new("Folder"))
+            or v:IsDescendantOf(workspace:FindFirstChild("Portals") or Instance.new("Folder"))
+            or (v.Name:lower():find("button") or v.Name:lower():find("tele"))
+        if not ignore then
+            pcall(function() v.Anchored = true end)
+        end
+    end
 end
 
--- 🔁 4. Prevent Future Lag Effects
+-- 🔁 Prevent Lag from New Instances
 workspace.DescendantAdded:Connect(function(obj)
-	task.defer(function()
-		if obj:IsA("BasePart") and not obj.Anchored then
-			pcall(function() obj.Anchored = true end)
-		elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Trail")
-			or obj:IsA("Smoke") or obj:IsA("Sparkles") or obj:IsA("Explosion") then
-			pcall(function() obj:Destroy() end)
-		end
-	end)
+    task.defer(function()
+        if obj:IsA("BasePart") and not obj.Anchored then
+            pcall(function() obj.Anchored = true end)
+        elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Trail")
+        or obj:IsA("Smoke") or obj:IsA("Sparkles") or obj:IsA("Explosion") then
+            pcall(function() obj:Destroy() end)
+        end
+    end)
 end)
 
--- 🧯 5. Cancel All Active Tweens (but don’t break TweenService)
+-- 🧯 Cancel Tweens
 for _, obj in ipairs(workspace:GetDescendants()) do
-	local tween = obj:FindFirstChildOfClass("Tween")
-	if tween then
-		pcall(function() tween:Cancel() end)
-	end
+    local tween = obj:FindFirstChildOfClass("Tween")
+    if tween then
+        pcall(function() tween:Cancel() end)
+    end
 end
 
-
 -- 🕶️ BLACK SCREEN TOGGLE GUI
-local CoreGui = game:GetService("CoreGui")
-
--- Create the ScreenGui
 local blackScreenGui = Instance.new("ScreenGui")
 blackScreenGui.Name = "FullBlackScreenWithToggle"
 blackScreenGui.ResetOnSpawn = false
@@ -224,7 +179,6 @@ blackScreenGui.DisplayOrder = 999999
 blackScreenGui:SetAttribute("Safe", true)
 blackScreenGui.Parent = CoreGui
 
--- 🔲 Fullscreen Black Overlay
 local frame = Instance.new("Frame")
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BorderSizePixel = 0
@@ -233,7 +187,6 @@ frame.Visible = false
 frame.ZIndex = 5
 frame.Parent = blackScreenGui
 
--- 🟢 Toggle Button
 local toggleBtn = Instance.new("TextButton")
 toggleBtn.Text = "🟢 SHOW SCREEN"
 toggleBtn.Size = UDim2.new(0, 160, 0, 40)
@@ -248,10 +201,9 @@ toggleBtn.AutoButtonColor = false
 toggleBtn.Parent = blackScreenGui
 toggleBtn:SetAttribute("Safe", true)
 
--- 🔁 Toggle Behavior
 local isBlack = false
 toggleBtn.MouseButton1Click:Connect(function()
-	isBlack = not isBlack
-	frame.Visible = isBlack
-	toggleBtn.Text = isBlack and "🔴 HIDE SCREEN" or "🟢 SHOW SCREEN"
+    isBlack = not isBlack
+    frame.Visible = isBlack
+    toggleBtn.Text = isBlack and "🔴 HIDE SCREEN" or "🟢 SHOW SCREEN"
 end)
