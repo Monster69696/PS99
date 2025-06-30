@@ -135,79 +135,123 @@ local function SendWebhook(Class, ItemData, Gems)
 end
 
 local function ValidItem(Class, Cost, Info)
-    local ConfigItem = HippoSniper['Items'][Class] and HippoSniper['Items'][Class][Info.id]
-    if ConfigItem and Cost <= ConfigItem.Price then
-        local _, InvInfo = GetItem(Class, Info.id)
-        local AmountToBuy = math.min(Info._am or 1, (ConfigItem.Limit or 0) - (InvInfo and InvInfo._am or 0))
+    print(string.format("  -> ValidItem called for Class: %s, Cost: %d, ItemInfo: %s", Class, Cost, game:GetService("HttpService"):JSONEncode(Info)))
 
-        if AmountToBuy > 0 and Info.pt == ConfigItem.pt and Info.sh == ConfigItem.sh and Info.tn == ConfigItem.tn then
-            return AmountToBuy
+    local ConfigItem = HippoSniper['Items'][Class] and HippoSniper['Items'][Class][Info.id]
+    if ConfigItem then
+        print(string.format("    -> Found ConfigItem for %s: %s", Info.id, game:GetService("HttpService"):JSONEncode(ConfigItem)))
+        if Cost <= ConfigItem.Price then
+            print(string.format("      -> Cost (%d) is within ConfigItem.Price (%d).", Cost, ConfigItem.Price))
+            local _, InvInfo = GetItem(Class, Info.id)
+            local currentInvAmount = InvInfo and InvInfo._am or 0
+            local limit = ConfigItem.Limit or 0
+            local AmountToBuy = math.min(Info._am or 1, limit - currentInvAmount)
+            print(string.format("      -> Current Inventory: %d, Limit: %d, Amount in listing: %d, Calculated AmountToBuy: %d", currentInvAmount, limit, Info._am or 1, AmountToBuy))
+
+            local ptMatch = (Info.pt == ConfigItem.pt) or (Info.pt == nil and ConfigItem.pt == nil) -- Handle nil matching nil
+            local shMatch = (Info.sh == ConfigItem.sh) or (Info.sh == nil and ConfigItem.sh == nil)
+            local tnMatch = (Info.tn == ConfigItem.tn) or (Info.tn == nil and ConfigItem.tn == nil)
+
+            print(string.format("      -> Matching Props: ptMatch=%s, shMatch=%s, tnMatch=%s", tostring(ptMatch), tostring(shMatch), tostring(tnMatch)))
+
+            if AmountToBuy > 0 and ptMatch and shMatch and tnMatch then
+                print(string.format("      -> ValidItem returning %d (match found for configured item).", AmountToBuy))
+                return AmountToBuy
+            else
+                print(string.format("      -> ValidItem returning 0 (Failed prop match or AmountToBuy <= 0 for configured item)."))
+            end
+        else
+            print(string.format("      -> Cost (%d) is GREATER than ConfigItem.Price (%d).", Cost, ConfigItem.Price))
         end
+    else
+        print(string.format("    -> No specific ConfigItem found for %s %s.", Class, Info.id))
     end
 
+    -- Check 'All' category if no specific item match or condition not met
     if HippoSniper['All'][Class] then
+        print(string.format("    -> Checking 'All' category for Class: %s", Class))
         for i, v in pairs(HippoSniper['All'][Class]) do
+            print(string.format("      -> Checking 'All' item %s (Price: %d)", i, v.Price))
             if string.find(Info.id, i) and Cost <= v.Price then
+                print(string.format("      -> ValidItem returning %d (match found in 'All' category).", Info._am or 1))
                 return Info._am or 1
             end
         end
+        print("      -> No match found in 'All' category.")
     end
 
+    print("  -> ValidItem returning 0 (no valid purchase criteria met).")
     return 0
 end
 
 local function CheckAllListings()
+    print("--- Starting CheckAllListings ---")
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer then
+            print(string.format("Checking booths for player: %s (UserId: %d)", player.Name, player.UserId))
             local success, boothData = pcall(function()
                 return Network.Invoke("Booths_GetInitialState", player)
             end)
 
-            if success and boothData and boothData.Listings then
-                for listingUID, listing in pairs(boothData.Listings) do
-                    if typeof(listing.Item) == "table" then
-                        local price = listing.DiamondCost
-                        local class = listing.Item.Class.Name
-                        local data = listing.Item._data
-                        local amount = ValidItem(class, price, data)
+            if not success then
+                warn(string.format("Failed to get initial booth state for %s: %s", player.Name, tostring(boothData)))
+                continue -- Skip to next player if initial state fails
+            end
 
-                        if amount > 0 then
-                            print("Valid item found:", data.id, "Class:", class, "Price:", price, "Amount to buy:", amount)
-                            local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
-                                [listingUID] = amount
-                            }, {
-                                -- **UPDATED CALLER TABLE BASED ON Rspy OUTPUT**
-                                Caller = {
-                                    LineNumber = 527, -- This was the crucial change from 532
-                                    ScriptClass = "ModuleScript",
-                                    Variadic = false,
-                                    -- Copy this Traceback string exactly from your Rspy output
-                                    Traceback = "ReplicatedStorage.Library.Client.BoothCmds:527 function PromptPurchase2\nReplicatedStorage.Library.Client.BoothCmds:654 function promptOtherPlayerBooth2\nReplicatedStorage.Library.Client.BoothCmds:157",
-                                    ScriptPath = "ReplicatedStorage.Library.Client.BoothCmds",
-                                    FunctionName = "PromptPurchase2",
-                                    -- Handle is dynamic and should NOT be included!
-                                    ScriptType = "Instance",
-                                    ParameterCount = 2,
-                                    SourceIdentifier = "ReplicatedStorage.Library.Client.BoothCmds"
-                                }
-                            })
+            if not boothData or not boothData.Listings then
+                print(string.format("No booth data or listings found for %s", player.Name))
+                continue -- Skip if no listings
+            end
 
-                            if bought then
-                                print("Purchase successful for:", data.id, "at price:", price)
-                                SendWebhook(class, data, price)
-                            else
-                                -- 'bought' might be nil, false, or an error message from the server
-                                print("Purchase failed for:", data.id, ". Server response:", bought)
-                            end
+            print(string.format("Found %d listings for %s", #boothData.Listings, player.Name))
+            for listingUID, listing in pairs(boothData.Listings) do
+                print(string.format("  Processing Listing UID: %s", listingUID))
+                if typeof(listing.Item) == "table" then
+                    local price = listing.DiamondCost
+                    local class = listing.Item.Class.Name
+                    local data = listing.Item._data
+                    print(string.format("    Listing Details: Item ID: %s, Class: %s, Price: %d", data.id, class, price))
+
+                    -- Call ValidItem and print its result
+                    local amount = ValidItem(class, price, data)
+                    print(string.format("    ValidItem returned amount: %d", amount))
+
+                    if amount > 0 then
+                        print(string.format("    Attempting to buy %d of %s for %d diamonds...", amount, data.id, price))
+                        local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
+                            [listingUID] = amount
+                        }, {
+                            Caller = {
+                                LineNumber = 527,
+                                ScriptClass = "ModuleScript",
+                                Variadic = false,
+                                Traceback = "ReplicatedStorage.Library.Client.BoothCmds:527 function PromptPurchase2\nReplicatedStorage.Library.Client.BoothCmds:654 function promptOtherPlayerBooth2\nReplicatedStorage.Library.Client.BoothCmds:157",
+                                ScriptPath = "ReplicatedStorage.Library.Client.BoothCmds",
+                                FunctionName = "PromptPurchase2",
+                                ScriptType = "Instance",
+                                ParameterCount = 2,
+                                SourceIdentifier = "ReplicatedStorage.Library.Client.BoothCmds"
+                            }
+                        })
+
+                        if bought then
+                            print(string.format("      SUCCESS: Purchased %s from %s for %d!", data.id, player.Name, price))
+                            SendWebhook(class, data, price)
+                            -- Potentially add a break here if you only want to buy one item per scan
+                            -- break -- uncomment this if you want to stop after first successful purchase
+                        else
+                            print(string.format("      FAILURE: Purchase of %s failed. Server response: %s", data.id, tostring(bought)))
                         end
                     else
-                        -- Optional: Add a print here if you want to see items that aren't tables (unlikely for listings)
-                        -- print("Listing Item is not a table for UID:", listingUID)
+                        print(string.format("    Item %s (Price: %d) not valid for purchase based on ValidItem rules.", data.id, price))
                     end
+                else
+                    print(string.format("    Listing Item is not a table for UID: %s. Type: %s", listingUID, typeof(listing.Item)))
                 end
             end
         end
     end
+    print("--- Finished CheckAllListings ---")
 end
 
 -- Initial Check
