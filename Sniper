@@ -184,6 +184,9 @@ local function ValidItem(Class, Cost, Info)
     return 0
 end
 
+-- Add this at the top of your script, or ensure it's already there
+local Signal = require(game.ReplicatedStorage.Library.Signal) -- Make sure you have this line
+
 local function CheckAllListings()
     print("--- Starting CheckAllListings ---")
     for _, player in ipairs(game.Players:GetPlayers()) do
@@ -195,12 +198,12 @@ local function CheckAllListings()
 
             if not success then
                 warn(string.format("Failed to get initial booth state for %s: %s", player.Name, tostring(boothData)))
-                continue -- Skip to next player if initial state fails
+                continue
             end
 
             if not boothData or not boothData.Listings then
                 print(string.format("No booth data or listings found for %s", player.Name))
-                continue -- Skip if no listings
+                continue
             end
 
             print(string.format("Found %d listings for %s", #boothData.Listings, player.Name))
@@ -212,12 +215,45 @@ local function CheckAllListings()
                     local data = listing.Item._data
                     print(string.format("    Listing Details: Item ID: %s, Class: %s, Price: %d", data.id, class, price))
 
-                    -- Call ValidItem and print its result
                     local amount = ValidItem(class, price, data)
                     print(string.format("    ValidItem returned amount: %d", amount))
 
                     if amount > 0 then
                         print(string.format("    Attempting to buy %d of %s for %d diamonds...", amount, data.id, price))
+
+                        -- *** THIS IS THE CRITICAL CHANGE ***
+                        -- 1. Simulate the "Yes" button being pressed via the Console Signal
+                        -- We need the actual Instance of the Yes_upvr button.
+                        -- We can get it from the Message GUI instance that Message.New uses.
+                        -- This needs to be done *before* the Invoke, because the Invoke will yield.
+                        local MessageGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("MessageGUI") -- Or whatever the name of your Message GUI is
+                        if not MessageGUI then
+                            -- If the GUI isn't instantly available, give it a moment or ensure it's loaded
+                            MessageGUI = game.Players.LocalPlayer.PlayerGui:WaitForChild("MessageGUI", 5) -- Wait up to 5 seconds
+                        end
+
+                        local YesButton = nil
+                        if MessageGUI then
+                            YesButton = MessageGUI.Frame.Contents.Yes -- Adjust path if needed
+                        end
+
+                        if YesButton then
+                            print("    Connecting to simulate Yes button click...")
+                            local connection
+                            connection = YesButton.Activated:Connect(function()
+                                print("    Simulating Yes button Activated!")
+                                -- You might need to add a small task.wait() here if the game expects a tiny delay
+                                -- task.wait(0.1)
+                                -- This connection should ideally disconnect itself after being used
+                                connection:Disconnect()
+                            end)
+                            -- Alternatively, you can try firing the Signal directly, but connecting to Activated is safer for timing.
+                            -- Signal.Fire("Console: Pressed Button", YesButton)
+                            -- Signal.Fire("Console: Released Button", YesButton) -- Some games require both pressed/released
+                        else
+                            warn("    Warning: Could not find Yes button in Message GUI. Automated purchase confirmation might fail.")
+                        end
+
                         local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
                             [listingUID] = amount
                         }, {
@@ -237,11 +273,15 @@ local function CheckAllListings()
                         if bought then
                             print(string.format("      SUCCESS: Purchased %s from %s for %d!", data.id, player.Name, price))
                             SendWebhook(class, data, price)
-                            -- Potentially add a break here if you only want to buy one item per scan
-                            -- break -- uncomment this if you want to stop after first successful purchase
                         else
                             print(string.format("      FAILURE: Purchase of %s failed. Server response: %s", data.id, tostring(bought)))
                         end
+
+                        -- Disconnect the connection if it wasn't already (important if you don't break after purchase)
+                        if connection and connection.Connected then
+                            connection:Disconnect()
+                        end
+
                     else
                         print(string.format("    Item %s (Price: %d) not valid for purchase based on ValidItem rules.", data.id, price))
                     end
