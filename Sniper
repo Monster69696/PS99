@@ -304,4 +304,7 @@ while task.wait() do
             }
         )
     end
+
+    -- Add a delay here to slow down the server hopping
+    task.wait(300) -- Waits for 5 seconds before the next iteration
 end
