@@ -184,30 +184,82 @@ local function ValidItem(Class, Cost, Info)
     return 0
 end
 
--- Add this at the top of your script, or ensure it's already there
-local Signal = require(game.ReplicatedStorage.Library.Signal) -- Make sure you have this line
+-- Ensure these are at the very top of your script
+local Network = require(game.ReplicatedStorage.Library.Client.Network)
+local Signal = require(game.ReplicatedStorage.Library.Signal)
+local MessageGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("MessageGUI") -- VERIFY THIS PATH IS CORRECT IN YOUR EXPLORER
 
 local function CheckAllListings()
-    print("--- Starting CheckAllListings ---")
+    print("--- Starting CheckAllListings Debug ---")
+    if not Network then warn("CRITICAL: 'Network' module not loaded! Cannot proceed.") return end
+    if not MessageGUI then warn("Warning: 'MessageGUI' not found in PlayerGui. Auto-purchase confirmation might fail.") end
+
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer then
-            print(string.format("Checking booths for player: %s (UserId: %d)", player.Name, player.UserId))
-            local success, boothData = pcall(function()
+            print(string.format("Attempting to get booth data for player: %s (UserId: %d)", player.Name, player.UserId))
+
+            local success, boothDataOrError = pcall(function()
                 return Network.Invoke("Booths_GetInitialState", player)
             end)
 
             if not success then
-                warn(string.format("Failed to get initial booth state for %s: %s", player.Name, tostring(boothData)))
+                warn(string.format("ERROR: Network.Invoke('Booths_GetInitialState') FAILED for %s: %s", player.Name, tostring(boothDataOrError)))
+                continue -- Skip to next player if the invoke itself failed
+            end
+
+            -- Step 1: Print the raw data received
+            print(string.format("  Raw data received for %s (Type: %s):", player.Name, typeof(boothDataOrError)))
+            if typeof(boothDataOrError) == "table" then
+                if next(boothDataOrError) == nil then
+                    print("    Table is empty {}")
+                else
+                    for k, v in pairs(boothDataOrError) do
+                        if type(v) == "table" then
+                            -- For tables, print key and number of elements if applicable, or just "table"
+                            if k == "Listings" then
+                                print(string.format("    Key: '%s', Type: table (contains %d elements)", k, #v))
+                                -- If Listings is found, let's peek inside the first few for structure
+                                local count = 0
+                                for listK, listV in pairs(v) do
+                                    count = count + 1
+                                    print(string.format("      Listing Key: '%s', Type: %s", tostring(listK), typeof(listV)))
+                                    if typeof(listV) == "table" then
+                                        -- Print some known properties if they exist
+                                        print(string.format("        Listing: Item type: %s, Price: %s", typeof(listV.Item), tostring(listV.DiamondCost)))
+                                    end
+                                    if count >= 3 then -- Limit detail for brevity
+                                        print("      (Showing first 3 listings for detail, if more exist)")
+                                        break
+                                    end
+                                end
+                            else
+                                print(string.format("    Key: '%s', Type: table", k))
+                            end
+                        else
+                            print(string.format("    Key: '%s', Value: '%s' (Type: %s)", k, tostring(v), typeof(v)))
+                        end
+                    end
+                end
+            else
+                print(string.format("    Received: %s", tostring(boothDataOrError)))
+            end
+
+
+            -- Step 2: Check if boothDataOrError or boothDataOrError.Listings is valid
+            if not boothDataOrError or not boothDataOrError.Listings then
+                print(string.format("  Result: No valid boothData or missing 'Listings' table for %s. Skipping.", player.Name))
                 continue
             end
 
-            if not boothData or not boothData.Listings then
-                print(string.format("No booth data or listings found for %s", player.Name))
+            -- Step 3: Check if Listings table is empty
+            if next(boothDataOrError.Listings) == nil then -- Use next() to check for empty table, # operator can be unreliable for dictionaries
+                print(string.format("  Result: Booth for %s has no listings (Listings table is empty). Skipping.", player.Name))
                 continue
             end
 
-            print(string.format("Found %d listings for %s", #boothData.Listings, player.Name))
-            for listingUID, listing in pairs(boothData.Listings) do
+            print(string.format("  SUCCESS: Found %d actual listings for %s. Processing...", #boothDataOrError.Listings, player.Name))
+            -- (The rest of your existing logic for iterating and buying listings remains unchanged)
+            for listingUID, listing in pairs(boothDataOrError.Listings) do
                 print(string.format("  Processing Listing UID: %s", listingUID))
                 if typeof(listing.Item) == "table" then
                     local price = listing.DiamondCost
@@ -221,37 +273,21 @@ local function CheckAllListings()
                     if amount > 0 then
                         print(string.format("    Attempting to buy %d of %s for %d diamonds...", amount, data.id, price))
 
-                        -- *** THIS IS THE CRITICAL CHANGE ***
-                        -- 1. Simulate the "Yes" button being pressed via the Console Signal
-                        -- We need the actual Instance of the Yes_upvr button.
-                        -- We can get it from the Message GUI instance that Message.New uses.
-                        -- This needs to be done *before* the Invoke, because the Invoke will yield.
-                        local MessageGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("MessageGUI") -- Or whatever the name of your Message GUI is
-                        if not MessageGUI then
-                            -- If the GUI isn't instantly available, give it a moment or ensure it's loaded
-                            MessageGUI = game.Players.LocalPlayer.PlayerGui:WaitForChild("MessageGUI", 5) -- Wait up to 5 seconds
-                        end
-
                         local YesButton = nil
                         if MessageGUI then
                             YesButton = MessageGUI.Frame.Contents.Yes -- Adjust path if needed
                         end
 
+                        local connection
                         if YesButton then
                             print("    Connecting to simulate Yes button click...")
-                            local connection
                             connection = YesButton.Activated:Connect(function()
                                 print("    Simulating Yes button Activated!")
-                                -- You might need to add a small task.wait() here if the game expects a tiny delay
-                                -- task.wait(0.1)
-                                -- This connection should ideally disconnect itself after being used
-                                connection:Disconnect()
+                                -- task.wait(0.1) -- Optional small delay
+                                connection:Disconnect() -- Disconnect immediately after use
                             end)
-                            -- Alternatively, you can try firing the Signal directly, but connecting to Activated is safer for timing.
-                            -- Signal.Fire("Console: Pressed Button", YesButton)
-                            -- Signal.Fire("Console: Released Button", YesButton) -- Some games require both pressed/released
                         else
-                            warn("    Warning: Could not find Yes button in Message GUI. Automated purchase confirmation might fail.")
+                            warn("    Warning: Could not find Yes button for auto-confirmation. Purchase might get stuck.")
                         end
 
                         local bought = Network.Invoke("Booths_RequestPurchase", player.UserId, {
@@ -277,9 +313,8 @@ local function CheckAllListings()
                             print(string.format("      FAILURE: Purchase of %s failed. Server response: %s", data.id, tostring(bought)))
                         end
 
-                        -- Disconnect the connection if it wasn't already (important if you don't break after purchase)
                         if connection and connection.Connected then
-                            connection:Disconnect()
+                            connection:Disconnect() -- Ensure disconnected
                         end
 
                     else
@@ -291,8 +326,9 @@ local function CheckAllListings()
             end
         end
     end
-    print("--- Finished CheckAllListings ---")
+    print("--- Finished CheckAllListings Debug ---")
 end
+                        
 
 -- Initial Check
 CheckAllListings()
