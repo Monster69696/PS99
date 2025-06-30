@@ -171,6 +171,64 @@ for _, obj in ipairs(workspace:GetDescendants()) do
     end
 end
 
+-- 💡 Clean & Freeze Character (Hybrid Mode: Anti-Muscle + Minimal Avatar)
+local function simplifyAndLockCharacter()
+    local char = plr.Character or plr.CharacterAdded:Wait()
+
+    -- 1. Destroy all clothing + accessories
+    for _, item in ipairs(char:GetChildren()) do
+        if item:IsA("Accessory") or item:IsA("Shirt") or item:IsA("Pants")
+        or item:IsA("ShirtGraphic") or item:IsA("CharacterMesh") or item:IsA("BodyColors")
+        or item:IsA("Decal") then
+            pcall(function() item:Destroy() end)
+        end
+    end
+
+    -- 2. Resize all body parts to minimal size and make invisible
+    local function cleanPart(part)
+        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+            pcall(function()
+                part.Size = Vector3.new(0.1, 0.1, 0.1)
+                part.Transparency = 1
+                part.Material = Enum.Material.SmoothPlastic
+                part.CanCollide = false
+                part.CastShadow = false
+                for _, d in ipairs(part:GetChildren()) do
+                    if d:IsA("Decal") or d:IsA("Texture") then d:Destroy() end
+                end
+            end)
+        end
+    end
+    for _, v in ipairs(char:GetChildren()) do
+        cleanPart(v)
+    end
+
+    -- 3. Lock humanoid properties
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.WalkSpeed = 16
+        hum.JumpPower = 0
+        hum.HipHeight = 1
+        hum.AutoRotate = false
+        hum.NameDisplayDistance = 0
+        pcall(function()
+            hum.BodyDepthScale.Value = 0.1
+            hum.BodyHeightScale.Value = 0.1
+            hum.BodyWidthScale.Value = 0.1
+            hum.HeadScale.Value = 0.1
+        end)
+    end
+end
+
+-- 🔁 Run on spawn and once now
+simplifyAndLockCharacter()
+plr.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    simplifyAndLockCharacter()
+end)
+
+
+
 -- 🕶️ BLACK SCREEN TOGGLE GUI
 local blackScreenGui = Instance.new("ScreenGui")
 blackScreenGui.Name = "FullBlackScreenWithToggle"
@@ -223,3 +281,5 @@ CoreGui.ChildAdded:Connect(function(gui)
         pcall(function() gui:Destroy() end)
     end
 end)
+
+
