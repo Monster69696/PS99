@@ -171,21 +171,23 @@ for _, obj in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- 💡 Clean & Freeze Character (Hybrid Mode: Anti-Muscle + Minimal Avatar)
-local function simplifyAndLockCharacter()
+-- 💪 Hard Anti-Muscle / Tiny Size Lock
+local function hardLockBodyTiny()
     local char = plr.Character or plr.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
 
-    -- 1. Destroy all clothing + accessories
-    for _, item in ipairs(char:GetChildren()) do
-        if item:IsA("Accessory") or item:IsA("Shirt") or item:IsA("Pants")
-        or item:IsA("ShirtGraphic") or item:IsA("CharacterMesh") or item:IsA("BodyColors")
-        or item:IsA("Decal") then
-            pcall(function() item:Destroy() end)
+    -- Remove visuals
+    for _, v in ipairs(char:GetChildren()) do
+        if v:IsA("Accessory") or v:IsA("Clothing") or v:IsA("Shirt") or v:IsA("Pants")
+        or v:IsA("BodyColors") or v:IsA("HumanoidDescription") or v:IsA("CharacterMesh")
+        or v:IsA("Tool") or v:IsA("ShirtGraphic") then
+            pcall(function() v:Destroy() end)
         end
     end
 
-    -- 2. Resize all body parts to minimal size and make invisible
-    local function cleanPart(part)
+    -- Tiny, invisible body parts
+    for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
             pcall(function()
                 part.Size = Vector3.new(0.1, 0.1, 0.1)
@@ -196,38 +198,60 @@ local function simplifyAndLockCharacter()
                 for _, d in ipairs(part:GetChildren()) do
                     if d:IsA("Decal") or d:IsA("Texture") then d:Destroy() end
                 end
+                part:GetPropertyChangedSignal("Size"):Connect(function()
+                    part.Size = Vector3.new(0.1, 0.1, 0.1)
+                end)
+            end)
+        elseif part:IsA("SpecialMesh") or part:IsA("Mesh") then
+            pcall(function()
+                part.Scale = Vector3.new(1, 1, 1)
+                part:GetPropertyChangedSignal("Scale"):Connect(function()
+                    part.Scale = Vector3.new(1, 1, 1)
+                end)
             end)
         end
     end
-    for _, v in ipairs(char:GetChildren()) do
-        cleanPart(v)
+
+    -- Lock humanoid scaling
+    for _, scaleName in ipairs({
+        "BodyHeightScale", "BodyWidthScale", "BodyDepthScale", "HeadScale"
+    }) do
+        local scale = hum:FindFirstChild(scaleName)
+        if scale then
+            scale.Value = 0.1
+            scale.Changed:Connect(function()
+                scale.Value = 0.1
+            end)
+        end
     end
 
-    -- 3. Lock humanoid properties
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if hum then
-        hum.WalkSpeed = 16
-        hum.JumpPower = 0
-        hum.HipHeight = 1
-        hum.AutoRotate = false
-        hum.NameDisplayDistance = 0
-        pcall(function()
-            hum.BodyDepthScale.Value = 0.1
-            hum.BodyHeightScale.Value = 0.1
-            hum.BodyWidthScale.Value = 0.1
-            hum.HeadScale.Value = 0.1
-        end)
+    hum.HipHeight = 0.5
+    hum.AutoRotate = false
+    hum.NameDisplayDistance = 0
+
+    -- Remove animations
+    local function killAnimator(animator)
+        if animator:IsA("Animator") then
+            pcall(function()
+                for _, t in ipairs(animator:GetPlayingAnimationTracks()) do t:Stop() end
+                animator:Destroy()
+            end)
+        end
     end
+    for _, v in ipairs(char:GetDescendants()) do
+        if v:IsA("Animator") then killAnimator(v) end
+    end
+    char.DescendantAdded:Connect(function(desc)
+        if desc:IsA("Animator") then task.wait(0.1) killAnimator(desc) end
+    end)
 end
 
--- 🔁 Run on spawn and once now
-simplifyAndLockCharacter()
+-- 🧬 Apply on spawn
+pcall(hardLockBodyTiny)
 plr.CharacterAdded:Connect(function()
-    task.wait(0.5)
-    simplifyAndLockCharacter()
+    task.wait(1)
+    pcall(hardLockBodyTiny)
 end)
-
-
 
 -- 🕶️ BLACK SCREEN TOGGLE GUI
 local blackScreenGui = Instance.new("ScreenGui")
