@@ -6,7 +6,6 @@ repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
 
 -- ✅ Services / Libraries
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local InstancingCmds = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("InstancingCmds"))
 local EggCmds = require(ReplicatedStorage.Library.Client.EggCmds)
 local Network = require(ReplicatedStorage.Library.Client.Network)
 local GetMaxEggsToHatch = EggCmds.GetMaxHatch()
@@ -14,44 +13,10 @@ local GetMaxEggsToHatch = EggCmds.GetMaxHatch()
 -- ✅ Remote Events
 local Train = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Train")
 local Start = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Start")
-local ZonePurchase = ReplicatedStorage.Network:WaitForChild("InstanceZones_RequestPurchase")
-local GymRebirth = ReplicatedStorage.Network:WaitForChild("Gym_Rebirth")
 
 -- ✅ Remove Egg Animation
 local EggScript = player.PlayerScripts:WaitForChild("Scripts"):WaitForChild("Game"):WaitForChild("Egg Opening Frontend")
 getsenv(EggScript).PlayEggAnimation = function() return end
-
--- ✅ Enter Gym Event
-local function EnterGymEvent()
-    setthreadidentity(2)
-    pcall(function()
-        InstancingCmds.Enter("GymEvent")
-    end)
-    setthreadidentity(7)
-end
-
-EnterGymEvent()
-task.wait(3)
-
--- ✅ Auto buy all zones
-task.spawn(function()
-    while task.wait(1) do
-        for zone = 1, 5 do
-            pcall(function()
-                ZonePurchase:InvokeServer("GymEvent", zone)
-            end)
-        end
-    end
-end)
-
--- ✅ Auto Rebirth
-task.spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            GymRebirth:InvokeServer()
-        end)
-    end
-end)
 
 -- ✅ Auto Start (Infinite Mode)
 task.spawn(function()
