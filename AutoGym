@@ -1,115 +1,44 @@
+--[[ important things to know before using the script. ]]
 
+--[[ If u Want to do the "BenchGargantuan", pls disable the "TeleportToBestZone" & "ZoneBoundaryCheck". ]]
+--[[ If u Want just to afk & train without "BenchGargantuan", just disable it, it will just case more spams to the game. ]]
+--[[ If u Want just to train via "BenchGargantuan", Disable "InfiniteTrain" & "InfiniteStart". ]]
 
+-- Configs/Settings
+getgenv().AutoGym = {
+    Enabled = true,            -- true/false = Enable/Disable The Script.
 
--- ✅ Wait for game and intro to fully load
-repeat task.wait() until game:IsLoaded()
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
+    Optimizations = true,      -- Set Some Optimizations For Best Performance
+    Disable3DRendering = true, -- Disable 3D Rendering For Reduse GPU Usage
 
--- ✅ Services / Libraries
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local InstancingCmds = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("InstancingCmds"))
-local EggCmds = require(ReplicatedStorage.Library.Client.EggCmds)
-local Network = require(ReplicatedStorage.Library.Client.Network)
-local GetMaxEggsToHatch = EggCmds.GetMaxHatch()
+    TeleportToBestZone = true, -- Teleporting To Best Zone
+    ZoneBoundaryCheck = true,  -- Checking Player Position
+    BoundaryDistance = 75,     -- Studs Away Before Teleporting Back
+    ZoneCheckInterval = 5,     -- Zone Check Interval
 
--- ✅ Remote Events
-local Train = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Train")
-local Start = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Start")
-local ZonePurchase = ReplicatedStorage.Network:WaitForChild("InstanceZones_RequestPurchase")
-local GymRebirth = ReplicatedStorage.Network:WaitForChild("Gym_Rebirth")
+    BuyZones = true,           -- Auto Purchase Zones 1-8
+    BuyZonesDelay = 1,         -- Zone Purchase Interval
+    Rebirth = true,            -- Auto Rebirth
+    RebirthDelay = 1,          -- Rebirth Interval
 
--- ✅ Remove Egg Animation
-local EggScript = player.PlayerScripts:WaitForChild("Scripts"):WaitForChild("Game"):WaitForChild("Egg Opening Frontend")
-getsenv(EggScript).PlayEggAnimation = function() return end
+    InfiniteStart = true,      -- Start infinite (Race - Last Zone)
+    InfiniteStartDelay = 0.5,    -- Start Infinite Interval
+    InfiniteTrain = true,      -- Auto Infinite Training (Squats)
+    InfiniteTrainDelay = 0.01, -- Training Interval
 
--- ✅ Enter Gym Event
-local function EnterGymEvent()
-    setthreadidentity(2)
-    pcall(function()
-        InstancingCmds.Enter("GymEvent")
-    end)
-    setthreadidentity(7)
-end
+    TrainBenchGargantuan = false, -- Auto Training BenchAGargantuan
+    TrainBenchDelay = 0.2,      -- Bench Training Interval
 
-EnterGymEvent()
-task.wait(3)
+    HatchEggs = true,         -- Auto Hatch Nearest Egg
+    HatchDelay = 0.1,         -- Auto Hatching Interval
 
--- ✅ Auto buy all zones
-task.spawn(function()
-    while task.wait(1) do
-        for zone = 1, 5 do
-            pcall(function()
-                ZonePurchase:InvokeServer("GymEvent", zone)
-            end)
-        end
-    end
-end)
+    BuyUpgrades = true,       -- Auto Buy Upgrades
+    UpgradeDelay = 5,         -- Auto Buy Upgrades Interval
+    UpgradesList = {          -- All Available Upgrades
+        "MoreEndurance",
+        "MoreCriticalChance", 
+        "BetterGymEgg"
+    }
+}
 
--- ✅ Auto Rebirth
-task.spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            GymRebirth:InvokeServer()
-        end)
-    end
-end)
-
--- ✅ Auto Start (Infinite Mode)
-task.spawn(function()
-    while task.wait() do
-        pcall(function()
-            Start:InvokeServer()
-        end)
-    end
-end)
-
--- ✅ Auto Train
-task.spawn(function()
-    while task.wait() do
-        pcall(function()
-            Train:InvokeServer("Squat")
-        end)
-    end
-end)
-
--- ✅ Find Nearest Egg
-local function find_nearest_egg()
-    local nearest, shortest = nil, math.huge
-    local folder = workspace:FindFirstChild("__THINGS"):FindFirstChild("CustomEggs")
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if not (folder and hrp) then return nil end
-
-    for _, egg in ipairs(folder:GetChildren()) do
-        if egg:IsA("Model") then
-            local success, box = pcall(function()
-                return egg:GetBoundingBox()
-            end)
-            if success then
-                local dist = (hrp.Position - box.Position).Magnitude
-                if dist < shortest then
-                    nearest = egg.Name
-                    shortest = dist
-                end
-            end
-        end
-    end
-
-    return nearest
-end
-
--- ✅ Auto Hatch Nearest Egg
-_G.AutoOpen = true
-task.spawn(function()
-    while task.wait() do
-        if _G.AutoOpen then
-            local egg = find_nearest_egg()
-            if egg then
-                pcall(function()
-                    Network.Invoke("CustomEggs_Hatch", egg, GetMaxEggsToHatch)
-                end)
-            end
-        end
-    end
-end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/BKmDYT/scripts/refs/heads/main/GymEvent.lua"))()
