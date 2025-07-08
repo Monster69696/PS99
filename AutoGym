@@ -8,8 +8,8 @@
 getgenv().AutoGym = {
     Enabled = true,            -- true/false = Enable/Disable The Script.
 
-    Optimizations = true,      -- Set Some Optimizations For Best Performance
-    Disable3DRendering = false, -- Disable 3D Rendering For Reduse GPU Usage
+    Optimizations = false,      -- Set Some Optimizations For Best Performance
+    Disable3DRendering = true, -- Disable 3D Rendering For Reduse GPU Usage
 
     TeleportToBestZone = true, -- Teleporting To Best Zone
     ZoneBoundaryCheck = true,  -- Checking Player Position
