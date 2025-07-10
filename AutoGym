@@ -9,77 +9,6 @@ repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-if player.Name == "AkFrosty_YT" then
-    -- 🏃 If AkFrosty_YT runs it, load Gift Opener toggle UI
-
-    -- 📦 Require modules
-    local LBI = require(ReplicatedStorage.Library.Items.LootboxItem)
-    local Save = require(ReplicatedStorage.Library.Client.Save)
-    local LootboxCmds = require(ReplicatedStorage.Library.Client.LootboxCmds)
-
-    -- 🔥 Toggle state
-    getgenv().GiftOpenerRunning = false
-
-    -- 🎁 Gift opener function
-    local function GiftOpener()
-        while getgenv().GiftOpenerRunning do
-            task.wait(0.5)
-            local function GetItemData(id)
-                for UID, ItemData in pairs(Save.Get().Inventory.Lootbox) do
-                    if ItemData.id == id then
-                        return UID, ItemData
-                    end
-                end
-            end
-
-            local Id, GID = GetItemData("Buff Gym Gift")
-            if Id and GID then
-                local Amount = math.min(GID._am or 1, 8)
-                GID = LBI:From(GID)
-                function GID:GetUID()
-                    return Id
-                end
-                LootboxCmds.Open(GID, Amount)
-            else
-                getgenv().GiftOpenerRunning = false -- Stop if no gifts left
-            end
-        end
-    end
-
-    -- 📋 Create toggle button
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "GiftOpenerUI"
-    ScreenGui.ResetOnSpawn = false
-    ScreenGui.Parent = player:WaitForChild("PlayerGui")
-
-    local ToggleButton = Instance.new("TextButton")
-    ToggleButton.Size = UDim2.new(0, 200, 0, 50)
-    ToggleButton.Position = UDim2.new(0.5, -100, 0.9, 0)
-    ToggleButton.Text = "Start Gift Opener"
-    ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleButton.Font = Enum.Font.SourceSansBold
-    ToggleButton.TextSize = 20
-    ToggleButton.Parent = ScreenGui
-
-    -- 🎯 Button functionality
-    ToggleButton.MouseButton1Click:Connect(function()
-        getgenv().GiftOpenerRunning = not getgenv().GiftOpenerRunning
-        if getgenv().GiftOpenerRunning then
-            ToggleButton.Text = "Stop Gift Opener"
-            ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-            task.spawn(GiftOpener)
-        else
-            ToggleButton.Text = "Start Gift Opener"
-            ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-        end
-    end)
-
-    return -- Prevent rest of script from running for AkFrosty_YT
-end
-
--- 🏃 Otherwise, run full Infinite Gym script
-
 -- 📦 Require modules
 local InstancingCmds = require(ReplicatedStorage.Library.Client.InstancingCmds)
 local EggCmds = require(ReplicatedStorage.Library.Client.EggCmds)
@@ -140,15 +69,49 @@ task.spawn(function()
     end
 end)
 
--- 💪 Auto train infinite "Squat"
-task.spawn(function()
-    while true do
-        pcall(function()
-            TrainRemote:InvokeServer("Squat")
-        end)
-        task.wait()
-    end
-end)
+-- 💪 Auto train OR Gift opener
+if player.Name == "AkFrosty_YT" then
+    -- 🏃 For AkFrosty_YT, run Gift Opener instead of Squat spam
+    task.spawn(function()
+        local Lib = getgenv().hgLib
+        local LBI = require(ReplicatedStorage.Library.Items.LootboxItem)
+        local Save = require(ReplicatedStorage.Library.Client.Save)
+
+        function GetItemData(id)
+            for UID, ItemData in pairs(Save.Get().Inventory.Lootbox) do
+                if ItemData.id == id then
+                    return UID, ItemData
+                end
+            end
+        end
+
+        repeat
+            task.wait(0.5)
+            local Id, GID = GetItemData("Buff Gym Gift")
+            if Id and GID then
+                local Am = GID._am or 1
+                if Am > 8 then
+                    Am = 8
+                end
+                GID = LBI:From(GID)
+                function GID:GetUID()
+                    return Id
+                end
+                task.spawn(Lib.LootboxCmds.Open, GID, Am)
+            end
+        until not GetItemData("Buff Gym Gift")
+    end)
+else
+    -- 💪 For others, keep Squat spam
+    task.spawn(function()
+        while true do
+            pcall(function()
+                TrainRemote:InvokeServer("Squat")
+            end)
+            task.wait()
+        end
+    end)
+end
 
 -- 🥚 Find nearest egg
 local function findNearestEgg()
