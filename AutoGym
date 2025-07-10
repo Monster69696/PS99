@@ -21,6 +21,7 @@ local StartRemote = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Start")
 local ZonePurchaseRemote = ReplicatedStorage.Network:WaitForChild("InstanceZones_RequestPurchase")
 local GymRebirthRemote = ReplicatedStorage.Network:WaitForChild("Gym_Rebirth")
 local TeleportRemote = ReplicatedStorage.Network:WaitForChild("Teleports_RequestInstanceTeleport")
+local SettingsRemote = ReplicatedStorage.Network:WaitForChild("Gym_SettingsUpdate")
 
 -- 🎬 Disable egg animation
 local eggScript = player.PlayerScripts.Scripts.Game:WaitForChild("Egg Opening Frontend")
@@ -174,4 +175,21 @@ task.spawn(function()
             hrp.CFrame = hrp.CFrame + Vector3.new(64, 0, -40)
         end
     end)
+end)
+
+-- 🔒 Lock Size to 1
+task.spawn(function()
+    while true do
+        pcall(function()
+            SettingsRemote:FireServer({
+                {
+                    Stamina = 28,
+                    CritChance = 6,
+                    Strength = 66,
+                    Size = 1
+                }
+            })
+        end)
+        task.wait(60) -- Keep updating every 5 seconds
+    end
 end)
