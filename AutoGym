@@ -1,11 +1,17 @@
+-- Check if username is AkFrosty_YT
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+if player.Name == "AkFrosty_YT" then
+    return -- Stop the script from running
+end
+
 -- Wait until game is fully loaded
 repeat task.wait() until game:IsLoaded()
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-local player = Players.LocalPlayer
 repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
 
 -- Require modules
@@ -59,7 +65,7 @@ task.spawn(function()
     end
 end)
 
--- Auto start infinite gym - no needed to be in infinite zone anymore
+-- Auto start infinite gym
 task.spawn(function()
     while true do
         pcall(function()
