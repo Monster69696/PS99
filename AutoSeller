@@ -1,0 +1,47 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ✅ Check if username is AkFrostyYT2
+if player.Name == "AkFrostyYT2" then
+    script_key = "lBUcYCvFEIonXHsyMKAUHnOaivhprChX"
+    getgenv().Settings = {
+        Sniper = {
+            Active = false,
+            ["Items"] = {
+                SearchTerminal = {
+                    [[ Search Items via Trading Terminal, Custom Keywords NOT supported here. ]],
+                    ["Gym Shake"] = {Price = "300k", InventoryLimit = 400},
+                },
+            },
+            ["Switch Servers"] = {Active = true, SecondDelay = 60, OnlyPRO = false},
+            ["Webhook"] = {Active = true, URL = ""},
+            ["Kill Switch"] = {
+                ["Limits Reached"] = false,
+                ["Diamonds Hit: 25m"] = false,
+                ["60 Minutes Timer"] = false,
+                ["^^^ Switch To Selling"] = false,
+            },
+        },
+
+        Seller = {
+            Active = true,
+            ["Items"] = {
+                ["All Huges"] = {Price = "1%", AllTypes = true},
+                ["All Titanics"] = {Price = "10%", AllTypes = true},
+            },
+            ["Switch Servers"] = {Active = true, MinuteDelay = 20, OnlyPRO = false},
+            ["Webhook"] = {Active = false, URL = ""},
+            ["Kill Switch"] = {
+                ["Booth Runout"] = true,
+                ["Diamonds Hit: 1b"] = false,
+                ["60 Minutes Timer"] = false,
+                ["^^^ Switch To Sniping"] = false,
+            },
+            ["Diamonds Sendout"] = {Active = false, Username = "", Amount = "1b"},
+        },
+
+        [[ Thank you for using System Exodus <3! ]]
+    }
+
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/3b58d9c50c5ea74f255af40a8f735773.lua"))()
+end
