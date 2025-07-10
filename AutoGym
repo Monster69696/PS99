@@ -1,37 +1,103 @@
--- Check if username is AkFrosty_YT
+-- ✅ Check if username is AkFrosty_YT
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if player.Name == "AkFrosty_YT" then
-    return -- Stop the script from running
-end
-
 -- Wait until game is fully loaded
 repeat task.wait() until game:IsLoaded()
+repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-repeat task.wait() until not player.PlayerGui:FindFirstChild("__INTRO")
+if player.Name == "AkFrosty_YT" then
+    -- 🏃 If AkFrosty_YT runs it, load Gift Opener toggle UI
 
--- Require modules
+    -- 📦 Require modules
+    local LBI = require(ReplicatedStorage.Library.Items.LootboxItem)
+    local Save = require(ReplicatedStorage.Library.Client.Save)
+    local LootboxCmds = require(ReplicatedStorage.Library.Client.LootboxCmds)
+
+    -- 🔥 Toggle state
+    getgenv().GiftOpenerRunning = false
+
+    -- 🎁 Gift opener function
+    local function GiftOpener()
+        while getgenv().GiftOpenerRunning do
+            task.wait(0.5)
+            local function GetItemData(id)
+                for UID, ItemData in pairs(Save.Get().Inventory.Lootbox) do
+                    if ItemData.id == id then
+                        return UID, ItemData
+                    end
+                end
+            end
+
+            local Id, GID = GetItemData("Buff Gym Gift")
+            if Id and GID then
+                local Amount = math.min(GID._am or 1, 8)
+                GID = LBI:From(GID)
+                function GID:GetUID()
+                    return Id
+                end
+                LootboxCmds.Open(GID, Amount)
+            else
+                getgenv().GiftOpenerRunning = false -- Stop if no gifts left
+            end
+        end
+    end
+
+    -- 📋 Create toggle button
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "GiftOpenerUI"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Size = UDim2.new(0, 200, 0, 50)
+    ToggleButton.Position = UDim2.new(0.5, -100, 0.9, 0)
+    ToggleButton.Text = "Start Gift Opener"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.Font = Enum.Font.SourceSansBold
+    ToggleButton.TextSize = 20
+    ToggleButton.Parent = ScreenGui
+
+    -- 🎯 Button functionality
+    ToggleButton.MouseButton1Click:Connect(function()
+        getgenv().GiftOpenerRunning = not getgenv().GiftOpenerRunning
+        if getgenv().GiftOpenerRunning then
+            ToggleButton.Text = "Stop Gift Opener"
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            task.spawn(GiftOpener)
+        else
+            ToggleButton.Text = "Start Gift Opener"
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+        end
+    end)
+
+    return -- Prevent rest of script from running for AkFrosty_YT
+end
+
+-- 🏃 Otherwise, run full Infinite Gym script
+
+-- 📦 Require modules
 local InstancingCmds = require(ReplicatedStorage.Library.Client.InstancingCmds)
 local EggCmds = require(ReplicatedStorage.Library.Client.EggCmds)
 local Network = require(ReplicatedStorage.Library.Client.Network)
 local InstanceZoneCmds = require(ReplicatedStorage.Library.Client.InstanceZoneCmds)
 
--- Remotes
+-- 📡 Remotes
 local TrainRemote = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Train")
 local StartRemote = ReplicatedStorage.Network:WaitForChild("InfiniteGym_Start")
 local ZonePurchaseRemote = ReplicatedStorage.Network:WaitForChild("InstanceZones_RequestPurchase")
 local GymRebirthRemote = ReplicatedStorage.Network:WaitForChild("Gym_Rebirth")
 local TeleportRemote = ReplicatedStorage.Network:WaitForChild("Teleports_RequestInstanceTeleport")
 
--- Disable egg animation
+-- 🎬 Disable egg animation
 local eggScript = player.PlayerScripts.Scripts.Game:WaitForChild("Egg Opening Frontend")
 getsenv(eggScript).PlayEggAnimation = function() end
 
--- Enter GymEvent
+-- 🏃 Enter GymEvent
 local function enterGymEvent()
     setthreadidentity(2)
     pcall(function()
@@ -39,11 +105,10 @@ local function enterGymEvent()
     end)
     setthreadidentity(7)
 end
-
 enterGymEvent()
 task.wait(10)
 
--- Auto buy zones
+-- 💰 Auto buy zones
 task.spawn(function()
     while true do
         for zone = 1, 5 do
@@ -55,7 +120,7 @@ task.spawn(function()
     end
 end)
 
--- Auto rebirth
+-- 🔄 Auto rebirth
 task.spawn(function()
     while true do
         pcall(function()
@@ -65,7 +130,7 @@ task.spawn(function()
     end
 end)
 
--- Auto start infinite gym
+-- 🔁 Auto start infinite gym
 task.spawn(function()
     while true do
         pcall(function()
@@ -75,7 +140,7 @@ task.spawn(function()
     end
 end)
 
--- Auto train infinite "Squat"
+-- 💪 Auto train infinite "Squat"
 task.spawn(function()
     while true do
         pcall(function()
@@ -85,7 +150,7 @@ task.spawn(function()
     end
 end)
 
--- Find nearest egg
+-- 🥚 Find nearest egg
 local function findNearestEgg()
     local eggsFolder = workspace.__THINGS:FindFirstChild("CustomEggs")
     if not eggsFolder then return nil end
@@ -111,7 +176,7 @@ local function findNearestEgg()
     return nearestEgg
 end
 
--- Auto hatch nearest egg
+-- 🐣 Auto hatch nearest egg
 _G.AutoOpen = true
 task.spawn(function()
     while task.wait() do
@@ -126,7 +191,7 @@ task.spawn(function()
     end
 end)
 
--- TP to max owned zone once
+-- 🚀 TP to max owned zone once
 task.spawn(function()
     pcall(function()
         local maxZone = InstanceZoneCmds.GetMaximumOwnedZoneNumber()
