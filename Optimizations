@@ -6,6 +6,18 @@ local StarterGui = game:GetService("StarterGui")
 local CoreGui = game:GetService("CoreGui")
 local PlayerGui = plr:WaitForChild("PlayerGui")
 
+-- 🛠️ Force Roblox Settings for Optimization
+local UserSettings = game:GetService("UserSettings")
+local GameSettings = UserSettings().GameSettings
+
+pcall(function()
+    GameSettings.SavedQualityLevel = Enum.SavedQualitySetting.QualityLevel1 -- Graphics 1
+    GameSettings.GraphicsMode = Enum.GraphicsMode.Manual -- Set graphics to Manual
+    GameSettings.Volume = 0 -- Mute volume
+    GameSettings.VibrationEnabled = false -- Haptics off
+    GameSettings.ReducedMotion = true -- Reduce motion
+end)
+
 -- 📉 FPS Cap
 pcall(function()
     if setfpscap then setfpscap(10) end
@@ -251,6 +263,25 @@ pcall(hardLockBodyTiny)
 plr.CharacterAdded:Connect(function()
     task.wait(1)
     pcall(hardLockBodyTiny)
+end)
+
+-- 🧹 Memory Cleaner: Runs every 60 seconds
+local function cleanMemory()
+    collectgarbage("collect") -- Force Lua GC
+    pcall(function() game:GetService("Debris"):ClearAllChildren() end) -- Clear debris
+    -- Optional: Clean unused PlayerGui
+    for _, ui in pairs(PlayerGui:GetChildren()) do
+        if ui:IsA("ScreenGui") and not ui.Enabled and ui.Name ~= "FullBlackScreenWithToggle" then
+            pcall(function() ui:Destroy() end)
+        end
+    end
+end
+
+task.spawn(function()
+    while true do
+        task.wait(300) -- Every 60 seconds
+        cleanMemory()
+    end
 end)
 
 -- 🕶️ BLACK SCREEN TOGGLE GUI
