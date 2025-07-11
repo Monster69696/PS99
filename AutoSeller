@@ -26,7 +26,7 @@ if player.Name == "AkFrostyYT2" then
         Seller = {
             Active = true,
             ["Items"] = {
-                ["All Titanics"] = {Price = "2%", AllTypes = true},
+                ["All Titanics"] = {Price = "+1%", AllTypes = true, UseCosmicValues = true},
                 ["All Huges"] = {Price = "1%", AllTypes = true},
             },
             ["Switch Servers"] = {Active = true, MinuteDelay = 20, OnlyPRO = false},
