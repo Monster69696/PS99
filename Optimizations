@@ -6,18 +6,6 @@ local StarterGui = game:GetService("StarterGui")
 local CoreGui = game:GetService("CoreGui")
 local PlayerGui = plr:WaitForChild("PlayerGui")
 
--- 🛠️ Force Roblox Settings for Optimization
-local UserSettings = game:GetService("UserSettings")
-local GameSettings = UserSettings().GameSettings
-
-pcall(function()
-    GameSettings.SavedQualityLevel = Enum.SavedQualitySetting.QualityLevel1 -- Graphics 1
-    GameSettings.GraphicsMode = Enum.GraphicsMode.Manual -- Set graphics to Manual
-    GameSettings.Volume = 0 -- Mute volume
-    GameSettings.VibrationEnabled = false -- Haptics off
-    GameSettings.ReducedMotion = true -- Reduce motion
-end)
-
 -- 📉 FPS Cap
 pcall(function()
     if setfpscap then setfpscap(10) end
