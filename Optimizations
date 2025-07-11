@@ -8,7 +8,7 @@ local PlayerGui = plr:WaitForChild("PlayerGui")
 
 -- 📉 FPS Cap
 pcall(function()
-    if setfpscap then setfpscap(10) end
+    if setfpscap then setfpscap(20) end
 end)
 
 -- 🖼️ Lower Quality Settings
