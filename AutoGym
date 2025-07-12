@@ -71,7 +71,7 @@ task.spawn(function()
 end)
 
 -- 💪 Auto train OR Gift opener
-if player.Name == "DoxepinsAlt2" then
+if player.Name == "AkFrosty_YT" then
     -- 🏃 For AkFrosty_YT, run Gift Opener instead of Squat spam
     task.spawn(function()
         local Lib = getgenv().hgLib
