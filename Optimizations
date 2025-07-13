@@ -1,5 +1,4 @@
--- PS99 OP Optimizer (Final Edition - Modified by gpt bhaiya)
-
+-- PS99 OP Optimizer (Final Edition - Pristine Copy)
 local plr = game.Players.LocalPlayer
 local Lighting = game:GetService("Lighting")
 local StarterGui = game:GetService("StarterGui")
@@ -11,10 +10,10 @@ pcall(function()
     if setfpscap then setfpscap(20) end
 end)
 
--- 🖼️ Lower Quality Settings
+-- 🖼️ Lower Quality Settings (Fixed)
 pcall(function()
     settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-    settings().Rendering.TextureQuality = Enum.TextureQuality.Low
+    -- settings().Rendering.TextureQuality removed (deprecated in Roblox)
 end)
 
 -- ⚡ Clean Workspace
@@ -325,4 +324,23 @@ CoreGui.ChildAdded:Connect(function(gui)
     end
 end)
 
+--------------------------------------------------
+-- NEW OPTIONAL FEATURES (UNCOMMENT TO ACTIVATE)
+--------------------------------------------------
 
+-- 🌐 Network Optimizer (Reduces lag)
+for _, part in ipairs(workspace:GetDescendants()) do
+    if part:IsA("BasePart") and not part:IsDescendantOf(plr.Character) then
+        pcall(function() part:SetNetworkOwner(nil) end)
+    end
+end
+
+-- 🔄 Smart Throttling (Prevents lag spikes)
+local lastCheck = 0
+workspace.DescendantAdded:Connect(function(obj)
+    if os.clock() - lastCheck < 0.1 then return end
+    lastCheck = os.clock()
+    if obj:IsA("ParticleEmitter") then
+        pcall(obj.Destroy, obj)
+    end
+end)
