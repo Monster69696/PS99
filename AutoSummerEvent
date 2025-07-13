@@ -1,0 +1,30 @@
+
+-- Configs/Settings
+getgenv().AutoSummerEvent = {
+    Enabled                      = true,  -- Whole Script Control true/false
+
+    AutoTiles                    = true,  -- Auto Buy Blocks/Tiles
+    TilesDelay                   = 10,    -- Auto Buy Blocks/Tiles Delay
+
+    AutoRewards                  = true,  -- Auto Claim/Buy Rewards
+    RewardsDelay                 = 3,     -- Auto Claim/Buy Rewards Delay
+    
+    AutoRebirth                  = true,  -- Auto Rebirth
+    SkipRebirthOnTitanic         = true,  -- (Unstable) When You Have Titanic Egg, It Wont Rebirth
+    SkipRebirthOnEgg             = "100x",-- Stop Rebirth On Selected Egg Chance
+    RebirthDelay                 = 135,   -- Auto Rebirth Delay
+
+    AutoTeleportToBestEgg        = true,  -- Auto Teleport To Best Egg (Luck Chance)
+    AutoTeleportToBestTitanicEgg = true,  -- Auto Teleport To Best TITANIC Egg (Luck Chance)
+    EggTeleportDelay             = 0.2,   -- dont change if u dont know whats this
+    EggScanInterval              = 120,   -- Egg Scan Interbal
+    LuckProximity                = 25,    -- dont change if u dont know whats this
+
+    HatchStopIslandProgress      = 50,    -- If Island Progress Less Than E.g (50) Stop Hatching
+    HatchEggs                    = true,  -- Auto Hatch Egg
+    HatchDelay                   = 0.1,   -- Hatch Delay
+
+    Optimizations                = true, -- Auto Able Optimizations
+}
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Sub2BK/Stratum/refs/heads/Scripts/PS99_Event.lua"))()
