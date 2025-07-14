@@ -24,7 +24,7 @@ getgenv().AutoSummerEvent = {
     HatchEggs                    = false,  -- Auto Hatch Egg
     HatchDelay                   = 0.1,   -- Hatch Delay
 
-    Optimizations                = false, -- Auto Able Optimizations
+    Optimizations                = true, -- Auto Able Optimizations
 }
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Sub2BK/Stratum/refs/heads/Scripts/PS99_Event.lua"))()
