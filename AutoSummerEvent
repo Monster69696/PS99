@@ -16,7 +16,7 @@ getgenv().AutoSummerEvent = {
 
     AutoTeleportToBestEgg        = false,  -- Auto Teleport To Best Egg (Luck Chance)
     AutoTeleportToBestTitanicEgg = true,  -- Auto Teleport To Best TITANIC Egg (Luck Chance)
-    EggTeleportDelay             = 0.2,   -- dont change if u dont know whats this
+    EggTeleportDelay             = 0.5,   -- dont change if u dont know whats this
     EggScanInterval              = 60,   -- Egg Scan Interbal
     LuckProximity                = 25,    -- dont change if u dont know whats this
 
