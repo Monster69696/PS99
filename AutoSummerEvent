@@ -10,7 +10,7 @@ getgenv().AutoSummerEvent = {
     RewardsDelay                 = 3,     -- Auto Claim/Buy Rewards Delay
     
     AutoRebirth                  = true,  -- Auto Rebirth
-    SkipRebirthOnTitanic         = true,  -- (Unstable) When You Have Titanic Egg, It Wont Rebirth
+    SkipRebirthOnTitanic         = false,  -- (Unstable) When You Have Titanic Egg, It Wont Rebirth
     SkipRebirthOnEgg             = {"100x","25"},-- Stop Rebirth On Selected Egg Chance
     RebirthDelay                 = 100,   -- Auto Rebirth Delay
 
