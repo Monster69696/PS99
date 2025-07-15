@@ -1,0 +1,44 @@
+-- 🔧 CONFIGURATION
+local targetUsername = "kenzykenx" -- Username to check
+local webhookURL = "https://discord.com/api/webhooks/XXXX/XXXX" -- 🔥 Replace with your webhook URL
+local checkInterval = 600 -- 10 minutes (in seconds)
+
+-- 🌐 Function to send webhook
+local function sendWebhook(content)
+    local http = game:GetService("HttpService")
+    local data = {
+        ["content"] = content
+    }
+    local success, response = pcall(function()
+        http:PostAsync(webhookURL, http:JSONEncode(data))
+    end)
+    if success then
+        print("[✅] Webhook sent successfully.")
+    else
+        warn("[❌] Failed to send webhook:", response)
+    end
+end
+
+-- 🚀 Send test webhook on script start
+sendWebhook("✅ Test: Webhook is working!")
+
+-- 🔄 Loop to check every 10 minutes
+while true do
+    local found = false
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Name:lower() == targetUsername:lower() then
+            found = true
+            break
+        end
+    end
+
+    if found then
+        print("[🟢] Player", targetUsername, "is in the server.")
+        sendWebhook("🟢 Player **" .. targetUsername .. "** is IN the server!")
+    else
+        print("[🔴] Player", targetUsername, "is NOT in the server.")
+        sendWebhook("🔴 Player **" .. targetUsername .. "** is NOT in the server!")
+    end
+
+    wait(checkInterval)
+end
