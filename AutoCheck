@@ -1,6 +1,6 @@
 -- 🔧 CONFIGURATION
 local targetUsername = "kenzykenx" -- Username to check
-local webhookURL = "https://discord.com/api/webhooks/XXXX/XXXX" -- 🔥 Replace with your webhook URL
+local rainyCactus99 = "https://discord.com/api/webhooks/1390104276419874890/ZPZHnk10IbCIXRlZmuOs8jr1Wifnkuw1HJCN9Cnh5k2Aag8MnuryFYL0qjEK6oHBiVez" -- 🔥 Replace with your webhook URL
 local checkInterval = 600 -- 10 minutes (in seconds)
 
 -- 🌐 Function to send webhook
@@ -10,7 +10,7 @@ local function sendWebhook(content)
         ["content"] = content
     }
     local success, response = pcall(function()
-        http:PostAsync(webhookURL, http:JSONEncode(data))
+        http:PostAsync(rainyCactus99, http:JSONEncode(data))
     end)
     if success then
         print("[✅] Webhook sent successfully.")
