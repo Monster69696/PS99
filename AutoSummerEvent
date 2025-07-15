@@ -11,7 +11,7 @@ getgenv().AutoSummerEvent = {
     
     AutoRebirth                  = true,  -- Auto Rebirth
     SkipRebirthOnTitanic         = true,  -- (Unstable) When You Have Titanic Egg, It Wont Rebirth
-    SkipRebirthOnEgg             = false,-- Stop Rebirth On Selected Egg Chance
+    SkipRebirthOnEgg             = {},-- Stop Rebirth On Selected Egg Chance
     RebirthDelay                 = 100,   -- Auto Rebirth Delay
 
     AutoTeleportToBestEgg        = false,  -- Auto Teleport To Best Egg (Luck Chance)
