@@ -3,10 +3,10 @@
 getgenv().AutoSummerEvent = {
     Enabled                      = true,  -- Whole Script Control true/false
 
-    AutoTiles                    = true,  -- Auto Buy Blocks/Tiles
+    AutoTiles                    = false,  -- Auto Buy Blocks/Tiles
     TilesDelay                   = 10,    -- Auto Buy Blocks/Tiles Delay
 
-    AutoRewards                  = true,  -- Auto Claim/Buy Rewards
+    AutoRewards                  = false,  -- Auto Claim/Buy Rewards
     RewardsDelay                 = 3,     -- Auto Claim/Buy Rewards Delay
     
     AutoRebirth                  = true,  -- Auto Rebirth
