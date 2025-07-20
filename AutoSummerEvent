@@ -1,30 +1,38 @@
-
 -- Configs/Settings
 getgenv().AutoSummerEvent = {
-    Enabled                      = true,  -- Whole Script Control true/false
+    ["_GEnabled"] = true,  -- Whole Script Control true/false
 
-    AutoTiles                    = false,  -- Auto Buy Blocks/Tiles
-    TilesDelay                   = 10,    -- Auto Buy Blocks/Tiles Delay
+    ["_GWebhookID"] = "", -- ID/Role To Ping (Leave "" For No Ping)
+    ["_GWebhookURL"] = "YOUR_WEBHOOK_HERE",
+    ["_GWebhookForcedPets"] = {
+        {"Test Pet", "All"}, {"Test Pet", 1}, {"Test Pet", 2},
+        {"Test Pet", true}, {"Test Pet", 1, true}, {"Test Pet", 2, true}
+    },
 
-    AutoRewards                  = false,  -- Auto Claim/Buy Rewards
-    RewardsDelay                 = 3,     -- Auto Claim/Buy Rewards Delay
+    ["_GOptimizationAutoRejoin"] = false,  -- Auto Rejoin After X Seconds (TO REDUSE THE LAG), (Set false or nil to disable)
+    ["_GOptimizationsLastestVersion"] = true,  -- Auto Able Optimizations
+
+    ["_GAutoCollectOrbs"] = true,  -- Auto Collect Orbs & Lootbags
+
+    ["_GAutoTiles"] = true,  -- Auto Buy Blocks/Tiles
+    ["_GTilesDelay"] = 15,     -- Auto Buy Blocks/Tiles Delay
+
+    ["_GAutoRewards"] = true,  -- Auto Claim/Buy Rewards
+    ["_GRewardsDelay"] = 10,     -- Auto Claim/Buy Rewards Delay
     
-    AutoRebirth                  = true,  -- Auto Rebirth
-    SkipRebirthOnTitanic         = true,  -- (Unstable) When You Have Titanic Egg, It Wont Rebirth
-    SkipRebirthOnEgg             = {},-- Stop Rebirth On Selected Egg Chance
-    RebirthDelay                 = 100,   -- Auto Rebirth Delay
+    --[[(Set nil to disable SkipRebirth)]]
+    ["_GAutoRebirth"] = true,  -- Auto Rebirth
+    ["_GRebirthDelay"] = 120,    -- Auto Rebirth Delay
+    ["_GSkipRebirthOnTitanicEgg"] = {"100x"}, -- Stop Rebirth On Selected TITANIC Egg Chance, {"100x", "25x", "5x", "2x", "1x"}
+    ["_GSkipRebirthOnNormalEgg"] = {}, -- Stop Rebirth On Selected Egg Chance, {"100x", "25x", "5x", "2x", "1x"}
+    
+    ["_GAutoTeleportToOthersEggs"] = true,  -- (Recommended Always on), Means It Will Teleport To Other Players Eggs
+    ["_GAutoTeleportToBestEgg"] = false,  -- Auto Teleport To Best Egg (Luck Chance)
+    ["_GAutoTeleportToBestTitanicEgg"] = true,  -- Auto Teleport To Best TITANIC Egg (Luck Chance)
+    ["_GEggScanInterval"] = 10,    -- Egg Scan Interbal
 
-    AutoTeleportToBestEgg        = false,  -- Auto Teleport To Best Egg (Luck Chance)
-    AutoTeleportToBestTitanicEgg = false,  -- Auto Teleport To Best TITANIC Egg (Luck Chance)
-    EggTeleportDelay             = 0.5,   -- dont change if u dont know whats this
-    EggScanInterval              = 90,   -- Egg Scan Interbal
-    LuckProximity                = 25,    -- dont change if u dont know whats this
-
-    HatchStopIslandProgress      = 75,    -- If Island Progress Less Than E.g (50) Stop Hatching
-    HatchEggs                    = false,  -- Auto Hatch Egg
-    HatchDelay                   = 0.1,   -- Hatch Delay
-
-    Optimizations                = true, -- Auto Able Optimizations
+    ["_GHatchStopIslandProgress"] = 50,    -- If Island Progress Less Than E.g (50) Stop Hatching
+    ["_GHatchEggs"] = false,  -- Auto Hatch Egg
+    ["_GHatchDelay"] = 1,   -- Hatch Delay
 }
-
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Sub2BK/Stratum/refs/heads/Scripts/PS99_Event.lua"))()
