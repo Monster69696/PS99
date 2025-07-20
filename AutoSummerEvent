@@ -15,10 +15,10 @@ getgenv().AutoSummerEvent = {
     ["_GAutoCollectOrbs"] = true,  -- Auto Collect Orbs & Lootbags
 
     ["_GAutoTiles"] = true,  -- Auto Buy Blocks/Tiles
-    ["_GTilesDelay"] = 15,     -- Auto Buy Blocks/Tiles Delay
+    ["_GTilesDelay"] = 5,     -- Auto Buy Blocks/Tiles Delay
 
     ["_GAutoRewards"] = true,  -- Auto Claim/Buy Rewards
-    ["_GRewardsDelay"] = 10,     -- Auto Claim/Buy Rewards Delay
+    ["_GRewardsDelay"] = 5,     -- Auto Claim/Buy Rewards Delay
     
     --[[(Set nil to disable SkipRebirth)]]
     ["_GAutoRebirth"] = true,  -- Auto Rebirth
