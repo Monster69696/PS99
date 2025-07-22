@@ -22,7 +22,7 @@ getgenv().AutoSummerEvent = {
     ["_GRaffleAmount"] = 10,     -- Amount Of Tickets Per Raffle, Difficult Is 10.
 
     ["_GHatchStopIslandProgress"] = 168,     -- If Island Progress Less Than E.g (50) Stop Hatching
-    ["_GHatchEggs"] = true,  -- Auto Hatch Egg
+    ["_GHatchEggs"] = false,  -- Auto Hatch Egg
     ["_GHatchDelay"] = 0.2,   -- Hatch Delay
 
     --[[(Set nil to disable SkipRebirth)]]
