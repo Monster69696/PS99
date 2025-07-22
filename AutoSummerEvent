@@ -2,8 +2,8 @@
 getgenv().AutoSummerEvent = {
     ["_GEnabled"] = true,  -- Whole Script Control true/false
 
-    ["_GWebhookID"] = "902135337353109554", -- ID/Role To Ping (Leave "" For No Ping)
-    ["_GWebhookURL"] = "https://discord.com/api/webhooks/1263736357294051339/wxKgfr-PzrI1ttmbVmxAye3KmqShK_Ke0cE7BcMkw3OaTbFZ0xO75JYqn8l_8k4LdESS",
+    ["_GWebhookID"] = "", -- ID/Role To Ping (Leave "" For No Ping)
+    ["_GWebhookURL"] = "",
 
     ["_GOptimizationsLastestVersion"] = true,  -- Auto Able Optimizations
     ["_GOptimizationsStatUI"] = true,
