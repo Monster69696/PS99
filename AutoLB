@@ -1,51 +1,62 @@
--- 🏋️ Strength Leaderboard 2 Score Display
--- By gpt bhaiya
+--// Centered GUI showing your BPRarePets2 value, updates every 60s
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local runService = game:GetService("RunService")
 
-repeat task.wait() until game:IsLoaded()
-
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local player = Players.LocalPlayer
-
-local GymUtil = require(ReplicatedStorage.Library.Util.GymUtil)
-local Save = require(ReplicatedStorage.Library.Client.Save)
-
--- 🖥️ Create UI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "StrengthLeaderboard2Display"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
-
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(0, 300, 0, 50)
-textLabel.Position = UDim2.new(0.5, -150, 0, 50) -- Centered at top
-textLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-textLabel.BackgroundTransparency = 0.3
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.TextScaled = true
-textLabel.Font = Enum.Font.SourceSansBold
-textLabel.Text = "Strength LB2 Score: Loading..."
-textLabel.Parent = screenGui
-
--- 📈 Function to update display
-local function updateScoreDisplay()
-    local saveData = Save.Get()
-    if not saveData then
-        textLabel.Text = "Strength LB2 Score: Data not loaded"
-        return
+-- Function to get player's BPRarePets2 value
+local function GetPlayerScore()
+    local success, result = pcall(function()
+        return require(game.ServerScriptService.Library.Saving).Get(player).BPRarePets2
+    end)
+    if success and result then
+        return result
+    else
+        return 0
     end
-
-    local gymData = saveData.Gym
-    if not gymData or not gymData.PersonalBest2 then
-        textLabel.Text = "Strength LB2 Score: No data"
-        return
-    end
-
-    local score = GymUtil.ComputeStudsGrown(gymData.PersonalBest2)
-    textLabel.Text = "Strength LB2 Score: " .. tostring(score)
 end
 
--- 🔁 Keep updating every 2 seconds
-while task.wait(2) do
-    pcall(updateScoreDisplay)
+-- Create GUI
+local function CreateScoreGui()
+    -- Remove existing GUI if already present
+    if playerGui:FindFirstChild("ScoreGui") then
+        playerGui.ScoreGui:Destroy()
+    end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "ScoreGui"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = playerGui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0, 400, 0, 80) -- You can resize
+    label.Position = UDim2.new(0.5, -200, 0.5, -40) -- Centered by default
+    label.BackgroundTransparency = 0.2
+    label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    label.BorderSizePixel = 0
+    label.Text = "🏆 BPRarePets2: Loading..."
+    label.Font = Enum.Font.SourceSansBold
+    label.TextScaled = true
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Parent = screenGui
+
+    return label
 end
+
+-- Update the score every 60 seconds
+local function StartUpdating(label)
+    local function update()
+        local score = GetPlayerScore()
+        label.Text = "🏆 BPRarePets2: " .. tostring(score)
+    end
+
+    update() -- Initial update
+
+    while player and player.Parent do
+        wait(60)
+        update()
+    end
+end
+
+-- Init
+local scoreLabel = CreateScoreGui()
+StartUpdating(scoreLabel)
