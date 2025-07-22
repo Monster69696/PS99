@@ -1,6 +1,4 @@
--- 🏆 Rare Pets LB2 Score Display
--- By gpt bhaiya
-
+-- 🏆 RarePets LB2 Score Display (Instant First Update)
 repeat task.wait() until game:IsLoaded()
 
 local Players = game:GetService("Players")
@@ -17,7 +15,7 @@ screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(0, 400, 0, 60)
-textLabel.Position = UDim2.new(0.5, -200, 0, 50) -- Centered at top
+textLabel.Position = UDim2.new(0.5, -200, 0, 50) -- Center of screen
 textLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 textLabel.BackgroundTransparency = 0.3
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -26,7 +24,7 @@ textLabel.Font = Enum.Font.SourceSansBold
 textLabel.Text = "RarePets LB2 Score: Loading..."
 textLabel.Parent = screenGui
 
--- 📈 Function to update display
+-- 📈 Update function
 local function updateScoreDisplay()
     local saveData = Save.Get()
     if not saveData then
@@ -43,7 +41,10 @@ local function updateScoreDisplay()
     textLabel.Text = "RarePets LB2 Score: " .. tostring(score)
 end
 
--- 🔁 Keep updating every 60 seconds
+-- ⚡ Do first update instantly
+pcall(updateScoreDisplay)
+
+-- 🔁 Start 60s update loop
 while task.wait(60) do
     pcall(updateScoreDisplay)
 end
