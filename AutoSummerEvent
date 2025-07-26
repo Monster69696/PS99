@@ -1,42 +1,21 @@
--- Configs/Settings
-getgenv().AutoSummerEvent = {
-    ["_GEnabled"] = true,  -- Whole Script Control true/false
-
-    ["_GWebhookID"] = "", -- ID/Role To Ping (Leave "" For No Ping)
-    ["_GWebhookURL"] = "",
-
-    ["_GOptimizationsLastestVersion"] = true,  -- Auto Able Optimizations
-    ["_GOptimizationsStatUI"] = true,
-    ["_GOptimizationAutoRejoin"] = nil,  -- Auto Rejoin After X Seconds (Set false or nil to disable)
-    
-    ["_GAutoServerHop"] = false, -- Enable/disable Auto Server Hopping.
-    ["_GAutoServerHopEggChance"] = {"100x", "25x"}, -- Stop Hopping If a Titanic Egg Is Found With Selected Chance(s)
-
-    ["_GAutoTiles"] = true,  -- Auto Buy Blocks/Tiles
-    ["_GTilesDelay"] = 1,     -- Auto Buy Blocks/Tiles Delay
-
-    ["_GAutoRewards"] = true,  -- Auto Claim/Buy Rewards
-    ["_GRewardsDelay"] = 20,     -- Auto Claim/Buy Rewards Delay
-
-    ["_GAutoRaffle"] = false,  -- Auto Enter Raffle Each Round
-    ["_GRaffleAmount"] = 10,     -- Amount Of Tickets Per Raffle, Difficult Is 10.
-
-    ["_GHatchStopIslandProgress"] = 168,     -- If Island Progress Less Than E.g (50) Stop Hatching
-    ["_GHatchEggs"] = false,  -- Auto Hatch Egg
-    ["_GHatchDelay"] = 0.2,   -- Hatch Delay
-
-    --[[(Set nil to disable SkipRebirth)]]
-    ["_GAutoRebirth"] = false,  -- Auto Rebirth
-    ["_GRebirthDelay"] = 999999999999,     -- Auto Rebirth Delay
-    ["_GSkipRebirthOnNormalEgg"] = {}, -- Stop Rebirth On Selected Egg Chance, {"100x", "25x", "5x", "2x", "1x"}
-    ["_GSkipRebirthOnTitanicEgg"] = {}, -- Stop Rebirth On Selected TITANIC Egg Chance, {"100x", "25x", "5x", "2x", "1x"}
-    ["_GSkipRebirthOnSelectedTitanicEggs"] = {}, -- Skip Rebirth via Selected Titanic Eggs & Luck
-
-    ["_GEggScanInterval"] = 99999999999,     -- Egg Scan Interbal
-    ["_GAutoTeleportToOthersEggs"] = false,  -- (Recommended Always on), Means It Will Teleport To Other Players Eggs
-    ["_GAutoTeleportToBestEgg"] = false,  -- Auto Teleport To Best Egg (Luck Chance)
-    ["_GAutoTeleportToBestTitanicEgg"] = false,  -- Auto Teleport To Best TITANIC Egg (Luck Chance)
-    ["_GAutoTeleportToBestSelectedTitanicEggs"] = {}, -- Auto Teleport To Selected Titanic Eggs
+--// SCRIPT SETTINGS
+getgenv().config = {
+    AutoRebirth = true, --// Turn auto rebirth off if false
+    Delay = 0.1, --// Delay between buying tiles
+    Optimize = true, --// Optimization
+    FPSCap = 5, --// What FPS to use
+    TeleportCheckInterval = 5, -- // How often to check whether near egg
+    StopOnTitanic = false, --// if true, will stop rebirthing when any Tier Eight egg is present (ignores SpecificEggsToStopOn if true)
+    StopOnChance = {}, --// Valid options: "100x", "25x", "5x", "2x", "1x", if StopOnTitanic 
+    SpecificEggsToStopOn = {"Block Party Tier Eight 100x"}, --// Same valid options as stoponchance just add block party and tier
+    ToggleUI = true, --// if false you can see what its doing
+    AutoRaffle = false, --// false -> wont do raffle
+    TicketAmount =  10, --// how many tickets to put into raffle, default 10 at a time 
+    URL = "https://discord.com/api/webhooks/1263736357294051339/wxKgfr-PzrI1ttmbVmxAye3KmqShK_Ke0cE7BcMkw3OaTbFZ0xO75JYqn8l_8k4LdESS", --// Webhook url
+    ID = "", --// NUMERICAL DISCORD ID, NOT USERNAME
+    ServerHop = false, --// if under 50% it will first wait until you have 50% progress and then it will start serverhopping, will not rebirth if true
+    FastHatchTier6to8 = false --// if false it will only hatch fast and max amount on specified eggs
+    --// DO NOT USE SERVERHOP WITH MANY ACCOUNTS AT ONCE AS IT USES A LOT MORE CPU THAN JUST FARMING NORMALLY!!
 }
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Sub2BK/Stratum/refs/heads/Scripts/PS99_Event.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Majkyy111/Event/refs/heads/main/BlockEvent.lua"))()
