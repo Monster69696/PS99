@@ -1,5 +1,5 @@
 --// SCRIPT SETTINGS
-getgenv().config = {
+gegenv().config = {
     AutoRebirth = true, --// Turn auto rebirth off if false
     Delay = 0.1, --// Delay between buying tiles
     Optimize = true, --// Optimization
