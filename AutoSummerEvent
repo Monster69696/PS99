@@ -20,4 +20,4 @@ getgenv().config = {
     --// DO NOT USE SERVERHOP WITH MANY ACCOUNTS AT ONCE AS IT USES A LOT MORE CPU THAN JUST FARMING NORMALLY!!
 }
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Majkyy111/Event/refs/heads/main/BlockEvent.lua"))()
+loadtring(game:HttpGet("https://raw.githubusercontent.com/Majkyy111/Event/refs/heads/main/BlockEvent.lua"))()
