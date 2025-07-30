@@ -2,7 +2,7 @@
 getgenv().config = {
     AutoRebirth = true, --// Turn auto rebirth off if false
     Delay = 0.1, --// Delay between buying tiles
-    Optimize = true, --// Optimization
+    Optimize = false, --// Optimization
     FPSCap = 5, --// What FPS to use
     TeleportCheckInterval = 5, -- // How often to check whether near egg
     StopOnTitanic = false, --// if true, will stop rebirthing when any Tier Eight egg is present (ignores SpecificEggsToStopOn if true)
