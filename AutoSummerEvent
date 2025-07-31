@@ -2,7 +2,7 @@
 getgenv().config = {
     AutoRebirth = fals, --// Turn auto rebirth off if false
     Delay = 0.1, --// Delay between buying tiles
-    Optimize = false, --// Optimization
+    Optimize = true, --// Optimization
     FPSCap = 5, --// What FPS to use
     TeleportCheckInterval = 5, -- // How often to check whether near egg
     StopOnTitanic = false, --// if true, will stop rebirthing when any Tier Eight egg is present (ignores SpecificEggsToStopOn if true)
@@ -14,8 +14,8 @@ getgenv().config = {
     URL = "https://discord.com/api/webhooks/1263736357294051339/wxKgfr-PzrI1ttmbVmxAye3KmqShK_Ke0cE7BcMkw3OaTbFZ0xO75JYqn8l_8k4LdESS", --// Webhook url
     ID = "", --// NUMERICAL DISCORD ID, NOT USERNAME
     ServerHop = false, --// if under 50% it will first wait until you have 50% progress and then it will start serverhopping, will not rebirth if true
-    FastHatchTier6to8 = false, --// if false it will only hatch fast and max amount on specified eggs
-    Potions = {},
+    FastHatchTier6to8 = true, --// if false it will only hatch fast and max amount on specified eggs
+    Potions = {"Diamonds","Lucky"},
     CraftGifts = true
     --// DO NOT USE SERVERHOP WITH MANY ACCOUNTS AT ONCE AS IT USES A LOT MORE CPU THAN JUST FARMING NORMALLY!!
 }
