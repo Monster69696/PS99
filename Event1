@@ -5,10 +5,10 @@ if player.Name == "HammerStorm_999"
     or player.Name == "NoobestBacon_47" then
 
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+    oadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
     
 else
 
     script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
-    loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
+    oadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 end
