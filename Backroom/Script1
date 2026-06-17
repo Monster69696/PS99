@@ -16,7 +16,7 @@ _G.ZapHubSettings = {
     ["TeleportToBestBackroomsBreakableRoom"] = {Enable = false},
     ["CombineBackroomsCrayonKeys"] = {Enable = true, Keys = {"Backrooms Crayon Key", "Deep Backrooms Crayon Key"}},
     ["BuyBackroomsUpgrades"] = {Enable = true, Upgrades = {"Boss Damage", "Token Find"}},
-    ["ServerHopBackrooms"] = {Enable = true, Rooms = {"TitanicEggRoom"}, MinimumMultiplier = 100},
+    ["ServerHopBackrooms"] = {Enable = true, Rooms = {"TitanicEggRoom", "MiniBossRoom"}, MinimumMultiplier = 100},
 
     ["InfinitePetSpeed"] = {Enable = true},
     ["Tap"] = {Enable = true, Mode = "Random"},
