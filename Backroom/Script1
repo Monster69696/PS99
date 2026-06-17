@@ -31,8 +31,8 @@ _G.ZapHubSettings = {
     ["ClaimDefaultForeverPackFreeGift"] = {Enable = true},
 
     ["Rejoin"] = {Enable = false, Time = 60},
-    ["WhiteScreen"] = {false = true},
-    ["StatGUI"] = {false = true,
+    ["WhiteScreen"] = {Enable = false},
+    ["StatGUI"] = {Enable = false,
         Items = {
             {Class = "Currency", Item = "Diamonds"},
             {Class = "Currency", Item = "DaydreamCoins"},
