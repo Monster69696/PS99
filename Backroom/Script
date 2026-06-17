@@ -2,7 +2,7 @@
 _G.ZapHubSettings = {
     ["NewPetsTracker"] = {Enable = true, WebhookURL = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL", PetTypes = {"Gargantuan", "Titanic", "Huge", "Exclusive"}},
 
-    ["Optimization"] = {Enable = true},
+    ["Optimization"] = {Enable = false},
 
     ["ExploreBackrooms"] = {Speed = 600},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
@@ -10,13 +10,13 @@ _G.ZapHubSettings = {
     ["ForgeBackroomsKey"] = {Enable = true},
     ["CompleteBackroomsBossFight"] = {Enable = true, UseDeepKey = true},
     ["FarmBackroomsKeys"] = {Enable = true, FarmThreshold = 1, ReturnThreshold = 3},
-    ["FarmBackroomsCoins"] = {Enable = true, FarmThreshold = 2000000, ReturnThreshold = 10000000},
-    ["TeleportToBestBackroomsEgg"] = {Enable = true, MinimumMultiplier = 20, IgnoreLocked = true},
+    ["FarmBackroomsCoins"] = {Enable = false, FarmThreshold = 2000000, ReturnThreshold = 10000000},
+    ["TeleportToBestBackroomsEgg"] = {Enable = false, MinimumMultiplier = 1, IgnoreLocked = true},
     ["BreakBackroomsChestRoom"] = {Enable = false, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
     ["TeleportToBestBackroomsBreakableRoom"] = {Enable = false},
     ["CombineBackroomsCrayonKeys"] = {Enable = true, Keys = {"Backrooms Crayon Key", "Deep Backrooms Crayon Key"}},
     ["BuyBackroomsUpgrades"] = {Enable = true, Upgrades = {"Boss Damage", "Token Find"}},
-    ["ServerHopBackrooms"] = {Enable = true, Rooms = {"MiniBossRoom"}},
+    ["ServerHopBackrooms"] = {Enable = false, Rooms = {"TitanicEggRoom", "MiniBossRoom"}, MinimumMultiplier = 100},
 
     ["InfinitePetSpeed"] = {Enable = true},
     ["Tap"] = {Enable = true, Mode = "Random"},
@@ -30,9 +30,9 @@ _G.ZapHubSettings = {
     ["ClaimRankRewards"] = {Enable = true},
     ["ClaimDefaultForeverPackFreeGift"] = {Enable = true},
 
-    ["Rejoin"] = {Enable = false, Time = 60},
-    ["WhiteScreen"] = {false = true},
-    ["StatGUI"] = {false = true,
+    ["Rejoin"] = {Enable = false, Time = 150},
+    ["WhiteScreen"] = {Enable = true},
+    ["StatGUI"] = {Enable = true,
         Items = {
             {Class = "Currency", Item = "Diamonds"},
             {Class = "Currency", Item = "DaydreamCoins"},
