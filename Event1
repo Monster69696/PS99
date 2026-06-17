@@ -7,8 +7,13 @@ if player.Name == "HammerStorm_999"
     script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
     loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 
+elseif player.Name == "AkFrosty_YT" then
+
+    -- Script for AkFrosty_YT
+    loadstring(game:HttpGet("https://some-other-script-url"))()
+
 else
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
-    
+
 end
