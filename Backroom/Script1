@@ -2,7 +2,7 @@
 _G.ZapHubSettings = {
     ["NewPetsTracker"] = {Enable = true, WebhookURL = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL", PetTypes = {"Gargantuan", "Titanic", "Huge", "Exclusive"}},
 
-    ["Optimization"] = {Enable = false},
+    ["Optimization"] = {Enable = true},
 
     ["ExploreBackrooms"] = {Speed = 600},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
@@ -31,8 +31,8 @@ _G.ZapHubSettings = {
     ["ClaimDefaultForeverPackFreeGift"] = {Enable = true},
 
     ["Rejoin"] = {Enable = false, Time = 60},
-    ["WhiteScreen"] = {Enable = false},
-    ["StatGUI"] = {Enable = false,
+    ["WhiteScreen"] = {Enable = true},
+    ["StatGUI"] = {Enable = true,
         Items = {
             {Class = "Currency", Item = "Diamonds"},
             {Class = "Currency", Item = "DaydreamCoins"},
