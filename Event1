@@ -9,8 +9,7 @@ if player.Name == "HammerStorm_999"
 
 elseif player.Name == "AkFrosty_YT" then
 
-    -- Script for AkFrosty_YT
-    loadstring(game:HttpGet("https://some-other-script-url"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
 
 else
 
