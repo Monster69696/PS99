@@ -2,7 +2,7 @@
 _G.ZapHubSettings = {
     ["NewPetsTracker"] = {Enable = true, WebhookURL = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL", PetTypes = {"Gargantuan", "Titanic", "Huge", "Exclusive"}},
 
-    ["Optimization"] = {Enable = true},
+    ["Optimization"] = {Enable = false},
 
     ["ExploreBackrooms"] = {Speed = 600},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
