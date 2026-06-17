@@ -1,14 +1,3 @@
-local player = game.Players.LocalPlayer
+script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
+loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 
-if player.Name == "HammerStorm_999"
-    or player.Name == "KickMonster_47"
-    or player.Name == "NoobestBacon_47" then
-
-
-    oadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
-    
-else
-
-    script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
-    oadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
-end
