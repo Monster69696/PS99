@@ -2,17 +2,17 @@
 _G.ZapHubSettings = {
     ["NewPetsTracker"] = {Enable = true, WebhookURL = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL", PetTypes = {"Gargantuan", "Titanic", "Huge", "Exclusive"}},
 
-    ["Optimization"] = {Enable = false},
+    ["Optimization"] = {Enable = true},
 
     ["ExploreBackrooms"] = {Speed = 600},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
     ["ClaimBackroomsRandomRewards"] = {Enable = true},
     ["ForgeBackroomsKey"] = {Enable = true},
-    ["CompleteBackroomsBossFight"] = {Enable = true, UseDeepKey = true},
+    ["CompleteBackroomsBossFight"] = {Enable = false, UseDeepKey = false},
     ["FarmBackroomsKeys"] = {Enable = true, FarmThreshold = 1, ReturnThreshold = 3},
-    ["FarmBackroomsCoins"] = {Enable = false, FarmThreshold = 2000000, ReturnThreshold = 10000000},
-    ["TeleportToBestBackroomsEgg"] = {Enable = false, MinimumMultiplier = 1, IgnoreLocked = true},
-    ["BreakBackroomsChestRoom"] = {Enable = false, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
+    ["FarmBackroomsCoins"] = {Enable = true, FarmThreshold = 2000000, ReturnThreshold = 10000000},
+    ["TeleportToBestBackroomsEgg"] = {Enable = true, MinimumMultiplier = 1, IgnoreLocked = true},
+    ["BreakBackroomsChestRoom"] = {Enable = true, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
     ["TeleportToBestBackroomsBreakableRoom"] = {Enable = false},
     ["CombineBackroomsCrayonKeys"] = {Enable = true, Keys = {"Backrooms Crayon Key", "Deep Backrooms Crayon Key"}},
     ["BuyBackroomsUpgrades"] = {Enable = true, Upgrades = {"Boss Damage", "Token Find"}},
