@@ -4,10 +4,10 @@ if player.Name == "AkFrosty_YT"
     or player.Name == "AkFrostyYT"
     or player.Name == "AkFrostyYT2" then
 
-    oadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
 
 else
 
-    oadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
 
 end
