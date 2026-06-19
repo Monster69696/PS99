@@ -4,7 +4,7 @@ _G.ZapHubSettings = {
 
     ["Optimization"] = {Enable = true},
 
-    ["ExploreBackrooms"] = {Speed = 600},
+    ["ExploreBackrooms"] = {Speed = 800},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
     ["ClaimBackroomsRandomRewards"] = {Enable = true},
     ["ForgeBackroomsKey"] = {Enable = true},
