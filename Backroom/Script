@@ -8,7 +8,7 @@ _G.ZapHubSettings = {
     ["HatchNearestBackroomsEgg"] = {Enable = true},
     ["ClaimBackroomsRandomRewards"] = {Enable = true},
     ["ForgeBackroomsKey"] = {Enable = true},
-    ["CompleteBackroomsBossFight"] = {Enable = true, UseDeepKey = true},
+    ["CompleteBackroomsBossFight"] = {Enable = false, UseDeepKey = true},
     ["FarmBackroomsKeys"] = {Enable = true, FarmThreshold = 1, ReturnThreshold = 3},
     ["FarmBackroomsCoins"] = {Enable = true, FarmThreshold = 20000000, ReturnThreshold = 100000000},
     ["TeleportToBestBackroomsEgg"] = {Enable = true, MinimumMultiplier = 1, IgnoreLocked = false},
