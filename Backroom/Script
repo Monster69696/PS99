@@ -11,7 +11,7 @@ _G.ZapHubSettings = {
     ["CompleteBackroomsBossFight"] = {Enable = true, UseDeepKey = true},
     ["FarmBackroomsKeys"] = {Enable = true, FarmThreshold = 1, ReturnThreshold = 3},
     ["FarmBackroomsCoins"] = {Enable = true, FarmThreshold = 20000000, ReturnThreshold = 100000000},
-    ["TeleportToBestBackroomsEgg"] = {Enable = false, MinimumMultiplier = 1, IgnoreLocked = false},
+    ["TeleportToBestBackroomsEgg"] = {Enable = true, MinimumMultiplier = 1, IgnoreLocked = false},
     ["BreakBackroomsChestRoom"] = {Enable = false, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
     ["TeleportToBestBackroomsBreakableRoom"] = {Enable = false},
     ["CombineBackroomsCrayonKeys"] = {Enable = true, Keys = {"Backrooms Crayon Key", "Deep Backrooms Crayon Key"}},
