@@ -3,22 +3,10 @@ local player = Players.LocalPlayer
 
 if player.Name == "AkFrosty_YT" then
 
-    -- Kick every IST hour only for AkFrosty_YT
+    -- Kick after 1 hour in-game
     task.spawn(function()
-        local lastHour = -1
-
-        while true do
-            local utc = os.time()
-            local ist = os.date("*t", utc + 19800) -- IST (UTC+5:30)
-
-            if ist.min == 0 and lastHour ~= ist.hour then
-                lastHour = ist.hour
-                player:Kick("Scheduled restart")
-                break
-            end
-
-            task.wait(5)
-        end
+        task.wait(3600) -- 60 minutes
+        player:Kick("Scheduled restart")
     end)
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
