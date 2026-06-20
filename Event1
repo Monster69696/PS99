@@ -1,19 +1,6 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
 
-if player.Name == "AkFrosty_YT" then
 
-    -- Kick after 1 hour in-game
-    task.spawn(function()
-        task.wait(3600) -- 60 minutes
-        player:Kick("Scheduled restart")
-    end)
+script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
+loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
 
-else
-
-    script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
-    loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
-
-end
