@@ -1,0 +1,29 @@
+local folders = {
+    "CustomEggs",
+    "ZoneEggs",
+    "Eggs",
+    "RenderedEggs"
+}
+
+for _, folderName in ipairs(folders) do
+    local folder = workspace.__THINGS:FindFirstChild(folderName)
+
+    if folder then
+        for _, obj in ipairs(folder:GetDescendants()) do
+
+            if obj:IsA("BasePart") then
+                obj.LocalTransparencyModifier = 1
+                obj.CastShadow = false
+
+            elseif obj:IsA("SurfaceGui") then
+                obj.Enabled = false
+
+            elseif obj:IsA("SurfaceLight") then
+                obj.Enabled = false
+
+            elseif obj:IsA("Highlight") then
+                obj.Enabled = false
+            end
+        end
+    end
+end
