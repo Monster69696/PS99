@@ -1,21 +1,60 @@
-local folders = {
-    "CustomEggs",
-    "ZoneEggs",
-    "Eggs",
-    "RenderedEggs",
-    "Ornaments",
-    "ShinyRelics"
-}
+local things = workspace:FindFirstChild("__THINGS")
 
-for _, name in ipairs(folders) do
-    local folder = workspace.__THINGS:FindFirstChild(name)
+-- Disable effects
+for _, obj in ipairs(game:GetDescendants()) do
 
-    if folder then
-        for _, obj in ipairs(folder:GetDescendants()) do
-            if obj:IsA("BasePart") then
-                obj.LocalTransparencyModifier = 1
-                obj.CastShadow = false
-            end
-        end
+    if obj:IsA("ParticleEmitter")
+    or obj:IsA("Beam")
+    or obj:IsA("Trail") then
+
+        obj.Enabled = false
+
+    elseif obj:IsA("PointLight")
+    or obj:IsA("SurfaceLight")
+    or obj:IsA("SpotLight") then
+
+        obj.Enabled = false
+
+    elseif obj:IsA("BillboardGui")
+    or obj:IsA("SurfaceGui") then
+
+        obj.Enabled = false
+
+    elseif obj:IsA("Highlight") then
+
+        obj.Enabled = false
     end
+end
+
+-- Hide confirmed visual-heavy folders
+if things then
+
+    local folders = {
+        "CustomEggs",
+        "ZoneEggs",
+        "Eggs",
+        "RenderedEggs",
+        "Ornaments",
+        "ShinyRelics"
+    }
+
+    for _, folderName in ipairs(folders) do
+
+        local folder = things:FindFirstChild(folderName)
+
+        if folder then
+
+            for _, obj in ipairs(folder:GetDescendants()) do
+
+                if obj:IsA("BasePart") then
+                    obj.LocalTransparencyModifier = 1
+                    obj.CastShadow = false
+                end
+
+            end
+
+        end
+
+    end
+
 end
