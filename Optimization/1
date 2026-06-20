@@ -1,0 +1,21 @@
+local folders = {
+    "CustomEggs",
+    "ZoneEggs",
+    "Eggs",
+    "RenderedEggs",
+    "Ornaments",
+    "ShinyRelics"
+}
+
+for _, name in ipairs(folders) do
+    local folder = workspace.__THINGS:FindFirstChild(name)
+
+    if folder then
+        for _, obj in ipairs(folder:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.LocalTransparencyModifier = 1
+                obj.CastShadow = false
+            end
+        end
+    end
+end
