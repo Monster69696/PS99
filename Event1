@@ -12,7 +12,7 @@ task.spawn(function()
 end)
 
 -- Pick ONE slot when the account starts
-local slots = {90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150}
+local slots = {30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90}
 math.randomseed(tick() + game.JobId:byte(1))
 
 local delayMinutes = slots[math.random(1, #slots)]
