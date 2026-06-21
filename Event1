@@ -1,1 +1,42 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+-- Put your private server code here
+local PRIVATE_SERVER_CODE = "14242328644814090844782882158060"
+
+-- Load your farming script
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+end)
+
+-- Pick ONE slot when the account starts
+local slots = {60, 65, 70, 75, 80, 85, 90}
+math.randomseed(tick() + game.JobId:byte(1))
+
+local delayMinutes = slots[math.random(1, #slots)]
+
+print("[Rejoin] Selected slot:", delayMinutes, "minutes")
+
+while true do
+    -- Wait for chosen slot
+    task.wait(delayMinutes * 60)
+
+    -- Extra random offset so accounts with same slot
+    -- don't leave at exactly the same second
+    task.wait(math.random(0, 180))
+
+    print("[Rejoin] Rejoining private server...")
+
+    pcall(function()
+        TeleportService:TeleportToPrivateServer(
+            game.PlaceId,
+            PRIVATE_SERVER_CODE,
+            {player}
+        )
+    end)
+
+    -- If teleport somehow fails, retry after 30s
+    task.wait(30)
+end
