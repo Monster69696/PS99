@@ -17,12 +17,7 @@ _G.ZapHubSettings = {
         MaximumMultiplier = 250,
         IgnoreLocked = false,
         RoomType = {
-            "EggRoom",
-            "DeepLockedEggRoom",
-            "FreeEggRoom",
-            "DeepFreeEggRoom1",
-            "DeepFreeEggRoom2",
-            "ParkourLaserEggRoom"
+            "DeepLockedEggRoom"
         }
     },
     ["BreakBackroomsChestRoom"] = {Enable = true, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
