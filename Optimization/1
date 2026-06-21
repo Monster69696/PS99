@@ -15,11 +15,6 @@ for _, obj in ipairs(game:GetDescendants()) do
 
         obj.Enabled = false
 
-    elseif obj:IsA("BillboardGui")
-    or obj:IsA("SurfaceGui") then
-
-        obj.Enabled = false
-
     elseif obj:IsA("Highlight") then
 
         obj.Enabled = false
