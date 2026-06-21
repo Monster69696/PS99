@@ -5,7 +5,7 @@ _G.ZapHubSettings = {
     ["Optimization"] = {Enable = true},
 
     ["HatchNearestBackroomsEgg"] = {Enable = true},
-    ["ClaimBackroomsRandomRewards"] = {Enable = false},
+    ["ClaimBackroomsRandomRewards"] = {Enable = true},
     ["ForgeBackroomsKey"] = {Enable = true},
     ["CompleteBackroomsBossFight"] = {Enable = true, RoomTypes = {"GameMastersStage"}},
     ["FarmBackroomsKeys"] = {Enable = false, FarmThreshold = 1, ReturnThreshold = 3},
