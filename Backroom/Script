@@ -4,23 +4,37 @@ _G.ZapHubSettings = {
 
     ["Optimization"] = {Enable = true},
 
-    ["ExploreBackrooms"] = {Speed = 800},
     ["HatchNearestBackroomsEgg"] = {Enable = true},
-    ["ClaimBackroomsRandomRewards"] = {Enable = true},
+    ["ClaimBackroomsRandomRewards"] = {Enable = false},
     ["ForgeBackroomsKey"] = {Enable = true},
-    ["CompleteBackroomsBossFight"] = {Enable = false, UseDeepKey = true},
-    ["FarmBackroomsKeys"] = {Enable = true, FarmThreshold = 1, ReturnThreshold = 3},
-    ["FarmBackroomsCoins"] = {Enable = true, FarmThreshold = 20000000, ReturnThreshold = 100000000},
-    ["TeleportToBestBackroomsEgg"] = {Enable = true, MinimumMultiplier = 1, IgnoreLocked = false},
-    ["BreakBackroomsChestRoom"] = {Enable = false, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
+    ["CompleteBackroomsBossFight"] = {Enable = true, RoomTypes = {"GameMastersStage"}},
+    ["FarmBackroomsKeys"] = {Enable = false, FarmThreshold = 1, ReturnThreshold = 3},
+    ["FarmDeepBackroomsKeys"] = {Enable = false, FarmThreshold = 1, ReturnThreshold = 3},
+    ["FarmBackroomsCoins"] = {Enable = false, FarmThreshold = 1000000, ReturnThreshold = 10000000},
+    ["TeleportToBestBackroomsEgg"] = {
+        Enable = true,
+        MinimumMultiplier = 100,
+        MaximumMultiplier = 250,
+        IgnoreLocked = false,
+        RoomType = {
+            "EggRoom",
+            "DeepLockedEggRoom",
+            "FreeEggRoom",
+            "DeepFreeEggRoom1",
+            "DeepFreeEggRoom2",
+            "ParkourLaserEggRoom"
+        }
+    },
+    ["BreakBackroomsChestRoom"] = {Enable = true, Rooms = {"DeepChestRoom1", "DeepChestRoom2", "DeepChestRoom3"}},
     ["TeleportToBestBackroomsBreakableRoom"] = {Enable = false},
     ["CombineBackroomsCrayonKeys"] = {Enable = true, Keys = {"Backrooms Crayon Key", "Deep Backrooms Crayon Key"}},
-    ["BuyBackroomsUpgrades"] = {Enable = true, Upgrades = {"Boss Damage", "Token Find"}},
-    ["ServerHopBackrooms"] = {Enable = false, Rooms = {"TitanicEggRoom", "MiniBossRoom"}, MinimumMultiplier = 100},
+    ["BuyBackroomsUpgrades"] = {Enable = true, Upgrades = {"Boss Damage", "Extra Loot Roll", "Token Find"}},
+    ["BuyDeepBackroomsUpgrades"] = {Enable = true, Upgrades = {"Deep Boss Damage", "Key Find"}},
+    ["ServerHopBackrooms"] = {Enable = false, Rooms = {"DeepFreeEggRoom2", "GameMastersStage"}, MinimumMultiplier = 100},
 
     ["InfinitePetSpeed"] = {Enable = true},
     ["Tap"] = {Enable = true, Mode = "Random"},
-    ["EfficientFarm"] = {Enable = true},
+    ["EfficientFarm"] = {Enable = false},
     ["CollectOrbs"] = {Enable = true},
 
     ["DisableEggAnimation"] = {Enable = true},
@@ -30,9 +44,10 @@ _G.ZapHubSettings = {
     ["ClaimRankRewards"] = {Enable = true},
     ["ClaimDefaultForeverPackFreeGift"] = {Enable = true},
 
-    ["Rejoin"] = {Enable = false, Time = 150},
+    ["Rejoin"] = {Enable = false, Time = 60},
     ["WhiteScreen"] = {Enable = true},
-    ["StatGUI"] = {Enable = true,
+    ["StatGUI"] = {
+        Enable = true,
         Items = {
             {Class = "Currency", Item = "Diamonds"},
             {Class = "Currency", Item = "DaydreamCoins"},
@@ -45,5 +60,5 @@ _G.ZapHubSettings = {
     }
 }
 
-script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"; -- Your premium key here
+script_key=""; -- Your premium key here
 loadstring(game:HttpGet('https://zaphub.xyz/ExecBackroomsEvent'))()
