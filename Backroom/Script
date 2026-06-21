@@ -60,5 +60,5 @@ _G.ZapHubSettings = {
     }
 }
 
-script_key=""; -- Your premium key here
+script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq"; -- Your premium key here
 loadstring(game:HttpGet('https://zaphub.xyz/ExecBackroomsEvent'))()
