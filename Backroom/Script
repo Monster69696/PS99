@@ -9,10 +9,11 @@ getgenv().GINVENTORY_COUNTS = {
 }
 getgenv().GBACKROOMS_OPEN_CHESTS = true
 getgenv().GBACKROOMS_OPEN_CHESTS_ONLY_DEEP_ROOMS = true
-getgenv().GBACKROOMS_KICK_AFTER_CHESTS = true
+getgenv().GBACKROOMS_KICK_AFTER_CHESTS = false
 getgenv().GBACKROOMS_DO_BOSS_ROOM = true
 getgenv().GEVENT_UPGRADES = {
-    { Id = "BackroomsBossDamage",    MaxTier = 25 }, --max is 25
+    { Id = "BackroomsBossDamage",    MaxTier = 25 },--max is 25
+    { Id = "BackroomsDeepBossDamage",    MaxTier = 25 }, 
     { Id = "BackroomsTokenFind", MaxTier = 20 }, --max is 20
     { Id = "BackroomsExtraLootRoll",  MaxTier = 20 }, --max is 20
     { Id = "BackroomsCoinMultiplier",  MaxTier = 20 }, --max is 20
@@ -23,8 +24,9 @@ getgenv().GBACKROOMS_COINS_TO_FARM_BEFORE_HATCHING = "1000m" -- you should calul
 getgenv().GRANK_FIRST = false
 getgenv().GENCHANTS = {"Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb"}
 getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
-getgenv().GKICK_ON_STAFF = false  
+--getgenv().GKICK_ON_STAFF = false
 --getgenv().GHOP_ON_STAFF = false
+getgenv().GBACKROOMS_DO_BACKROOMS_DELETE = true
 getgenv().GBACKROOMS_MIN_MULTIPLIER = 100  --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
 getgenv().GGFX_MODE = 1 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
 getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
