@@ -38,5 +38,5 @@ while true do
     end
 
     -- Wait 5-10 minutes before next scan
-    task.wait(math.random(300, 600))
+    task.wait(math.random(200, 400))
 end
