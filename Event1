@@ -8,13 +8,7 @@ local PRIVATE_SERVER_CODE = "14242328644814090844782882158060"
 
 -- Load script based on username
 task.spawn(function()
-    if player.Name == "HammerStorm_999" then
-        -- HammerStorm_999 loads Script1
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
-    else
-        -- Everyone else loads Script
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
-    end
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
 end)
 
 -- Pick ONE slot when the account starts
