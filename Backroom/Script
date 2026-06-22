@@ -29,7 +29,7 @@ getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Luck
 --getgenv().GKICK_ON_STAFF = false
 --getgenv().GHOP_ON_STAFF = false
 getgenv().GBACKROOMS_DO_BACKROOMS_DELETE = true
-getgenv().GBACKROOMS_MIN_MULTIPLIER = 100  --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
+getgenv().GBACKROOMS_MIN_MULTIPLIER = 1  --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
 getgenv().GGFX_MODE = 3 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
 getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
 getgenv().GWEBHOOK_USERID = ""
