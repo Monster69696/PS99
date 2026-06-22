@@ -18,7 +18,6 @@ getgenv().GEVENT_UPGRADES = {
     { Id = "BackroomsDeepBossDamage",    MaxTier = 25 }, 
     { Id = "BackroomsTokenFind", MaxTier = 20 }, --max is 20
     { Id = "BackroomsExtraLootRoll",  MaxTier = 20 }, --max is 20
-    { Id = "BackroomsCoinMultiplier",  MaxTier = 20 }, --max is 20
     { Id = "BackroomsKeyFind",  MaxTier = 15 }, --max is 15
 }
 getgenv().GBACKROOMS_COINS_TO_FARM_BEFORE_HATCHING = "1000m" -- you should calulate how much coins your accounts can hatch away in 1 hour. look at announcement.
