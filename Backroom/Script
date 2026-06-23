@@ -7,7 +7,7 @@ getgenv().GINVENTORY_COUNTS = {
     ["Chest Hunt Token"] = {Class = "Misc", Id = "Chest Hunt Token"},
     ["Deep Chest Token"] = {Class = "Misc", Id = "Deep Chest Token"},
 }
-getgenv().GBACKROOMS_DO_BOSS_ROOM = false
+getgenv().GBACKROOMS_DO_BOSS_ROOM = true
 getgenv().GBACKROOMS_WAIT_FOR_BOSS_RESPAWN = false
 getgenv().GBACKROOMS_KICK_AFTER_BOSS = false
 getgenv().GBACKROOMS_OPEN_CHESTS = false
