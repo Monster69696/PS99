@@ -36,4 +36,4 @@ getgenv().GGFX_MODE = 2 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : 
 getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
 getgenv().GWEBHOOK_USERID = ""
 getgenv().GWEBHOOK_LINK = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL"
-loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/34915da4ad87a5028e1fd64efbe3543f.lua"))()
+oadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/34915da4ad87a5028e1fd64efbe3543f.lua"))()
