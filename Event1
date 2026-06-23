@@ -9,17 +9,12 @@ end
 
 
 task.wait(600)
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SendPosition = ReplicatedStorage:WaitForChild("Network"):WaitForChild("Send Position")
-
 local function teleport()
-    local args = {
-        CFrame.new(-6526.47509765625, 2011.305419921875, -3593.764892578125, -0.8542281985282898, -3.1199526517866616e-08, 0.5198982954025269, -5.72376812613129e-08, 1, -3.4034567164553664e-08, -0.5198982954025269, -5.883105913540021e-08, -0.8542281985282898),
-        CFrame.new(-6525.75341796875, 2025.023193359375, -3567.161865234375, 0.9996323585510254, -0.011311398819088936, 0.02463846281170845, 0, 0.9088024497032166, 0.4172268211841583, -0.027110910043120384, -0.41707342863082886, 0.9084684252738953),
-        CFrame.new(-6526.47509765625, 2012.805419921875, -3593.764892578125)
-    }
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
 
-    SendPosition:FireServer(unpack(args))
+    hrp.CFrame = CFrame.new(-6526.47509765625, 2012.805419921875, -3593.764892578125)
 end
 
 while true do
