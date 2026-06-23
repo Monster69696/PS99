@@ -8,11 +8,11 @@ getgenv().GINVENTORY_COUNTS = {
     ["Deep Chest Token"] = {Class = "Misc", Id = "Deep Chest Token"},
 }
 getgenv().GBACKROOMS_DO_BOSS_ROOM = true
-getgenv().GBACKROOMS_OPEN_CHESTS = false
-getgenv().GBACKROOMS_OPEN_CHESTS_ONLY_DEEP_ROOMS = true
-getgenv().GBACKROOMS_TOKEN_CHEST_FARM = true -- Only use if you undertand what this does
-getgenv().GBACKROOMS_KICK_AFTER_CHESTS = false
 getgenv().GBACKROOMS_WAIT_FOR_BOSS_RESPAWN = true
+getgenv().GBACKROOMS_OPEN_CHESTS = false
+getgenv().GBACKROOMS_OPEN_CHESTS_ONLY_DEEP_ROOMS = false
+getgenv().GBACKROOMS_TOKEN_CHEST_FARM = false -- Only use if you undertand what this does
+getgenv().GBACKROOMS_KICK_AFTER_CHESTS = false
 
 getgenv().GEVENT_UPGRADES = {
     { Id = "BackroomsBossDamage",    MaxTier = 25 },--max is 25
