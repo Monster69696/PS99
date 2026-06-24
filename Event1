@@ -7,30 +7,3 @@ else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
 end
 
-
-task.wait(600)
-
-local function teleport()
-    local player = game:GetService("Players").LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
-
-    local pos = CFrame.new(
-        -6526.47509765625,
-        2012.805419921875,
-        -3593.764892578125
-    )
-
-    hrp.CFrame = pos
-    task.wait(1)
-    hrp.CFrame = pos
-end
-
-while true do
-    local t = os.date("*t")
-    local secondsUntilNext5Min = 300 - ((t.min % 5) * 60 + t.sec)
-
-    task.wait(secondsUntilNext5Min)
-    teleport()
-end
-
