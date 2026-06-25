@@ -27,14 +27,14 @@ getgenv().GEVENT_UPGRADES = {
 }
 getgenv().GBACKROOMS_COINS_TO_FARM_BEFORE_HATCHING = "1000m" -- you should calulate how much coins your accounts can hatch away in 1 hour. look at announcement.
 getgenv().GRANK_FIRST = false
-getgenv().GENCHANTS = {"Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb"}
-getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
+getgenv().GENCHANTS = {"Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb"}
+getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
 --getgenv().GKICK_ON_STAFF = false
 --getgenv().GHOP_ON_STAFF = false
 getgenv().GBACKROOMS_DO_BACKROOMS_DELETE = true
-getgenv().GBACKROOMS_MIN_MULTIPLIER = 1 --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
+getgenv().GBACKROOMS_MIN_MULTIPLIER = 100 --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
 getgenv().GGFX_MODE = 2 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
-getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
+getgenv().GZONE_TO = 240 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
 getgenv().GWEBHOOK_USERID = ""
 getgenv().GWEBHOOK_LINK = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL"
 loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/34915da4ad87a5028e1fd64efbe3543f.lua"))()
