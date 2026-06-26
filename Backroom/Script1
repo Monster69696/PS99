@@ -9,8 +9,8 @@ getgenv().GINVENTORY_COUNTS = {
 }
 getgenv().GBACKROOMS_DO_BOSS_ROOM = true --defualt on false
 getgenv().GBACKROOMS_WAIT_FOR_BOSS_RESPAWN = false --default on false
-getgenv().GBACKROOMS_KICK_AFTER_BOSS = false --default on false
-getgenv().GBACKROOMS_HATCH_DURING_BOSS_RESPAWN = true --default on false
+getgenv().GBACKROOMS_KICK_AFTER_BOSS = true --default on false
+getgenv().GBACKROOMS_HATCH_DURING_BOSS_RESPAWN = false --default on false
 getgenv().GBACKROOMS_OPEN_CHESTS = false
 getgenv().GBACKROOMS_OPEN_CHESTS_ONLY_DEEP_ROOMS = false
 getgenv().GBACKROOMS_TOKEN_CHEST_FARM = false -- Only use if you undertand what this does
@@ -32,7 +32,7 @@ getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Luck
 --getgenv().GKICK_ON_STAFF = false
 --getgenv().GHOP_ON_STAFF = false
 getgenv().GBACKROOMS_DO_BACKROOMS_DELETE = true
-getgenv().GBACKROOMS_MIN_MULTIPLIER = 100 --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
+getgenv().GBACKROOMS_MIN_MULTIPLIER = 1 --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
 getgenv().GGFX_MODE = 2 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
 getgenv().GZONE_TO = 240 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
 getgenv().GWEBHOOK_USERID = ""
