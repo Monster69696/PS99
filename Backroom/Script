@@ -8,9 +8,9 @@ getgenv().GINVENTORY_COUNTS = {
     ["Deep Chest Token"] = {Class = "Misc", Id = "Deep Chest Token"},
 }
 getgenv().GBACKROOMS_DO_BOSS_ROOM = true --defualt on false
-getgenv().GBACKROOMS_WAIT_FOR_BOSS_RESPAWN = false --default on false
+getgenv().GBACKROOMS_WAIT_FOR_BOSS_RESPAWN = true --default on false
 getgenv().GBACKROOMS_KICK_AFTER_BOSS = true --default on false
-getgenv().GBACKROOMS_HATCH_DURING_BOSS_RESPAWN = false --default on false
+getgenv().GBACKROOMS_HATCH_DURING_BOSS_RESPAWN = true --default on false
 getgenv().GBACKROOMS_OPEN_CHESTS = false
 getgenv().GBACKROOMS_OPEN_CHESTS_ONLY_DEEP_ROOMS = false
 getgenv().GBACKROOMS_TOKEN_CHEST_FARM = false -- Only use if you undertand what this does
