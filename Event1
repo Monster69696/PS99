@@ -3,13 +3,13 @@ local player = Players.LocalPlayer
 
 if player.Name == "AkFrosty_YT" then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
+    task.wait(15)
+
+    script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq";
+    loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
+
 else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
 end
-
-task.wait(10)
-
-script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq";
-loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
 
 
