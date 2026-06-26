@@ -30,7 +30,7 @@ getgenv().GRANK_FIRST = false
 getgenv().GENCHANTS = {"Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb"}
 getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
 --getgenv().GKICK_ON_STAFF = false
---getgenv().GHOP_ON_STAFF = false
+getgenv().GHOP_ON_STAFF = true
 getgenv().GBACKROOMS_DO_BACKROOMS_DELETE = true
 getgenv().GBACKROOMS_MIN_MULTIPLIER = 1 --it would kick or hop based on if you enabled kickonstaff or hoponstaff.
 getgenv().GGFX_MODE = 2 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
