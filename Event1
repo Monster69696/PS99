@@ -1,9 +1,6 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/AutoLB"))()
-task.wait(1)
-
 if player.Name == "AkFrosty_YT" then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
 
