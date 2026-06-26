@@ -1,4 +1,4 @@
--- 🏆 RarePets LB2 Score Display (Instant First Update)
+-- 🏆 Deep Backroom 2026 LB Score Display
 repeat task.wait() until game:IsLoaded()
 
 local Players = game:GetService("Players")
@@ -9,42 +9,37 @@ local Save = require(ReplicatedStorage.Library.Client.Save)
 
 -- 🖥️ Create UI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "RarePetsLB2Display"
+screenGui.Name = "DeepBackroomLBDisplay"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(0, 400, 0, 60)
-textLabel.Position = UDim2.new(0.5, -200, 0, 50) -- Center of screen
+textLabel.Position = UDim2.new(0.5, -200, 0, 50)
 textLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 textLabel.BackgroundTransparency = 0.3
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 textLabel.TextScaled = true
 textLabel.Font = Enum.Font.SourceSansBold
-textLabel.Text = "RarePets LB2 Score: Loading..."
+textLabel.Text = "Deep Backroom LB Score: Loading..."
 textLabel.Parent = screenGui
 
 -- 📈 Update function
 local function updateScoreDisplay()
     local saveData = Save.Get()
     if not saveData then
-        textLabel.Text = "RarePets LB2 Score: Data not loaded"
+        textLabel.Text = "Deep Backroom LB Score: Data not loaded"
         return
     end
 
-    if not saveData.BPRarePets2 then
-        textLabel.Text = "RarePets LB2 Score: No data"
-        return
-    end
-
-    local score = saveData.BPRarePets2
-    textLabel.Text = "RarePets LB2 Score: " .. tostring(score)
+    local score = saveData.BackroomsPetsHatched2026 or 0
+    textLabel.Text = "Deep Backroom LB Score: " .. tostring(score)
 end
 
--- ⚡ Do first update instantly
+-- ⚡ First update
 pcall(updateScoreDisplay)
 
--- 🔁 Start 60s update loop
+-- 🔁 Update every 60 seconds
 while task.wait(60) do
     pcall(updateScoreDisplay)
 end
