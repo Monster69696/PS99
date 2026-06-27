@@ -27,6 +27,7 @@ getgenv().GEVENT_UPGRADES = {
 }
 getgenv().GBACKROOMS_COINS_TO_FARM_BEFORE_HATCHING = "1000m" -- you should calulate how much coins your accounts can hatch away in 1 hour. look at announcement.
 getgenv().GRANK_FIRST = false
+getgenv().GHATCH_CHARGED_EGGS = true
 getgenv().GENCHANTS = {"Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb", "Magic Orb"}
 getgenv().GHATCH_ENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
 --getgenv().GKICK_ON_STAFF = false
