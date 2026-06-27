@@ -1,6 +1,14 @@
 setfpscap(10)
 script_key = "RBnzNhazGAdhDSZaOyTBwjLdFthDqDej";
 getgenv().GDO_SOCCER_EVENT = true
+getgenv().GEVENT_UPGRADES = {
+    { Id = "SoccerBetterYeetEgg",    MaxTier = 5 }, --max is 5
+    { Id = "SoccerTrickshotThrowChance", MaxTier = 5 }, --max is 5
+    { Id = "SoccerCriticalThrowChance",  MaxTier = 5 }, --max is 5
+    { Id = "SoccerYeetOrbsReach",  MaxTier = 0 }, --max is 5
+    { Id = "SoccerYeetOrbStrength",  MaxTier = 5 }, --max is 5
+}
+getgenv().GHATCH_CHARGED_EGGS = true
 getgenv().GENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
 getgenv().GGFX_MODE = 3 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
 getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
