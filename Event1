@@ -1,12 +1,2 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
-f player.Name == "AkFrosty_YT" then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script"))()
-
-else
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PS99/main/Backroom/Script1"))()
-
-end
-
-
+script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq";
+loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
