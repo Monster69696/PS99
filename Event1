@@ -1,20 +1,2 @@
-task.wait(300)
-getgenv().Config = {
-    ["CPU Saver"] = false,
-    ["Webhook"] = {
-        ["URL"] = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL",
-        ["Discord Id to ping"] = {""},
-        ["Send Normal Huges"] = true,
-
-    },
-    ["Upgrades"] = {
-        ["SoccerYeetOrbsReach"] = 0,
-        ["SoccerBetterYeetEgg"] = 99,
-        ["SoccerCriticalThrowChance"] = 99,
-        ["SoccerTrickshotThrowChance"] = 99,
-        ["SoccerYeetOrbStrength"] = 99,
-    },
-}
-
-
-loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/a476ededcf808a47b35783225ceacba8.lua"))()
+script_key="wUyvmjsmuvRIwOPwLszkupgIOvvIkoYq";
+loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
