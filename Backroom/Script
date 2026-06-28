@@ -1,5 +1,5 @@
 setfpscap(10)
-script_key = "RBnzNhazGAdhDSZaOyTBwjLdFthDqDej";
+script_key = "VCAttvTgYrgnuwjZmKoKvOrfvRscbtGv";
 getgenv().GDO_SOCCER_EVENT = true
 getgenv().GEVENT_UPGRADES = {
     { Id = "SoccerBetterYeetEgg",    MaxTier = 5 }, --max is 5
