@@ -1,6 +1,4 @@
-||<@&1499437937853595771> ||
-# Free test version for the next 24h scoccer event script
-```lua
+
 getgenv().Config = {
     ["CPU Saver"] = false,
     ["Webhook"] = {
