@@ -4,7 +4,10 @@ local player = game.Players.LocalPlayer
 if player.Name == "AkFrosty_YT" then
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PetSim/main/Backroom/Script"))()
-    
+
+elseif player.Name == "AlphaApex_301" then
+
+    task.wait(500)
 else
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PetSim/main/Backroom/Script1"))()
