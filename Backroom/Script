@@ -8,7 +8,7 @@ getgenv().GEVENT_UPGRADES = {
     { Id = "SoccerYeetOrbsReach",  MaxTier = 0 }, --max is 5
     { Id = "SoccerYeetOrbStrength",  MaxTier = 5 }, --max is 5
 }
-getgenv().GSOCCER_EVENT_SHOOT_FAST = false -- to make you kick slower again
+getgenv().GSOCCER_EVENT_SHOOT_FAST = true -- to make you kick slower again
 getgenv().GHATCH_CHARGED_EGGS = true
 getgenv().GENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
 getgenv().GGFX_MODE = 3 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
