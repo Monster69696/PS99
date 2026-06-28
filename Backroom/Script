@@ -1,18 +1,41 @@
-setfpscap(10)
-script_key = "VCAttvTgYrgnuwjZmKoKvOrfvRscbtGv";
+
+
 getgenv().GDO_SOCCER_EVENT = true
+
 getgenv().GEVENT_UPGRADES = {
-    { Id = "SoccerBetterYeetEgg",    MaxTier = 5 }, --max is 5
-    { Id = "SoccerTrickshotThrowChance", MaxTier = 5 }, --max is 5
-    { Id = "SoccerCriticalThrowChance",  MaxTier = 5 }, --max is 5
-    { Id = "SoccerYeetOrbsReach",  MaxTier = 0 }, --max is 5
-    { Id = "SoccerYeetOrbStrength",  MaxTier = 5 }, --max is 5
+    { Id = "SoccerBetterYeetEgg", MaxTier = 5 },
+    { Id = "SoccerTrickshotThrowChance", MaxTier = 5 },
+    { Id = "SoccerCriticalThrowChance", MaxTier = 5 },
+    { Id = "SoccerYeetOrbsReach", MaxTier = 0 },
+    { Id = "SoccerYeetOrbStrength", MaxTier = 5 },
 }
-getgenv().GSOCCER_EVENT_SHOOT_FAST = true -- to make you kick slower again
+
+getgenv().GINVENTORY_COUNTS = {
+    ["Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus"},
+    ["Golden Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", IsGold = true},
+    ["Rainbow Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", IsRainbow = true},
+    ["Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 0, IsShiny = true},
+    ["Golden Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 1, IsGold = true, IsShiny = true},
+    ["Rainbow Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 2, IsRainbow = true, Shiny = true}
+}
+
+getgenv().GSOCCER_EVENT_SHOOT_FAST = true
 getgenv().GHATCH_CHARGED_EGGS = true
-getgenv().GENCHANTS = {"Shiny Hunter", "Shiny Hunter", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs", "Lucky Eggs"}
-getgenv().GGFX_MODE = 3 --2 = LOW_GFX: still see what they do, 1 = REMOVE_GFX : no visuals, 3 = FULL_GFX
-getgenv().GZONE_TO = 1 -- enter event W1: 1, W2: 100, W3: 200, W4: 240, also for GRANK_FIRST
-getgenv().GWEBHOOK_USERID = ""
-getgenv().GWEBHOOK_LINK = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL"
+
+getgenv().GENCHANTS = {
+    "Shiny Hunter",
+    "Shiny Hunter",
+    "Huge Hunter",
+    "Huge Hunter",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs"
+}
+
+getgenv().GGFX_MODE = 3
+
+getgenv().GZONE_TO = 1
+
 loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/34915da4ad87a5028e1fd64efbe3543f.lua"))()
