@@ -1,15 +1,42 @@
 
-local player = game.Players.LocalPlayer
 
-if player.Name == "AkFrosty_YT" then
+getgenv().GDO_SOCCER_EVENT = true
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PetSim/main/Backroom/Script"))()
+getgenv().GEVENT_UPGRADES = {
+    { Id = "SoccerBetterYeetEgg", MaxTier = 5 },
+    { Id = "SoccerTrickshotThrowChance", MaxTier = 5 },
+    { Id = "SoccerCriticalThrowChance", MaxTier = 5 },
+    { Id = "SoccerYeetOrbsReach", MaxTier = 0 },
+    { Id = "SoccerYeetOrbStrength", MaxTier = 5 },
+}
 
-elseif player.Name == "AlphaApex_301" then
+getgenv().GINVENTORY_COUNTS = {
+    ["Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus"},
+    ["Golden Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", IsGold = true},
+    ["Rainbow Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", IsRainbow = true},
+    ["Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 0, IsShiny = true},
+    ["Golden Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 1, IsGold = true, IsShiny = true},
+    ["Rainbow Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 2, IsRainbow = true, IsShiny = true}
+}
 
-    task.wait(500)
-else
+getgenv().GSOCCER_EVENT_SHOOT_FAST = true
+getgenv().GHATCH_CHARGED_EGGS = true
+getgenv().GSOCCER_EVENT_ALWAYS_SHOOT_MAX_POWER = false
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Monster69696/PetSim/main/Backroom/Script1"))()
-    
-end
+getgenv().GENCHANTS = {
+    "Shiny Hunter",
+    "Shiny Hunter",
+    "Huge Hunter",
+    "Huge Hunter",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs",
+    "Lucky Eggs"
+}
+
+getgenv().GGFX_MODE = 2 
+
+getgenv().GZONE_TO = 1
+
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/34915da4ad87a5028e1fd64efbe3543f.lua"))()
