@@ -1,4 +1,4 @@
-
+task.wait(300)
 getgenv().Config = {
     ["CPU Saver"] = false,
     ["Webhook"] = {
