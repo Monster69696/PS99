@@ -1,5 +1,5 @@
 getgenv().Config = {
-    ["CPU Saver"] = true,
+    ["CPU Saver"] = false,
     ["Webhook"] = {
         ["URL"] = "https://discord.com/api/webhooks/1513862811409846423/akc2PQh74ZskeAXp-6JXu1Z8eelSkz-57p367waFYljaB7z0idYIRAFaRBlkHQs7fAtL",
         ["Discord Id to ping"] = {""},
