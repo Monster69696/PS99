@@ -16,7 +16,7 @@ getgenv().GINVENTORY_COUNTS = {
     ["Rainbow Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", IsRainbow = true},
     ["Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 0, IsShiny = true},
     ["Golden Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 1, IsGold = true, IsShiny = true},
-    ["Rainbow Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 2, IsRainbow = true, Shiny = true}
+    ["Rainbow Shiny Soccerball Trophy Angelus"] = {Class = "Pet", Id = "Soccerball Trophy Angelus", Tier = 2, IsRainbow = true, IsShiny = true}
 }
 
 getgenv().GSOCCER_EVENT_SHOOT_FAST = true
