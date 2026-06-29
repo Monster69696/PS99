@@ -22,6 +22,7 @@ getgenv().GINVENTORY_COUNTS = {
 getgenv().GSOCCER_EVENT_SHOOT_FAST = true
 getgenv().GHATCH_CHARGED_EGGS = true
 getgenv().GSOCCER_EVENT_ALWAYS_SHOOT_MAX_POWER = false
+getgenv().GSOCCER_EVENT_UPGRADE_PETS = false
 
 getgenv().GENCHANTS = {
     "Shiny Hunter",
